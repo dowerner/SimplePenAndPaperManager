@@ -1,0 +1,60 @@
+﻿<UserControl x:Class="SimplePenAndPaperManager.UserInterface.View.Controls.TransformationGizmo"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SimplePenAndPaperManager.UserInterface.View.Controls"
+             mc:Ignorable="d" 
+             Height="120" Width="120">
+    <Canvas MouseMove="Ellipse_MouseMove"
+            MouseLeftButtonUp="Ellipse_MouseLeftButtonUp">
+        <Rectangle Width="30" Height="30" Canvas.Top="30" Canvas.Left="30"
+                   Fill="LightYellow"
+                   Stroke="Gray"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   Opacity="0.5"
+                   Margin="30,0,0,30"/>
+        <Path Stretch="Fill" Fill="DarkRed"  Canvas.Top="45" Canvas.Left="15"
+              Data="M 0 115 95 115 65 90 85 90 120 120 85 150 65 150 95 125 0 125 Z"
+              HorizontalAlignment="Center"  Width="50" Height="30" Margin="45,0,0,0"/>
+        <Path Stretch="Fill" Fill="LimeGreen"  Canvas.Top="10" Canvas.Left="45" 
+              Data="M 0 115 95 115 65 90 85 90 120 120 85 150 65 150 95 125 0 125 Z"
+              HorizontalAlignment="Center"  Width="50" Height="30" Margin="0,0,0,45">
+            <Path.LayoutTransform>
+                <RotateTransform Angle="-90"/>
+            </Path.LayoutTransform>
+        </Path>
+        <Line X1="0" Y1="0" X2="47" Y2="0" RenderTransformOrigin="0.98,-0.006"
+              Stroke="Blue"
+              Canvas.Top="57.5" Canvas.Left="14"
+              StrokeThickness="5"
+              HorizontalAlignment="Center"
+              VerticalAlignment="Center"
+              Margin="0,2.5,45,0">
+            <Line.RenderTransform>
+                <RotateTransform x:Name="RotationIndicatorTransform" Angle="0"/>
+            </Line.RenderTransform>
+        </Line>
+        <Ellipse Height="100" Width="100"
+                 Fill="Transparent"
+                 Canvas.Top="10" Canvas.Left="10"
+                 Stroke="Gray"/>
+        <TextBlock FontSize="16" Foreground="Gray" Text="0°"
+                   x:Name="RotationText"
+                   Canvas.Top="30" Canvas.Left="50"
+                   Margin="0,40,0,0"/>
+        <Ellipse Height="15" Width="15" RenderTransformOrigin="3.82,0.48"
+                 x:Name="RotationBall"
+                 Fill="Blue"
+                 Canvas.Top="52.5" Canvas.Left="3"
+                 HorizontalAlignment="Center"
+                 VerticalAlignment="Center"
+                 Margin="0,0,100,0">
+            <Ellipse.RenderTransform>
+                <RotateTransform x:Name="RotationBallTransform" Angle="0"/>
+            </Ellipse.RenderTransform>
+        </Ellipse>
+        <Ellipse x:Name="Center" Width="6" Height="6" Fill="Blue" Canvas.Top="57" Canvas.Left="57"/>
+    </Canvas>
+</UserControl>

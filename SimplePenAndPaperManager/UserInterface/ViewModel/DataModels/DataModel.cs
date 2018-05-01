@@ -75,6 +75,8 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
             }
         }
 
+        public ObservableCollection<VisualElements.BaseVisualElement> Test { get; set; }
+
         public DataModel()
         {
             //
@@ -84,6 +86,21 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
             rectangles.Add(new RectangleData(550, 350, 80, 150, Colors.Green));
             rectangles.Add(new RectangleData(850, 850, 30, 20, Colors.Purple));
             rectangles.Add(new RectangleData(1200, 1200, 80, 150, Colors.Red));
+            rectangles.Add(new RectangleData(340, 880, 80, 150, Colors.Orange));
+
+            Test = new ObservableCollection<VisualElements.BaseVisualElement>();
+            Test.Add(new VisualElements.RectangleElement(new MapEditor.Entities.Buildings.RectangularBuilding() { X = 100, Y = 100, Width = 100, Height = 100, Orientation = 20 }));
+            Test.Add(new VisualElements.RectangleElement(new MapEditor.Entities.Buildings.RectangularBuilding() { X = 150, Y = 300, Width = 130, Height = 100, Orientation = -34 }));
+
+            System.Collections.Generic.List<MapEditor.Entities.Point2D> c = new System.Collections.Generic.List<MapEditor.Entities.Point2D>();
+            c.Add(new MapEditor.Entities.Point2D() { X = 10, Y = 10 });
+            c.Add(new MapEditor.Entities.Point2D() { X = 24, Y = 10 });
+            c.Add(new MapEditor.Entities.Point2D() { X = 15, Y = 34 });
+            c.Add(new MapEditor.Entities.Point2D() { X = 30, Y = 50 });
+            c.Add(new MapEditor.Entities.Point2D() { X = 60, Y = 50 });
+
+            Test.Add(new VisualElements.PolygonElement(new MapEditor.Entities.Buildings.PolygonBuilding() { X = 200, Y = 200, Corners = c, Orientation = 37.4 }));
+            //OnPropertyChanged("Test");
         }
 
         /// <summary>

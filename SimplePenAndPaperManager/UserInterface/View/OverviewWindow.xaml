@@ -1,0 +1,101 @@
+﻿<Window x:Class="SimplePenAndPaperManager.UserInterface.View.OverviewWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SimplePenAndPaperManager.UserInterface.View"
+        xmlns:zoomAndPan="clr-namespace:ZoomAndPan;assembly=ZoomAndPan"
+        xmlns:converter="clr-namespace:SimplePenAndPaperManager.UserInterface.View.Converter"
+        xmlns:datatemplates="clr-namespace:SimplePenAndPaperManager.UserInterface.ViewModel.DataModels"
+        Title="Overview" 
+        Height="200" 
+        Width="200" 
+        WindowStyle="ToolWindow"
+        ShowInTaskbar="False" 
+        ShowActivated="False"
+        MouseDown="Window_MouseDown">
+    <Window.Resources>
+        <converter:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
+
+        <DataTemplate DataType="{x:Type datatemplates:RectangleData}">
+            <Rectangle
+            Width="{Binding Width}"
+            Height="{Binding Height}"
+            Fill="{Binding Color, Converter={StaticResource ColorToBrushConverter}}"/>
+        </DataTemplate>
+    </Window.Resources>
+    <zoomAndPan:ZoomAndPanControl
+        x:Name="overview"
+        Background="LightGray"
+        SizeChanged="overview_SizeChanged"
+        >
+
+        <!-- 
+        This is the content that is displayed.
+        -->
+        <Grid
+            Width="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=ContentWidth}"
+            Height="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=ContentHeight}"
+            SizeChanged="overview_SizeChanged"
+            >
+
+            <!--
+        	This ItemsControl is the main part of the content that is displayed.
+            It contains instances of RectangleData, the DataTemplate for RectangleData is in
+            the UserControl.Resources section of this file.
+            -->
+            <ItemsControl
+                x:Name="content"
+                ItemsSource="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=Rectangles}"
+                Background="White"
+                >
+
+                <ItemsControl.ItemContainerStyle>
+                    <Style>
+                        <Setter Property="Canvas.Left" Value="{Binding X}" />
+                        <Setter Property="Canvas.Top" Value="{Binding Y}" />
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+            </ItemsControl>
+
+            <!--
+            This Canvas and Border are used to draw the 'overview' zoom rect. 
+            This show the area of the content that is being viewed in the main window.
+            -->
+            <Canvas>
+                <Thumb
+                    x:Name="overviewZoomRectThumb"
+                    Canvas.Left="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=ContentOffsetX, Mode=TwoWay}"
+                    Canvas.Top="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=ContentOffsetY, Mode=TwoWay}"
+                    Width="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=ContentViewportWidth}"
+                    Height="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=ContentViewportHeight}"
+                    DragDelta="overviewZoomRectThumb_DragDelta"
+                    Opacity="0.5"
+                    >
+                    <Thumb.Template>
+                        <ControlTemplate 
+                            TargetType="{x:Type Thumb}"
+                            >
+
+                            <Border 
+                                BorderBrush="Black"
+                                BorderThickness="1"
+                                Background="Yellow"
+                                CornerRadius="1"                                        
+                                />
+
+                        </ControlTemplate>
+                    </Thumb.Template>
+                </Thumb>
+            </Canvas>
+
+        </Grid>
+    </zoomAndPan:ZoomAndPanControl>
+</Window>

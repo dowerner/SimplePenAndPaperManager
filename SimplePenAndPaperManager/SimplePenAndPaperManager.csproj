@@ -37,6 +37,8 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -55,8 +57,66 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="MapEditor\Entities\BaseMapEntity.cs" />
+    <Compile Include="MapEditor\Entities\Buildings\BaseBuilding.cs" />
+    <Compile Include="MapEditor\Entities\Buildings\BuildingMaterial.cs" />
+    <Compile Include="MapEditor\Entities\Buildings\Door.cs" />
+    <Compile Include="MapEditor\Entities\Buildings\Interface\IBuildingEntity.cs" />
+    <Compile Include="MapEditor\Entities\Buildings\Interface\IDoorEntity.cs" />
+    <Compile Include="MapEditor\Entities\Buildings\Interface\IFloorEntity.cs" />
+    <Compile Include="MapEditor\Entities\Buildings\Interface\IStairsEntity.cs" />
+    <Compile Include="MapEditor\Entities\Buildings\Interface\IWallEntity.cs" />
+    <Compile Include="MapEditor\Entities\Buildings\Interface\IWindowEntity.cs" />
+    <Compile Include="MapEditor\Entities\Buildings\PolygonBuilding.cs" />
+    <Compile Include="MapEditor\Entities\Buildings\RectangularBuilding.cs" />
+    <Compile Include="MapEditor\Entities\Buildings\Stairs.cs" />
+    <Compile Include="MapEditor\Entities\Buildings\Wall.cs" />
+    <Compile Include="MapEditor\Entities\Buildings\Window.cs" />
+    <Compile Include="MapEditor\Entities\Interface\IMapEntity.cs" />
+    <Compile Include="MapEditor\Entities\Interface\IPathEntity.cs" />
+    <Compile Include="MapEditor\Entities\Interface\IPolygonMapEntity.cs" />
+    <Compile Include="MapEditor\Entities\Interface\IRectangularMapEntity.cs" />
+    <Compile Include="MapEditor\Entities\Items\Interface\IItemEntity.cs" />
+    <Compile Include="MapEditor\Entities\Items\Interface\IKeyEntity.cs" />
+    <Compile Include="MapEditor\Entities\Point2D.cs" />
+    <Compile Include="UserInterface\ViewModel\DataModels\DataModel.cs" />
+    <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\BaseVisualElement.cs" />
+    <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\PolygonElement.cs" />
+    <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\RectangleElement.cs" />
+    <Compile Include="UserInterface\View\Controls\EditorView.xaml.cs">
+      <DependentUpon>EditorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterface\View\Controls\TransformationGizmo.xaml.cs">
+      <DependentUpon>TransformationGizmo.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserInterface\View\Converter\ColorToBrushConverter.cs" />
+    <Compile Include="UserInterface\View\HelpTextWindow.xaml.cs">
+      <DependentUpon>HelpTextWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterface\View\OverviewWindow.xaml.cs">
+      <DependentUpon>OverviewWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserInterface\View\States\MouseHandleMode.cs" />
+    <Page Include="UserInterface\View\Controls\EditorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserInterface\View\Controls\TransformationGizmo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserInterface\View\Controls\VisualElements.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserInterface\View\HelpTextWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserInterface\View\HelpText.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserInterface\View\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -71,6 +131,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="UserInterface\View\OverviewWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -100,9 +164,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="MapEditor\" />
+    <Folder Include="MapEditor\Entities\Characters\Interface\" />
+    <Folder Include="MapEditor\Entities\Vegetation\Interface\" />
     <Folder Include="UserInterface\Model\" />
-    <Folder Include="UserInterface\View\Controls\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ZoomAndPan\ZoomAndPan.csproj">

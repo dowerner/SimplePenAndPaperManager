@@ -4,41 +4,68 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SimplePenAndPaperManager"
-        xmlns:zoomAndPen="clr-namespace:ZoomAndPan;assembly=ZoomAndPan"
-        xmlns:converter="clr-namespace:SimplePenAndPaperManager.UserInterface.View.Converter"
-        xmlns:datatemplates="clr-namespace:SimplePenAndPaperManager.UserInterface.ViewModel.DataModels"
+        xmlns:controls="clr-namespace:SimplePenAndPaperManager.UserInterface.View.Controls"
         mc:Ignorable="d"
-        Title="Simple Pen &amp; Paper Manager" Height="350" Width="525">
-    <Window.Resources>
-        <RoutedUICommand x:Key="Commands.ZoomOut"/>
-        <RoutedUICommand x:Key="Commands.ZoomIn"/>
-        <RoutedUICommand x:Key="Commands.JumpBackToPrevZoom"/>
-        <RoutedUICommand x:Key="Commands.Fill"/>
-        <RoutedUICommand x:Key="Commands.OneHundredPercent"/>
-
-        <converter:ScaleToPercentConverter x:Key="ScaleToPercentConverter"/>
-        <converter:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
-
-        <DataTemplate DataType="{x:Type datatemplates:RectangleData}">
-            <Rectangle
-                Width="{Binding Width}"
-                Height="{Binding Height}"
-                Fill="{Binding Color, Converter={StaticResource ColorToBrushConverter}}"
-                Cursor="Hand"
-                MouseDown="Rectangle_MouseDown"
-                MouseUp="Rectangle_MouseUp"
-                MouseMove="Rectangle_MouseMove" />
-        </DataTemplate>
-    </Window.Resources>
-    <Grid Width="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=ContentWidth}"
-          Height="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=ContentHeight}"
-                >
-        <ListBox
-            x:Name="content"
-            Background="White"
-            ItemsSource="{Binding Source={x:Static datatemplates:DataModel}, Path=Rectangles}"
-            Style="{StaticResource noScrollViewerListBoxStyle}"
-            ItemContainerStyle="{StaticResource listBoxItemStyle}"/>
-        <zoomAndPen:ZoomAndPanControl />
+        Title="Simple Pen &amp; Paper Manager"
+        Height="600" 
+        Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="26"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="4*"/>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Menu Grid.ColumnSpan="3">
+            <MenuItem Header="File">
+                <MenuItem Header="New Adventure"/>
+                <MenuItem Header="Open Adventure"/>
+                <MenuItem Header="Save Adventure"/>
+                <MenuItem Header="Save Advendture As"/>
+                <MenuItem Header="New Exterior"/>
+                <MenuItem Header="Open Exterior"/>
+            </MenuItem>
+            <MenuItem Header="Edit">
+                <MenuItem Header="Undo"/>
+                <MenuItem Header="Redo"/>
+            </MenuItem>
+            <MenuItem Header="View"></MenuItem>
+            <MenuItem Header="Adventure">
+                <MenuItem Header="Show Content"/>
+            </MenuItem>
+            <MenuItem Header="Buildings">
+                <MenuItem Header="Create Rectangular Building"/>
+                <MenuItem Header="Create Polygonal Building"/>
+                <MenuItem Header="Create Wall"/>
+                <MenuItem Header="Create Door"/>
+            </MenuItem>
+            <MenuItem Header="Terrain">
+                <MenuItem Header="Create Terrain"/>
+            </MenuItem>
+            <MenuItem Header="Vegetation">
+                <MenuItem Header="Create Vegetation"/>
+            </MenuItem>
+            <MenuItem Header="Markers">
+                <MenuItem Header="Create Marker"/>
+                <MenuItem Header="Create Link"/>
+                <MenuItem Header="Create Quest Marker"/>
+            </MenuItem>
+            <MenuItem Header="Characters">
+                <MenuItem Header="Players">
+                    <MenuItem Header="Add Player"/>
+                </MenuItem>
+                <MenuItem Header="Create NPC"/>
+            </MenuItem>
+            <MenuItem Header="Help">
+                <MenuItem Header="Help"/>
+                <MenuItem Header="About"/>
+            </MenuItem>
+        </Menu>
+        <controls:EditorView Grid.Row="1" />
+        <GridSplitter HorizontalAlignment="Stretch" Grid.Row="1" Grid.Column="1"/>
+        <TreeView Grid.Row="1" Grid.Column="2"/>
     </Grid>
 </Window>
