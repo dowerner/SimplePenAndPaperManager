@@ -24,6 +24,7 @@
 
             <converter:ScaleToPercentConverter x:Key="ScaleToPercentConverter"/>
             <converter:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
+            <converter:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
 
 
             <DataTemplate DataType="{x:Type datatemplates:RectangleData}">
@@ -71,7 +72,7 @@
                 Property="IsSelected" 
                 Value="{Binding IsSelected}" 
                 />
-
+                
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="ListBoxItem">
@@ -305,7 +306,8 @@
                     <ListBox
                     x:Name="content"
                     Background="White"
-                    ItemsSource="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=Test}"
+                    SelectionMode="Extended"
+                    ItemsSource="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=MapEntities}"
                     Style="{StaticResource noScrollViewerListBoxStyle}"
                     ItemContainerStyle="{StaticResource listBoxItemStyle}"
                     />
@@ -329,7 +331,14 @@
                     </Canvas>
                 </Grid>
             </zoomAndPan:ZoomAndPanControl>
-            <local:TransformationGizmo/>
+            <Canvas>
+                <local:TransformationGizmo x:Name="Gizmo"
+                                           Visibility="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=EntitiesSelected, Converter={StaticResource BoolToVisibilityConverter}}"
+                                           DraggingX="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=GizmoDragX, Mode=TwoWay}"
+                                           DraggingY="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=GizmoDragY, Mode=TwoWay}"
+                                           Canvas.Top="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=GizmoY}" 
+                                           Canvas.Left="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=GizmoX}"/>
+            </Canvas>
         </Grid>
     </DockPanel>
 </UserControl>

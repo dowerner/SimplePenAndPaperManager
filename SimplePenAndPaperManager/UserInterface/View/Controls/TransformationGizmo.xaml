@@ -6,25 +6,7 @@
              xmlns:local="clr-namespace:SimplePenAndPaperManager.UserInterface.View.Controls"
              mc:Ignorable="d" 
              Height="120" Width="120">
-    <Canvas MouseMove="Ellipse_MouseMove"
-            MouseLeftButtonUp="Ellipse_MouseLeftButtonUp">
-        <Rectangle Width="30" Height="30" Canvas.Top="30" Canvas.Left="30"
-                   Fill="LightYellow"
-                   Stroke="Gray"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"
-                   Opacity="0.5"
-                   Margin="30,0,0,30"/>
-        <Path Stretch="Fill" Fill="DarkRed"  Canvas.Top="45" Canvas.Left="15"
-              Data="M 0 115 95 115 65 90 85 90 120 120 85 150 65 150 95 125 0 125 Z"
-              HorizontalAlignment="Center"  Width="50" Height="30" Margin="45,0,0,0"/>
-        <Path Stretch="Fill" Fill="LimeGreen"  Canvas.Top="10" Canvas.Left="45" 
-              Data="M 0 115 95 115 65 90 85 90 120 120 85 150 65 150 95 125 0 125 Z"
-              HorizontalAlignment="Center"  Width="50" Height="30" Margin="0,0,0,45">
-            <Path.LayoutTransform>
-                <RotateTransform Angle="-90"/>
-            </Path.LayoutTransform>
-        </Path>
+    <Canvas>
         <Line X1="0" Y1="0" X2="47" Y2="0" RenderTransformOrigin="0.98,-0.006"
               Stroke="Blue"
               Canvas.Top="57.5" Canvas.Left="14"
@@ -44,8 +26,36 @@
                    x:Name="RotationText"
                    Canvas.Top="30" Canvas.Left="50"
                    Margin="0,40,0,0"/>
+        <Rectangle Width="30" Height="30" Canvas.Top="30" Canvas.Left="30"
+                   MouseLeftButtonDown="Ellipse_MouseLeftButtonDown"
+                   MouseLeftButtonUp="Ellipse_MouseLeftButtonUp"
+                   Fill="LightYellow"
+                   Stroke="Gray"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   Opacity="0.5"
+                   Margin="30,0,0,30"/>
+        <Path Stretch="Fill" Fill="DarkRed"  Canvas.Top="45" Canvas.Left="15"
+              x:Name="XManipulator"
+              Data="M 0 115 95 115 65 90 85 90 120 120 85 150 65 150 95 125 0 125 Z"
+              HorizontalAlignment="Center"  Width="50" Height="30" Margin="45,0,0,0"
+              MouseLeftButtonDown="Ellipse_MouseLeftButtonDown"
+              MouseLeftButtonUp="Ellipse_MouseLeftButtonUp"/>
+        <Path Stretch="Fill" Fill="LimeGreen"  Canvas.Top="10" Canvas.Left="45" 
+              x:Name="YManipulator"
+              Data="M 0 115 95 115 65 90 85 90 120 120 85 150 65 150 95 125 0 125 Z"
+              HorizontalAlignment="Center"  Width="50" Height="30" Margin="0,0,0,45"
+              MouseLeftButtonDown="Ellipse_MouseLeftButtonDown"
+              MouseLeftButtonUp="Ellipse_MouseLeftButtonUp">
+            <Path.LayoutTransform>
+                <RotateTransform Angle="-90"/>
+            </Path.LayoutTransform>
+        </Path>
         <Ellipse Height="15" Width="15" RenderTransformOrigin="3.82,0.48"
                  x:Name="RotationBall"
+                 MouseMove="Ellipse_MouseMove"
+                 MouseLeftButtonDown="Ellipse_MouseLeftButtonDown"
+                 MouseLeftButtonUp="Ellipse_MouseLeftButtonUp"
                  Fill="Blue"
                  Canvas.Top="52.5" Canvas.Left="3"
                  HorizontalAlignment="Center"

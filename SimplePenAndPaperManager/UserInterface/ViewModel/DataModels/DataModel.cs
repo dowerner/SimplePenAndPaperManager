@@ -1,6 +1,10 @@
-﻿using System.Collections.ObjectModel;
+﻿using SimplePenAndPaperManager.UserInterface.Model.EditorActions.Interface;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Windows.Media;
+using System.Windows;
 
 namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
 {
@@ -17,11 +21,6 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
         /// This is a singleton for convenience.
         /// </summary>
         private static DataModel instance = new DataModel();
-
-        /// <summary>
-        /// The list of rectangles that is displayed both in the main window and in the overview window.
-        /// </summary>
-        private ObservableCollection<RectangleData> rectangles = new ObservableCollection<RectangleData>();
 
         ///
         /// The current scale at which the content is being viewed.
@@ -75,44 +74,148 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
             }
         }
 
-        public ObservableCollection<VisualElements.BaseVisualElement> Test { get; set; }
-
         public DataModel()
         {
-            //
-            // Populate the data model with some example data.
-            //
-            rectangles.Add(new RectangleData(50, 50, 80, 150, Colors.Blue));
-            rectangles.Add(new RectangleData(550, 350, 80, 150, Colors.Green));
-            rectangles.Add(new RectangleData(850, 850, 30, 20, Colors.Purple));
-            rectangles.Add(new RectangleData(1200, 1200, 80, 150, Colors.Red));
-            rectangles.Add(new RectangleData(340, 880, 80, 150, Colors.Orange));
+            EditStack = new Stack<IEditorAction>();
 
-            Test = new ObservableCollection<VisualElements.BaseVisualElement>();
-            Test.Add(new VisualElements.RectangleElement(new MapEditor.Entities.Buildings.RectangularBuilding() { X = 100, Y = 100, Width = 100, Height = 100, Orientation = 20 }));
-            Test.Add(new VisualElements.RectangleElement(new MapEditor.Entities.Buildings.RectangularBuilding() { X = 150, Y = 300, Width = 130, Height = 100, Orientation = -34 }));
+            SelectedEntities = new ObservableCollection<IVisualElement>();
+            SelectedEntities.CollectionChanged += SelectedEntities_CollectionChanged;
 
-            System.Collections.Generic.List<MapEditor.Entities.Point2D> c = new System.Collections.Generic.List<MapEditor.Entities.Point2D>();
+            MapEntities = new ObservableCollection<IVisualElement>();
+            MapEntities.CollectionChanged += MapEntities_CollectionChanged;
+            MapEntities.Add(new VisualElements.RectangleElement(new MapEditor.Entities.Buildings.RectangularBuilding() { X = 100, Y = 400, Width = 100, Height = 100, Orientation = 20 }));
+            MapEntities.Add(new VisualElements.RectangleElement(new MapEditor.Entities.Buildings.RectangularBuilding() { X = 150, Y = 600, Width = 130, Height = 100, Orientation = -34 }));
+
+            List<MapEditor.Entities.Point2D> c = new List<MapEditor.Entities.Point2D>();
             c.Add(new MapEditor.Entities.Point2D() { X = 10, Y = 10 });
             c.Add(new MapEditor.Entities.Point2D() { X = 24, Y = 10 });
             c.Add(new MapEditor.Entities.Point2D() { X = 15, Y = 34 });
             c.Add(new MapEditor.Entities.Point2D() { X = 30, Y = 50 });
             c.Add(new MapEditor.Entities.Point2D() { X = 60, Y = 50 });
 
-            Test.Add(new VisualElements.PolygonElement(new MapEditor.Entities.Buildings.PolygonBuilding() { X = 200, Y = 200, Corners = c, Orientation = 37.4 }));
-            //OnPropertyChanged("Test");
+            MapEntities.Add(new VisualElements.PolygonElement(new MapEditor.Entities.Buildings.PolygonBuilding() { X = 500, Y = 700, Corners = c, Orientation = 37.4 }));
         }
 
-        /// <summary>
-        /// The list of rectangles that is displayed both in the main window and in the overview window.
-        /// </summary>
-        public ObservableCollection<RectangleData> Rectangles
+        private void MapEntities_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            get
+            // listen for entity changes
+            foreach (IVisualElement element in e.NewItems) element.PropertyChanged += EntityChanged;
+        }
+
+        private void SelectedEntities_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            // handle items where selection was removed
+            foreach(IVisualElement element in MapEntities)
             {
-                return rectangles;
+                if (!SelectedEntities.Contains(element)) element.IsSelected = false;
+            }            
+
+            // set selection position
+            _selectionLocation = new Point(0, 0);
+
+            foreach (IVisualElement element in SelectedEntities)
+            {
+                _selectionLocation.X += element.X;
+                _selectionLocation.Y += element.Y;
+            }
+            _selectionLocation.X /= SelectedEntities.Count;
+            _selectionLocation.Y /= SelectedEntities.Count;
+
+            OnPropertyChanged("EntitiesSelected");
+            OnPropertyChanged("SelectionLocation");
+        }
+
+        private void EntityChanged(object sender, PropertyChangedEventArgs e)
+        {
+            IVisualElement entity = (IVisualElement)sender;
+
+            if(e.PropertyName == "IsSelected")
+            {
+                if (entity.IsSelected && !_selectedEntities.Contains(entity)) _selectedEntities.Add(entity);
+                else if (!entity.IsSelected && _selectedEntities.Contains(entity)) _selectedEntities.Remove(entity); 
             }
         }
+
+        public Stack<IEditorAction> EditStack { get; set; }
+
+        public ObservableCollection<IVisualElement> MapEntities
+        {
+            get { return _mapEntities; }
+            set
+            {
+                _mapEntities = value;
+                OnPropertyChanged("MapEntities");
+            }
+        }
+        private ObservableCollection<IVisualElement> _mapEntities;
+
+        public ObservableCollection<IVisualElement> SelectedEntities
+        {
+            get { return _selectedEntities; }
+            set
+            {
+                _selectedEntities = value;
+                OnPropertyChanged("SelectedEntities");
+            }
+        }
+        private ObservableCollection<IVisualElement> _selectedEntities;
+
+        public Point SelectionLocation
+        {
+            get { return _selectionLocation; }
+            set
+            {
+                _selectionLocation = value;
+                OnPropertyChanged("SelectionLocation");
+            }
+        }
+        private Point _selectionLocation;
+
+        public bool EntitiesSelected { get { return SelectedEntities.Count > 0; } }
+
+        public bool GizmoDragX
+        {
+            get { return _gizmoDragX; }
+            set
+            {
+                _gizmoDragX = value;
+                OnPropertyChanged("GizmoDragX");
+            }
+        }
+        private bool _gizmoDragX;
+
+        public bool GizmoDragY
+        {
+            get { return _gizmoDragY; }
+            set
+            {
+                _gizmoDragY = value;
+                OnPropertyChanged("GizmoDragY");
+            }
+        }
+        private bool _gizmoDragY;
+
+        public double GizmoX
+        {
+            get { return _gizmoX; }
+            set
+            {
+                _gizmoX = value;
+                OnPropertyChanged("GizmoX");
+            }
+        }
+        private double _gizmoX;
+
+        public double GizmoY
+        {
+            get { return _gizmoY; }
+            set
+            {
+                _gizmoY = value;
+                OnPropertyChanged("GizmoY");
+            }
+        }
+        private double _gizmoY;
 
         ///
         /// The current scale at which the content is being viewed.
@@ -145,6 +248,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
                 contentOffsetX = value;
 
                 OnPropertyChanged("ContentOffsetX");
+                OnPropertyChanged("SelectionLocation");
             }
         }
 
@@ -162,6 +266,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
                 contentOffsetY = value;
 
                 OnPropertyChanged("ContentOffsetY");
+                OnPropertyChanged("SelectionLocation");
             }
         }
 
@@ -179,6 +284,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
                 contentWidth = value;
 
                 OnPropertyChanged("ContentWidth");
+                OnPropertyChanged("SelectionLocation");
             }
         }
 
@@ -196,6 +302,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
                 contentHeight = value;
 
                 OnPropertyChanged("ContentHeight");
+                OnPropertyChanged("SelectionLocation");
             }
         }
 
@@ -215,6 +322,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
                 contentViewportWidth = value;
 
                 OnPropertyChanged("ContentViewportWidth");
+                OnPropertyChanged("SelectionLocation");
             }
         }
 
@@ -234,6 +342,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
                 contentViewportHeight = value;
 
                 OnPropertyChanged("ContentViewportHeight");
+                OnPropertyChanged("SelectionLocation");
             }
         }
 
@@ -244,10 +353,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
         /// </summary>
         private void OnPropertyChanged(string name)
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(name));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
         /// <summary>

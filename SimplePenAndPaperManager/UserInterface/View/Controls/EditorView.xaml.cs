@@ -1,9 +1,13 @@
 ﻿using SimplePenAndPaperManager.UserInterface.View.States;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
 using System;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Shapes;
 using ZoomAndPan;
 
@@ -52,6 +56,21 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
         public EditorView()
         {
             InitializeComponent();
+            DataModel.Instance.PropertyChanged += Instance_PropertyChanged;
+        }
+
+        private void Instance_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if ((e.PropertyName == "GizmoDragX" && DataModel.Instance.GizmoDragX) 
+                || (e.PropertyName == "GizmoDragY" && DataModel.Instance.GizmoDragY))
+                mouseHandlingMode = MouseHandlingMode.DragObject;
+
+            if(e.PropertyName == "SelectionLocation")
+            {
+                Point canvasPoint = FromZoomControlToCanvasCoordinates(DataModel.Instance.SelectionLocation);
+                DataModel.Instance.GizmoX = canvasPoint.X - Gizmo.Width / 2;
+                DataModel.Instance.GizmoY = canvasPoint.Y - Gizmo.Height / 2;
+            }
         }
 
         /// <summary>
@@ -66,46 +85,35 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
             overviewWindow.Owner = parent;
             overviewWindow.Show();
 
+            KeyDown += EditorView_KeyDown;
+
             ExpandContent();
         }
+
+        private void EditorView_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Escape:
+                    HandleEscape();
+                    break;
+            }
+        }
+
+        #region Key Handling
+        private void HandleEscape()
+        {
+            DataModel.Instance.SelectedEntities.Clear();
+        }
+        #endregion
 
         /// <summary>
         /// Expand the content area to fit the rectangles.
         /// </summary>
         private void ExpandContent()
         {
-            double xOffset = 0;
-            double yOffset = 0;
-            Rect contentRect = new Rect(0, 0, 0, 0);
-            foreach (RectangleData rectangleData in DataModel.Instance.Rectangles)
-            {
-                if (rectangleData.X < xOffset)
-                {
-                    xOffset = rectangleData.X;
-                }
-
-                if (rectangleData.Y < yOffset)
-                {
-                    yOffset = rectangleData.Y;
-                }
-
-                contentRect.Union(new Rect(rectangleData.X, rectangleData.Y, rectangleData.Width, rectangleData.Height));
-            }
-
-            //
-            // Translate all rectangles so they are in positive space.
-            //
-            xOffset = Math.Abs(xOffset);
-            yOffset = Math.Abs(yOffset);
-
-            foreach (RectangleData rectangleData in DataModel.Instance.Rectangles)
-            {
-                rectangleData.X += xOffset;
-                rectangleData.Y += yOffset;
-            }
-
-            DataModel.Instance.ContentWidth = contentRect.Width;
-            DataModel.Instance.ContentHeight = contentRect.Height;
+            DataModel.Instance.ContentWidth = 4000;
+            DataModel.Instance.ContentHeight = 4000;
         }
 
         /// <summary>
@@ -169,6 +177,8 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
 
                 zoomAndPanControl.ReleaseMouseCapture();
                 mouseHandlingMode = MouseHandlingMode.None;
+                DataModel.Instance.GizmoDragX = false;
+                DataModel.Instance.GizmoDragY = false;
                 e.Handled = true;
             }
         }
@@ -224,7 +234,75 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
 
                 e.Handled = true;
             }
+            else if(mouseHandlingMode == MouseHandlingMode.DragObject)
+            {
+                //
+                // Update position of transformation gizmo on overlay canvas to drag an object around
+                //
+                Point canvasPoint = FromZoomControlToCanvasCoordinates(e.GetPosition(content));
+
+                if (DataModel.Instance.GizmoDragX) DataModel.Instance.GizmoX = canvasPoint.X - (Gizmo.X + Gizmo.Width / 2);
+                if (DataModel.Instance.GizmoDragY) DataModel.Instance.GizmoY = canvasPoint.Y - (Gizmo.Y + Gizmo.Height / 2);
+
+                e.Handled = true;
+            }
         }
+
+        #region Math Tools
+        /// <summary>
+        /// Transform point from zoom control content to overlay canvas coordinates
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
+        private Point FromZoomControlToCanvasCoordinates(Point point)
+        {
+            double xContentOffset = zoomAndPanControl.ContentOffsetX;   // get x content offset
+            double yContentOffset = zoomAndPanControl.ContentOffsetY;   // get y content offset
+
+            // check if Viewport is wider than the content and calculate the offst that has to be subtracted in this case
+            if (zoomAndPanControl.ContentViewportWidth > DataModel.Instance.ContentWidth)
+            {
+                xContentOffset -= (zoomAndPanControl.ContentViewportWidth - DataModel.Instance.ContentWidth) / 2;
+            }
+
+            // check if Viewport is higher than the content and calculate the offst that has to be subtracted in this case
+            if (zoomAndPanControl.ContentViewportHeight > DataModel.Instance.ContentHeight)
+            {
+                yContentOffset -= (zoomAndPanControl.ContentViewportHeight - DataModel.Instance.ContentHeight) / 2;
+            }
+
+            // return point in canvas coordinate system
+            return new Point((point.X - xContentOffset) * zoomAndPanControl.ContentScale,
+                             (point.Y - yContentOffset) * zoomAndPanControl.ContentScale);
+        }
+
+        /// <summary>
+        /// Transform point from overlay canvas to zoom control coordinates
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
+        private Point FromCanvasToZoomControlCoordinates(Point point)
+        {
+            double xContentOffset = zoomAndPanControl.ContentOffsetX;   // get x content offset
+            double yContentOffset = zoomAndPanControl.ContentOffsetY;   // get y content offset
+
+            // check if Viewport is wider than the content and calculate the offst that has to be subtracted in this case
+            if (zoomAndPanControl.ContentViewportWidth > DataModel.Instance.ContentWidth)
+            {
+                xContentOffset -= (zoomAndPanControl.ContentViewportWidth - DataModel.Instance.ContentWidth) / 2;
+            }
+
+            // check if Viewport is higher than the content and calculate the offst that has to be subtracted in this case
+            if (zoomAndPanControl.ContentViewportHeight > DataModel.Instance.ContentHeight)
+            {
+                yContentOffset -= (zoomAndPanControl.ContentViewportHeight - DataModel.Instance.ContentHeight) / 2;
+            }
+
+            // return point in zoom control coordinate system
+            return new Point(point.X / zoomAndPanControl.ContentScale + xContentOffset,
+                             point.Y / zoomAndPanControl.ContentScale + yContentOffset);
+        }
+        #endregion
 
         /// <summary>
         /// Event raised by rotating the mouse wheel

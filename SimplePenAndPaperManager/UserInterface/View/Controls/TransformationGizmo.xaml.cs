@@ -20,6 +20,18 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
         public static readonly DependencyProperty OrientationProperty =
                 DependencyProperty.Register("Orientation", typeof(double), typeof(TransformationGizmo), new PropertyMetadata(0.0, OrientationPropertyChanged));
 
+        private static void XDraggingPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            TransformationGizmo gizmo = (TransformationGizmo)d;
+            if(!(bool)e.NewValue) gizmo.IsHitTestVisible = true;
+        }
+
+        private static void YDraggingPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            TransformationGizmo gizmo = (TransformationGizmo)d;
+            if (!(bool)e.NewValue) gizmo.IsHitTestVisible = true;
+        }
+
         private static void OrientationPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             TransformationGizmo gizmo = (TransformationGizmo)d;
@@ -27,6 +39,12 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
             gizmo.RotationBallTransform.Angle = gizmo.Orientation;
             gizmo.RotationText.Text = string.Format("{0}°", Math.Round(gizmo.Orientation, 2));
         }
+
+        public static readonly DependencyProperty DraggingXProperty =
+                DependencyProperty.Register("DraggingX", typeof(bool), typeof(TransformationGizmo), new PropertyMetadata(false, XDraggingPropertyChanged));
+
+        public static readonly DependencyProperty DraggingYProperty =
+                DependencyProperty.Register("DraggingY", typeof(bool), typeof(TransformationGizmo), new PropertyMetadata(false, YDraggingPropertyChanged));
 
         public double X
         {
@@ -46,13 +64,33 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
             set { SetValue(OrientationProperty, value); }
         }
 
+        public bool DraggingX
+        {
+            get { return (bool)GetValue(DraggingXProperty); }
+            set
+            {
+                SetValue(DraggingXProperty, value);
+                if (!value) IsHitTestVisible = true;
+            }
+        }
+
+        public bool DraggingY
+        {
+            get { return (bool)GetValue(DraggingYProperty); }
+            set
+            {
+                SetValue(DraggingYProperty, value);
+                if(!value) IsHitTestVisible = true;
+            }
+        }
+
         private bool _dragging = false;
+        private double _start_x = 0;
+        private double _start_y = 0;
 
         public TransformationGizmo()
         {
             InitializeComponent();
-
-            RotationBall.AddHandler(PreviewMouseDownEvent, new MouseButtonEventHandler(Ellipse_MouseLeftButtonDown));
         }
 
         private void Ellipse_MouseMove(object sender, MouseEventArgs e)
@@ -67,12 +105,36 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
 
         private void Ellipse_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            _dragging = true;
+            Point point = e.GetPosition(Center);
+            X = point.X;
+            Y = point.Y;
+
+            if (sender is Path)
+            {
+                Path arrow = (Path)sender;
+                if (arrow.Name == "XManipulator") DraggingX = true;
+                else DraggingY = true;
+                IsHitTestVisible = false;
+            }
+            else if(sender is Rectangle)
+            {
+                DraggingX = true;
+                DraggingY = true;
+                IsHitTestVisible = false;
+            }
+            else
+            {
+                e.MouseDevice.Capture((UIElement)sender);
+                _dragging = true;
+            }           
         }
 
         private void Ellipse_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             _dragging = false;
+            DraggingX = false;
+            DraggingY = false;
+            e.MouseDevice.Capture(null);
         }
     }
 }

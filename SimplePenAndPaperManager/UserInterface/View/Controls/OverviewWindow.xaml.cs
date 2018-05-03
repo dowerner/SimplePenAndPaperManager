@@ -5,7 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
-namespace SimplePenAndPaperManager.UserInterface.View
+namespace SimplePenAndPaperManager.UserInterface.View.Controls
 {
     /// <summary>
     /// Interaction logic for OverviewWindow.xaml

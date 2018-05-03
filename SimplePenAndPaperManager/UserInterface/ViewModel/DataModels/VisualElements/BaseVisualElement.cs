@@ -1,11 +1,34 @@
 ﻿using SimplePenAndPaperManager.MapEditor.Entities.Interface;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
 using System.ComponentModel;
 using System.Windows.Media;
 
 namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements
 {
-    public abstract class BaseVisualElement : INotifyPropertyChanged
+    public abstract class BaseVisualElement : IVisualElement
     {
+        public double BoundingWidth
+        {
+            get { return _boundingWidth; }
+            set
+            {
+                _boundingWidth = value;
+                OnPropertyChanged("BoundingWidth");
+            }
+        }
+        private double _boundingWidth;
+
+        public double BoundingHeight
+        {
+            get { return _boundingHeight; }
+            set
+            {
+                _boundingHeight = value;
+                OnPropertyChanged("BoundingHeight");
+            }
+        }
+        private double _boundingHeight;
+
         public Color Color
         {
             get { return _color; }

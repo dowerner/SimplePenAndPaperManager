@@ -1,4 +1,4 @@
-﻿<Window x:Class="SimplePenAndPaperManager.UserInterface.View.OverviewWindow"
+﻿<Window x:Class="SimplePenAndPaperManager.UserInterface.View.Controls.OverviewWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -15,14 +15,20 @@
         ShowActivated="False"
         MouseDown="Window_MouseDown">
     <Window.Resources>
-        <converter:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="VisualElements.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            
+            <converter:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
 
-        <DataTemplate DataType="{x:Type datatemplates:RectangleData}">
-            <Rectangle
-            Width="{Binding Width}"
-            Height="{Binding Height}"
-            Fill="{Binding Color, Converter={StaticResource ColorToBrushConverter}}"/>
-        </DataTemplate>
+            <DataTemplate DataType="{x:Type datatemplates:RectangleData}">
+                <Rectangle
+                Width="{Binding Width}"
+                Height="{Binding Height}"
+                Fill="{Binding Color, Converter={StaticResource ColorToBrushConverter}}"/>
+            </DataTemplate>
+        </ResourceDictionary>
     </Window.Resources>
     <zoomAndPan:ZoomAndPanControl
         x:Name="overview"
@@ -46,7 +52,7 @@
             -->
             <ItemsControl
                 x:Name="content"
-                ItemsSource="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=Rectangles}"
+                ItemsSource="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=MapEntities}"
                 Background="White"
                 >
 
