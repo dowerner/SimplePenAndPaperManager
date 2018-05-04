@@ -79,9 +79,14 @@
     <Compile Include="MapEditor\Entities\Items\Interface\IItemEntity.cs" />
     <Compile Include="MapEditor\Entities\Items\Interface\IKeyEntity.cs" />
     <Compile Include="MapEditor\Entities\Point2D.cs" />
+    <Compile Include="UserInterface\Model\EditorActions\DeleteAction.cs" />
     <Compile Include="UserInterface\Model\EditorActions\Interface\IEditorAction.cs" />
+    <Compile Include="UserInterface\Model\EditorActions\PasteAction.cs" />
     <Compile Include="UserInterface\Model\EditorActions\RotateAction.cs" />
+    <Compile Include="UserInterface\Model\EditorActions\BaseAction.cs" />
     <Compile Include="UserInterface\Model\EditorActions\TranslateAction.cs" />
+    <Compile Include="UserInterface\Model\ObservableStack.cs" />
+    <Compile Include="UserInterface\ViewModel\Commands\EditCommands.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\DataModel.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\BaseVisualElement.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\Interface\IVisualElement.cs" />
@@ -102,6 +107,7 @@
       <DependentUpon>OverviewWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserInterface\View\States\MouseHandleMode.cs" />
+    <Compile Include="UserInterface\View\States\TransformationEvent.cs" />
     <Page Include="UserInterface\View\Controls\EditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -130,7 +136,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="UserInterface\ViewModel\DataModels\RectangleData.cs" />
     <Compile Include="UserInterface\View\Converter\ScaleToPercentConverter.cs" />
     <Compile Include="UserInterface\View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

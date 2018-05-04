@@ -1,4 +1,6 @@
-﻿using SimplePenAndPaperManager.UserInterface.Model.EditorActions.Interface;
+﻿using SimplePenAndPaperManager.UserInterface.Model;
+using SimplePenAndPaperManager.UserInterface.Model.EditorActions;
+using SimplePenAndPaperManager.UserInterface.Model.EditorActions.Interface;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -76,15 +78,20 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
 
         public DataModel()
         {
-            EditStack = new Stack<IEditorAction>();
+            UndoStack = new ObservableStack<IEditorAction>();
+            RedoStack = new ObservableStack<IEditorAction>();
 
             SelectedEntities = new ObservableCollection<IVisualElement>();
             SelectedEntities.CollectionChanged += SelectedEntities_CollectionChanged;
+            Clipboard = new ObservableCollection<IVisualElement>();
 
             MapEntities = new ObservableCollection<IVisualElement>();
             MapEntities.CollectionChanged += MapEntities_CollectionChanged;
             MapEntities.Add(new VisualElements.RectangleElement(new MapEditor.Entities.Buildings.RectangularBuilding() { X = 100, Y = 400, Width = 100, Height = 100, Orientation = 20 }));
             MapEntities.Add(new VisualElements.RectangleElement(new MapEditor.Entities.Buildings.RectangularBuilding() { X = 150, Y = 600, Width = 130, Height = 100, Orientation = -34 }));
+
+            // stress test
+            //for(int i = 0; i < 3000; i++) MapEntities.Add(new VisualElements.RectangleElement(new MapEditor.Entities.Buildings.RectangularBuilding() { X = 150, Y = 600, Width = 130, Height = 100, Orientation = -34 }));
 
             List<MapEditor.Entities.Point2D> c = new List<MapEditor.Entities.Point2D>();
             c.Add(new MapEditor.Entities.Point2D() { X = 10, Y = 10 });
@@ -99,7 +106,15 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
         private void MapEntities_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             // listen for entity changes
-            foreach (IVisualElement element in e.NewItems) element.PropertyChanged += EntityChanged;
+            if(e.NewItems != null)
+            {
+                foreach (IVisualElement element in e.NewItems) element.PropertyChanged += EntityChanged;
+            }
+            if(e.OldItems != null)
+            {
+                foreach (IVisualElement element in e.OldItems) element.PropertyChanged -= EntityChanged;
+            }
+            
         }
 
         private void SelectedEntities_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -123,6 +138,10 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
 
             OnPropertyChanged("EntitiesSelected");
             OnPropertyChanged("SelectionLocation");
+
+            // set correct gizmo orientation
+            if (_selectedEntities.Count == 1 && !GizmoIsRotating) GizmoOrientation = _selectedEntities[0].Orientation;
+            else if (!GizmoIsRotating) GizmoOrientation = 0;
         }
 
         private void EntityChanged(object sender, PropertyChangedEventArgs e)
@@ -136,7 +155,14 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
             }
         }
 
-        public Stack<IEditorAction> EditStack { get; set; }
+        public IEditorAction CurrentAction { get; set; }
+
+        public ObservableStack<IEditorAction> UndoStack { get; set; }
+        public ObservableStack<IEditorAction> RedoStack { get; set; }
+
+        public ObservableCollection<IVisualElement> Clipboard { get; set; }
+        public Point CopyLocation { get; set; }
+        public Point MousePosition { get; set; }
 
         public ObservableCollection<IVisualElement> MapEntities
         {
@@ -173,6 +199,17 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
 
         public bool EntitiesSelected { get { return SelectedEntities.Count > 0; } }
 
+        public double GizmoOrientation
+        {
+            get { return _gizmoOrientation; }
+            set
+            {
+                _gizmoOrientation = value;
+                OnPropertyChanged("GizmoOrientation");
+            }
+        }
+        private double _gizmoOrientation;
+
         public bool GizmoDragX
         {
             get { return _gizmoDragX; }
@@ -194,6 +231,17 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
             }
         }
         private bool _gizmoDragY;
+
+        public bool GizmoIsRotating
+        {
+            get { return _gizmoIsRotating; }
+            set
+            {
+                _gizmoIsRotating = value;
+                OnPropertyChanged("GizmoIsRotating");
+            }
+        }
+        private bool _gizmoIsRotating;
 
         public double GizmoX
         {
@@ -229,7 +277,6 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
             set
             {
                 contentScale = value;
-
                 OnPropertyChanged("ContentScale");
             }
         }

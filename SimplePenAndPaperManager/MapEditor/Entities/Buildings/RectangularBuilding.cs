@@ -7,5 +7,12 @@ namespace SimplePenAndPaperManager.MapEditor.Entities.Buildings
     {
         public double Height { get; set; }
         public double Width { get; set; }
+
+        public override IMapEntity Copy()
+        {
+            RectangularBuilding copy = new RectangularBuilding() { Width = Width, Height = Height };
+            CopyFillInBaseProperties(copy);
+            return copy;
+        }
     }
 }

@@ -123,6 +123,8 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
         }
         private bool _isSelected;
 
+        public abstract IVisualElement Copy();
+
         protected IMapEntity _source;
 
         public BaseVisualElement(IMapEntity mapEntity)

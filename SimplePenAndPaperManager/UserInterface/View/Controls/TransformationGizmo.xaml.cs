@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SimplePenAndPaperManager.UserInterface.View.States;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -11,6 +12,9 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
     /// </summary>
     public partial class TransformationGizmo : UserControl
     {
+        public delegate void TransformationChangedHandler(object sender, TransformationEvent transformationEvent);
+        public event TransformationChangedHandler TransformationChanged;
+
         public static readonly DependencyProperty XProperty =
                 DependencyProperty.Register("X", typeof(double), typeof(TransformationGizmo), new PropertyMetadata(0.0, null));
 
@@ -45,6 +49,9 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
 
         public static readonly DependencyProperty DraggingYProperty =
                 DependencyProperty.Register("DraggingY", typeof(bool), typeof(TransformationGizmo), new PropertyMetadata(false, YDraggingPropertyChanged));
+
+        public static readonly DependencyProperty IsRotatingProperty =
+               DependencyProperty.Register("IsRotating", typeof(bool), typeof(TransformationGizmo), new PropertyMetadata(false, null));
 
         public double X
         {
@@ -84,9 +91,15 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
             }
         }
 
-        private bool _dragging = false;
-        private double _start_x = 0;
-        private double _start_y = 0;
+        public bool IsRotating
+        {
+            get { return (bool)GetValue(IsRotatingProperty); }
+            set
+            {
+                SetValue(IsRotatingProperty, value);
+                if (!value) IsHitTestVisible = true;
+            }
+        }
 
         public TransformationGizmo()
         {
@@ -95,7 +108,7 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
 
         private void Ellipse_MouseMove(object sender, MouseEventArgs e)
         {
-            if (_dragging)
+            if (IsRotating)
             {
                 Point position = e.GetPosition(Center);
                 double angle = Math.Atan2(position.Y, position.X)*180/Math.PI + 180;
@@ -115,23 +128,28 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                 if (arrow.Name == "XManipulator") DraggingX = true;
                 else DraggingY = true;
                 IsHitTestVisible = false;
+                TransformationChanged?.Invoke(this, TransformationEvent.TranslationStarted);
             }
             else if(sender is Rectangle)
             {
                 DraggingX = true;
                 DraggingY = true;
                 IsHitTestVisible = false;
+                TransformationChanged?.Invoke(this, TransformationEvent.TranslationStarted);
             }
             else
             {
                 e.MouseDevice.Capture((UIElement)sender);
-                _dragging = true;
+                IsRotating = true;
+                TransformationChanged?.Invoke(this, TransformationEvent.RotationStarted);
             }           
         }
 
         private void Ellipse_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            _dragging = false;
+            if (DraggingX || DraggingY) TransformationChanged?.Invoke(this, TransformationEvent.TranslationEnded);
+            else TransformationChanged?.Invoke(this, TransformationEvent.RotationEnded);
+            IsRotating = false;
             DraggingX = false;
             DraggingY = false;
             e.MouseDevice.Capture(null);

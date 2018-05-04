@@ -1,13 +1,11 @@
-﻿using SimplePenAndPaperManager.UserInterface.View.States;
+﻿using SimplePenAndPaperManager.UserInterface.Model.EditorActions;
+using SimplePenAndPaperManager.UserInterface.View.States;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels;
-using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
 using System;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Shapes;
 using ZoomAndPan;
 
@@ -57,6 +55,35 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
         {
             InitializeComponent();
             DataModel.Instance.PropertyChanged += Instance_PropertyChanged;
+            Gizmo.TransformationChanged += Gizmo_TransformationChanged;
+        }
+
+        private void Gizmo_TransformationChanged(object sender, TransformationEvent transformationEvent)
+        {
+            switch (transformationEvent)
+            {
+                case TransformationEvent.TranslationStarted:
+                    TranslateAction translation = new TranslateAction(DataModel.Instance.SelectedEntities);
+                    translation.TransformStartPoint = DataModel.Instance.SelectionLocation;
+                    DataModel.Instance.CurrentAction = translation;
+                    break;
+                case TransformationEvent.TranslationEnded:
+                    DataModel.Instance.UndoStack.Push(DataModel.Instance.CurrentAction);
+                    DataModel.Instance.CurrentAction = null;
+                    break;
+                case TransformationEvent.RotationStarted:
+                    RotateAction rotation = new RotateAction(DataModel.Instance.SelectedEntities);
+                    mouseHandlingMode = MouseHandlingMode.RotateObject;
+                    rotation.StartRotation = DataModel.Instance.GizmoOrientation;
+                    rotation.PivotPoint = DataModel.Instance.SelectionLocation;
+                    DataModel.Instance.CurrentAction = rotation;
+                    break;
+                case TransformationEvent.RotationEnded:
+                    mouseHandlingMode = MouseHandlingMode.None;
+                    DataModel.Instance.UndoStack.Push(DataModel.Instance.CurrentAction);
+                    DataModel.Instance.CurrentAction = null;
+                    break;
+            }
         }
 
         private void Instance_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -65,11 +92,27 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                 || (e.PropertyName == "GizmoDragY" && DataModel.Instance.GizmoDragY))
                 mouseHandlingMode = MouseHandlingMode.DragObject;
 
-            if(e.PropertyName == "SelectionLocation")
+            if(e.PropertyName == "SelectionLocation" && mouseHandlingMode != MouseHandlingMode.DragObject)
             {
                 Point canvasPoint = FromZoomControlToCanvasCoordinates(DataModel.Instance.SelectionLocation);
-                DataModel.Instance.GizmoX = canvasPoint.X - Gizmo.Width / 2;
-                DataModel.Instance.GizmoY = canvasPoint.Y - Gizmo.Height / 2;
+                DataModel.Instance.GizmoX = canvasPoint.X;
+                DataModel.Instance.GizmoY = canvasPoint.Y;
+            }
+
+            // update selected entities postion
+            if((e.PropertyName == "GizmoX" || e.PropertyName == "GizmoY") && mouseHandlingMode == MouseHandlingMode.DragObject)
+            {
+                TranslateAction translation = (TranslateAction)DataModel.Instance.CurrentAction;
+                translation.TransformEndPoint = FromCanvasToZoomControlCoordinates(new Point(DataModel.Instance.GizmoX, DataModel.Instance.GizmoY));
+                translation.Do();
+            }
+
+            // update selected entities rotation
+            if(e.PropertyName == "GizmoOrientation" && mouseHandlingMode == MouseHandlingMode.RotateObject)
+            {
+                RotateAction rotation = (RotateAction)DataModel.Instance.CurrentAction;
+                rotation.EndRotation = DataModel.Instance.GizmoOrientation;
+                rotation.Do();
             }
         }
 
@@ -104,6 +147,8 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
         private void HandleEscape()
         {
             DataModel.Instance.SelectedEntities.Clear();
+            if (DataModel.Instance.CurrentAction != null) DataModel.Instance.CurrentAction.Undo();
+            mouseHandlingMode = MouseHandlingMode.None;
         }
         #endregion
 
@@ -173,6 +218,11 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                 {
                     // When drag-zooming has finished we zoom in on the rectangle that was highlighted by the user.
                     ApplyDragZoomRect();
+                }
+                if(mouseHandlingMode == MouseHandlingMode.DragObject)
+                {
+                    // When releasing dragged objects
+                    Gizmo_TransformationChanged(Gizmo, TransformationEvent.TranslationEnded);
                 }
 
                 zoomAndPanControl.ReleaseMouseCapture();
@@ -246,6 +296,7 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
 
                 e.Handled = true;
             }
+            DataModel.Instance.MousePosition = e.GetPosition(content);
         }
 
         #region Math Tools
@@ -520,43 +571,6 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
         }
 
         /// <summary>
-        /// Event raised when a mouse button is clicked down over a Rectangle.
-        /// </summary>
-        private void Rectangle_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            content.Focus();
-            Keyboard.Focus(content);
-
-            Rectangle rectangle = (Rectangle)sender;
-            RectangleData myRectangle = (RectangleData)rectangle.DataContext;
-
-            myRectangle.IsSelected = true;
-
-            if ((Keyboard.Modifiers & ModifierKeys.Shift) != 0)
-            {
-                //
-                // When the shift key is held down special zooming logic is executed in content_MouseDown,
-                // so don't handle mouse input here.
-                //
-                return;
-            }
-
-            if (mouseHandlingMode != MouseHandlingMode.None)
-            {
-                //
-                // We are in some other mouse handling mode, don't do anything.
-                return;
-            }
-
-            mouseHandlingMode = MouseHandlingMode.DraggingRectangles;
-            origContentMouseDownPoint = e.GetPosition(content);
-
-            rectangle.CaptureMouse();
-
-            e.Handled = true;
-        }
-
-        /// <summary>
         /// Event raised when a mouse button is released over a Rectangle.
         /// </summary>
         private void Rectangle_MouseUp(object sender, MouseButtonEventArgs e)
@@ -573,38 +587,6 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
 
             Rectangle rectangle = (Rectangle)sender;
             rectangle.ReleaseMouseCapture();
-
-            e.Handled = true;
-        }
-
-        /// <summary>
-        /// Event raised when the mouse cursor is moved when over a Rectangle.
-        /// </summary>
-        private void Rectangle_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (mouseHandlingMode != MouseHandlingMode.DraggingRectangles)
-            {
-                //
-                // We are not in rectangle dragging mode, so don't do anything.
-                //
-                return;
-            }
-
-            Point curContentPoint = e.GetPosition(content);
-            Vector rectangleDragVector = curContentPoint - origContentMouseDownPoint;
-
-            //
-            // When in 'dragging rectangles' mode update the position of the rectangle as the user drags it.
-            //
-
-            origContentMouseDownPoint = curContentPoint;
-
-            Rectangle rectangle = (Rectangle)sender;
-            RectangleData myRectangle = (RectangleData)rectangle.DataContext;
-            myRectangle.X += rectangleDragVector.X;
-            myRectangle.Y += rectangleDragVector.Y;
-
-            ExpandContent();
 
             e.Handled = true;
         }

@@ -12,9 +12,6 @@
                 Height="{Binding Height}"
                 Fill="{Binding Color, Converter={StaticResource ColorToBrushConverter}}"
                 Cursor="Hand">
-            <Rectangle.LayoutTransform>
-                <RotateTransform CenterX="{Binding CenterX}" CenterY="{Binding CenterY}" Angle="{Binding Orientation}"/>
-            </Rectangle.LayoutTransform>
         </Rectangle>
     </DataTemplate>
 
@@ -23,9 +20,6 @@
             Points="{Binding Corners}"
             Fill="{Binding Color, Converter={StaticResource ColorToBrushConverter}}"
             Cursor="Hand">
-            <Polygon.LayoutTransform>
-                <RotateTransform CenterX="{Binding CenterX}" CenterY="{Binding CenterY}" Angle="{Binding Orientation}"/>
-            </Polygon.LayoutTransform>
         </Polygon>
     </DataTemplate>
 </ResourceDictionary>

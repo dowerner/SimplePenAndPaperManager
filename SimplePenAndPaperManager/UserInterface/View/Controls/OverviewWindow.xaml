@@ -19,15 +19,8 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="VisualElements.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-            
-            <converter:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
 
-            <DataTemplate DataType="{x:Type datatemplates:RectangleData}">
-                <Rectangle
-                Width="{Binding Width}"
-                Height="{Binding Height}"
-                Fill="{Binding Color, Converter={StaticResource ColorToBrushConverter}}"/>
-            </DataTemplate>
+            <converter:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
         </ResourceDictionary>
     </Window.Resources>
     <zoomAndPan:ZoomAndPanControl

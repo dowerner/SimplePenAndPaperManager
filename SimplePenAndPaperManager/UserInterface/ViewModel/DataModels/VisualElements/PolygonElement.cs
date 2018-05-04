@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
 using System;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
 
 namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements
 {
@@ -29,6 +30,11 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             fillPointsFromSource();
         }
 
+        public override IVisualElement Copy()
+        {
+            return new PolygonElement((IPolygonMapEntity)_polygonSource.Copy());
+        }
+
         private void fillPointsFromSource()
         {
             if (_polygonSource.Corners == null) return;
@@ -45,7 +51,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             foreach (Point point in _corners) _polygonSource.Corners.Add(new Point2D() { X = point.X, Y = point.Y });
         }
 
-        private void _corners_Changed(object sender, System.EventArgs e)
+        private void _corners_Changed(object sender, EventArgs e)
         {
             fillPointsToSource();
         }

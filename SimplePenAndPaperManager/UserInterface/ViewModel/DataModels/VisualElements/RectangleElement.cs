@@ -1,4 +1,6 @@
-﻿using SimplePenAndPaperManager.MapEditor.Entities.Interface;
+﻿using System;
+using SimplePenAndPaperManager.MapEditor.Entities.Interface;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
 
 namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements
 {
@@ -10,7 +12,6 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             set
             {
                 _rectangleSource.Width = value;
-                UpdateBounds();
                 OnPropertyChanged("Widht");
             }
         }
@@ -21,9 +22,13 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             set
             {
                 _rectangleSource.Height = value;
-                UpdateBounds();
                 OnPropertyChanged("Height");
             }
+        }
+
+        public override IVisualElement Copy()
+        {
+            return new RectangleElement((IRectangularMapEntity)_rectangleSource.Copy());
         }
 
         private IRectangularMapEntity _rectangleSource;

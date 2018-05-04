@@ -8,6 +8,7 @@
              xmlns:zoomAndPan="clr-namespace:ZoomAndPan;assembly=ZoomAndPan"
              xmlns:converter="clr-namespace:SimplePenAndPaperManager.UserInterface.View.Converter"
              xmlns:datatemplates="clr-namespace:SimplePenAndPaperManager.UserInterface.ViewModel.DataModels"
+             xmlns:commands="clr-namespace:SimplePenAndPaperManager.UserInterface.ViewModel.Commands"
              d:DesignHeight="300" d:DesignWidth="300"
              Loaded="EditorView_Loaded">
     <UserControl.Resources>
@@ -25,16 +26,6 @@
             <converter:ScaleToPercentConverter x:Key="ScaleToPercentConverter"/>
             <converter:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
             <converter:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
-
-
-            <DataTemplate DataType="{x:Type datatemplates:RectangleData}">
-                <Rectangle
-                Width="{Binding Width}"
-                Height="{Binding Height}"
-                Fill="{Binding Color, Converter={StaticResource ColorToBrushConverter}}"
-                Cursor="Hand">
-                </Rectangle>
-            </DataTemplate>
 
             <!-- 
         Override the style of the ListBox to remove the ScrollViewer.
@@ -60,14 +51,14 @@
             x:Key="listBoxItemStyle" 
             TargetType="ListBoxItem"
             >
-                <Setter 
+                <!--<Setter 
                 Property="Canvas.Left" 
                 Value="{Binding X}" 
                 />
                 <Setter 
                 Property="Canvas.Top" 
                 Value="{Binding Y}" 
-                />
+                />-->
                 <Setter 
                 Property="IsSelected" 
                 Value="{Binding IsSelected}" 
@@ -84,7 +75,14 @@
                             Name="Border"
                             BorderThickness="1"
                             Padding="2"
+                            RenderTransformOrigin="0.5 0.5"
                             >
+                                <Border.RenderTransform>
+                                    <TransformGroup>
+                                        <RotateTransform Angle="{Binding Orientation}"/>
+                                        <TranslateTransform X="{Binding X}" Y="{Binding Y}"/>
+                                    </TransformGroup>
+                                </Border.RenderTransform>
                                 <ContentPresenter />
                             </Border>
                             <ControlTemplate.Triggers>
@@ -123,7 +121,26 @@
 			Key="Backspace"
 			Command="{StaticResource Commands.JumpBackToPrevZoom}"
 			/>
-
+        <KeyBinding
+            Key="Z" Modifiers="Ctrl"
+            Command="{Binding Source={x:Static commands:EditCommands.UndoCommand}}"
+            />
+        <KeyBinding
+            Key="Y" Modifiers="Ctrl"
+            Command="{Binding Source={x:Static commands:EditCommands.RedoCommand}}"
+            />
+        <KeyBinding
+            Key="C" Modifiers="Ctrl"
+            Command="{Binding Source={x:Static commands:EditCommands.CopyCommand}}"
+            />
+        <KeyBinding
+            Key="V" Modifiers="Ctrl"
+            Command="{Binding Source={x:Static commands:EditCommands.PasteCommand}}"
+            />
+        <KeyBinding
+            Key="Delete"
+            Command="{Binding Source={x:Static commands:EditCommands.DeleteCommand}}"
+            />
     </UserControl.InputBindings>
 
     <UserControl.CommandBindings>
@@ -333,7 +350,9 @@
             </zoomAndPan:ZoomAndPanControl>
             <Canvas>
                 <local:TransformationGizmo x:Name="Gizmo"
+                                           Orientation="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=GizmoOrientation, Mode=TwoWay}"
                                            Visibility="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=EntitiesSelected, Converter={StaticResource BoolToVisibilityConverter}}"
+                                           IsRotating="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=GizmoIsRotating, Mode=OneWayToSource}"
                                            DraggingX="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=GizmoDragX, Mode=TwoWay}"
                                            DraggingY="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=GizmoDragY, Mode=TwoWay}"
                                            Canvas.Top="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=GizmoY}" 

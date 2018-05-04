@@ -33,6 +33,11 @@
         /// <summary>
         /// The user is dragging an object via gizmo.
         /// </summary>
-        DragObject
+        DragObject,
+
+        /// <summary>
+        /// The user is rotating an object via gizmo.
+        /// </summary>
+        RotateObject
     }
 }
