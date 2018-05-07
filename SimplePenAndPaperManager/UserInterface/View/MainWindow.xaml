@@ -41,7 +41,7 @@
                 <MenuItem Header="Show Content"/>
             </MenuItem>
             <MenuItem Header="Buildings">
-                <MenuItem Header="Create Rectangular Building"/>
+                <MenuItem Header="Create Rectangular Building" Command="{Binding Source={x:Static commands:BuildingCommands.CreateRecangularBuildingCommand}}" />
                 <MenuItem Header="Create Polygonal Building"/>
                 <MenuItem Header="Create Wall"/>
                 <MenuItem Header="Create Door"/>

@@ -38,6 +38,11 @@
         /// <summary>
         /// The user is rotating an object via gizmo.
         /// </summary>
-        RotateObject
+        RotateObject,
+
+        /// <summary>
+        /// The user is dragging the lower right corner of a newly created rectangle.
+        /// </summary>
+        CreateRectangle
     }
 }

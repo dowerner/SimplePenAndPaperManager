@@ -1,6 +1,7 @@
-﻿using SimplePenAndPaperManager.UserInterface.Model;
-using SimplePenAndPaperManager.UserInterface.Model.EditorActions;
+﻿using SimplePenAndPaperManager.MapEditor.Entities.Buildings;
+using SimplePenAndPaperManager.UserInterface.Model;
 using SimplePenAndPaperManager.UserInterface.Model.EditorActions.Interface;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -162,7 +163,56 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
 
         public ObservableCollection<IVisualElement> Clipboard { get; set; }
         public Point CopyLocation { get; set; }
-        public Point MousePosition { get; set; }
+        public Point RectangleStartLocation { get; set; }
+        public Point MousePosition
+        {
+            get { return _mousePosition; }
+            set
+            {
+                _mousePosition = value;
+                OnPropertyChanged("MousePosition");
+            }
+        }
+        private Point _mousePosition;
+
+        #region Creation Variables
+        public RectangleElement NewRectangleBuilding { get; set; }
+        #endregion
+
+        #region Creation Methods
+        private void InitiateRectangularBuilding()
+        {
+            RectangleStartLocation = MousePosition;
+            NewRectangleBuilding = new RectangleElement(new RectangularBuilding()
+            {
+                X = RectangleStartLocation.X,
+                Y = RectangleStartLocation.Y,
+                Width = 10,
+                Height = 10
+            });
+            MapEntities.Add(NewRectangleBuilding);
+        }
+
+        public void StartBuilding()
+        {
+            if (IsCreatingRectangle)
+            {
+                InitiateRectangularBuilding();
+            }
+        }
+        #endregion
+
+
+        public bool IsCreatingRectangle
+        {
+            get { return _isCreatingRectangle; }
+            set
+            {
+                _isCreatingRectangle = value;
+                OnPropertyChanged("IsCreatingRectangle");
+            }
+        }
+        private bool _isCreatingRectangle;
 
         public ObservableCollection<IVisualElement> MapEntities
         {

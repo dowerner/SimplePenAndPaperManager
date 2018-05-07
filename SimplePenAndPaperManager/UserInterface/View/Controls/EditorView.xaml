@@ -348,6 +348,8 @@
                     </Canvas>
                 </Grid>
             </zoomAndPan:ZoomAndPanControl>
+            <TextBlock Text="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=MousePosition}"
+                       IsHitTestVisible="False"/>
             <Canvas>
                 <local:TransformationGizmo x:Name="Gizmo"
                                            Orientation="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=GizmoOrientation, Mode=TwoWay}"

@@ -88,9 +88,14 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
 
         private void Instance_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if ((e.PropertyName == "GizmoDragX" && DataModel.Instance.GizmoDragX) 
+            if ((e.PropertyName == "GizmoDragX" && DataModel.Instance.GizmoDragX)
                 || (e.PropertyName == "GizmoDragY" && DataModel.Instance.GizmoDragY))
                 mouseHandlingMode = MouseHandlingMode.DragObject;
+
+            if (e.PropertyName == "IsCreatingRectangle" && DataModel.Instance.IsCreatingRectangle)
+            {
+                mouseHandlingMode = MouseHandlingMode.CreateRectangle;
+            }
 
             if(e.PropertyName == "SelectionLocation" && mouseHandlingMode != MouseHandlingMode.DragObject)
             {
@@ -173,6 +178,14 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
             origZoomAndPanControlMouseDownPoint = e.GetPosition(zoomAndPanControl);
             origContentMouseDownPoint = e.GetPosition(content);
 
+            if(mouseHandlingMode == MouseHandlingMode.CreateRectangle)
+            {
+                DataModel.Instance.StartBuilding();
+                zoomAndPanControl.CaptureMouse();
+                e.Handled = true;
+                return;
+            }
+
             if ((Keyboard.Modifiers & ModifierKeys.Shift) != 0 &&
                 (e.ChangedButton == MouseButton.Left ||
                  e.ChangedButton == MouseButton.Right))
@@ -229,6 +242,9 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                 mouseHandlingMode = MouseHandlingMode.None;
                 DataModel.Instance.GizmoDragX = false;
                 DataModel.Instance.GizmoDragY = false;
+                DataModel.Instance.NewRectangleBuilding.CenterX = 0.5;
+                DataModel.Instance.NewRectangleBuilding.CenterY = 0.5;
+                DataModel.Instance.NewRectangleBuilding = null;
                 e.Handled = true;
             }
         }
@@ -295,6 +311,25 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                 if (DataModel.Instance.GizmoDragY) DataModel.Instance.GizmoY = canvasPoint.Y - (Gizmo.Y + Gizmo.Height / 2);
 
                 e.Handled = true;
+            }
+            else if(mouseHandlingMode == MouseHandlingMode.CreateRectangle && DataModel.Instance.NewRectangleBuilding != null)
+            {
+                // Update rectangle that is being created
+                Point point = e.GetPosition(content);
+                Point start = DataModel.Instance.RectangleStartLocation;
+
+                if (point.X > start.X) DataModel.Instance.NewRectangleBuilding.Width = point.X - start.X;
+                else
+                {
+                    DataModel.Instance.NewRectangleBuilding.Width = start.X - point.X;
+                    DataModel.Instance.NewRectangleBuilding.X = point.X;
+                }
+                if (point.Y > start.Y) DataModel.Instance.NewRectangleBuilding.Height = point.Y - start.Y;
+                else
+                {
+                    DataModel.Instance.NewRectangleBuilding.Height = start.Y - point.Y;
+                    DataModel.Instance.NewRectangleBuilding.Y = point.Y;
+                }
             }
             DataModel.Instance.MousePosition = e.GetPosition(content);
         }

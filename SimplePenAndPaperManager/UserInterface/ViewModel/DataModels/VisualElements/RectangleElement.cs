@@ -12,7 +12,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             set
             {
                 _rectangleSource.Width = value;
-                OnPropertyChanged("Widht");
+                OnPropertyChanged("Width");
             }
         }
 
