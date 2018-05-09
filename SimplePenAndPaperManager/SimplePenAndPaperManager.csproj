@@ -79,6 +79,8 @@
     <Compile Include="MapEditor\Entities\Items\Interface\IItemEntity.cs" />
     <Compile Include="MapEditor\Entities\Items\Interface\IKeyEntity.cs" />
     <Compile Include="MapEditor\Entities\Point2D.cs" />
+    <Compile Include="MathTools\MathTools.cs" />
+    <Compile Include="UserInterface\Model\EditorActions\CreatePolygonAction.cs" />
     <Compile Include="UserInterface\Model\EditorActions\CreateRectangleAction.cs" />
     <Compile Include="UserInterface\Model\EditorActions\DeleteAction.cs" />
     <Compile Include="UserInterface\Model\EditorActions\Interface\IEditorAction.cs" />
@@ -94,6 +96,7 @@
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\Interface\IVisualElement.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\PolygonElement.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\RectangleElement.cs" />
+    <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\WallElement.cs" />
     <Compile Include="UserInterface\View\Controls\EditorView.xaml.cs">
       <DependentUpon>EditorView.xaml</DependentUpon>
     </Compile>

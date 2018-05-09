@@ -43,6 +43,11 @@
         /// <summary>
         /// The user is dragging the lower right corner of a newly created rectangle.
         /// </summary>
-        CreateRectangle
+        CreateRectangle,
+
+        /// <summary>
+        /// The user is creating a polygon.
+        /// </summary>
+        CreatePolygon
     }
 }

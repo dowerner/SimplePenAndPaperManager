@@ -6,12 +6,24 @@
 
     <converter:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
     
+    <!--REPLACE THIS WITH RECTANGULAR POLYGON -> Polygons behave better!!!!-->
     <DataTemplate DataType="{x:Type datamodel:RectangleElement}">
         <Rectangle
                 Width="{Binding Width}"
                 Height="{Binding Height}"
                 Fill="{Binding Color, Converter={StaticResource ColorToBrushConverter}}"
-                Cursor="Hand">
+                Stroke="{Binding StrokeColor, Converter={StaticResource ColorToBrushConverter}}"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                StrokeThickness="3"
+                Cursor="Hand"
+                RenderTransformOrigin="0.5 0.5">
+            <Rectangle.RenderTransform>
+                <TransformGroup>
+                    <RotateTransform Angle="{Binding Orientation}"/>
+                    <TranslateTransform X="{Binding X}" Y="{Binding Y}"/>
+                </TransformGroup>
+            </Rectangle.RenderTransform>
         </Rectangle>
     </DataTemplate>
 
@@ -19,7 +31,46 @@
         <Polygon
             Points="{Binding Corners}"
             Fill="{Binding Color, Converter={StaticResource ColorToBrushConverter}}"
-            Cursor="Hand">
+            Stroke="{Binding StrokeColor, Converter={StaticResource ColorToBrushConverter}}"
+            StrokeThickness="3"
+            Cursor="Hand"
+            RenderTransformOrigin="0 0">
+            <Polygon.RenderTransform>
+                <TransformGroup>
+                    <RotateTransform Angle="{Binding Orientation}"/>
+                    <TranslateTransform X="{Binding X}" Y="{Binding Y}"/>
+                </TransformGroup>
+            </Polygon.RenderTransform>
         </Polygon>
     </DataTemplate>
+
+    <!--<DataTemplate DataType="{x:Type datamodel:WallElement}">
+        <Rectangle
+            Height="{Binding Thickness}"
+            Width="{Binding Length}"
+            Fill="{Binding Color, Converter={StaticResource ColorToBrushConverter}}"
+            Stroke="{Binding StrokeColor, Converter={StaticResource ColorToBrushConverter}}"
+            Cursor="Hand"
+            RenderTransformOrigin="0.5 0.5">
+            <Rectangle.RenderTransform>
+                <TransformGroup>
+                    <RotateTransform Angle="{Binding Orientation}"/>
+                    <TranslateTransform X="{Binding X}" Y="{Binding Y}"/>
+                </TransformGroup>
+            </Rectangle.RenderTransform>
+        </Rectangle>
+    </DataTemplate>-->
+
+    <DataTemplate DataType="{x:Type datamodel:WallElement}">
+        <Line
+            X1="{Binding X1}"
+            Y1="{Binding Y1}"
+            X2="{Binding X2}"
+            Y2="{Binding Y2}"
+            Stroke="Black"
+            StrokeThickness="{Binding Thickness}"
+            Cursor="Hand"
+            />
+    </DataTemplate>
+    <!--Stroke="{Binding StrokeColor, Converter={StaticResource ColorToBrushConverter}}"-->
 </ResourceDictionary>

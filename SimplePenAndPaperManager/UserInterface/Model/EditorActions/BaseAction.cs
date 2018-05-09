@@ -16,7 +16,10 @@ namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
         public BaseAction(ObservableCollection<IVisualElement> selectedEntities)
         {
             AffectedEntities = new List<IVisualElement>();
-            foreach (IVisualElement enity in selectedEntities) AffectedEntities.Add(enity);
+            if(selectedEntities != null)
+            {
+                foreach (IVisualElement enity in selectedEntities) AffectedEntities.Add(enity);
+            }
         }
     }
 }

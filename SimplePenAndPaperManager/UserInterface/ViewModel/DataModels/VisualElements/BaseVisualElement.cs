@@ -16,7 +16,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
                 OnPropertyChanged("BoundingWidth");
             }
         }
-        private double _boundingWidth;
+        protected double _boundingWidth;
 
         public double BoundingHeight
         {
@@ -27,7 +27,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
                 OnPropertyChanged("BoundingHeight");
             }
         }
-        private double _boundingHeight;
+        protected double _boundingHeight;
 
         public Color Color
         {
@@ -38,7 +38,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
                 OnPropertyChanged("Color");
             }
         }
-        private Color _color;
+        protected Color _color;
 
         public double CenterX
         {
@@ -49,7 +49,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
                 OnPropertyChanged("CenterX");
             }
         }
-        private double _centerX;
+        protected double _centerX;
 
         public double CenterY
         {
@@ -60,7 +60,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
                 OnPropertyChanged("CenterY");
             }
         }
-        private double _centerY;
+        protected double _centerY;
 
         public double X
         {
@@ -118,10 +118,22 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             set
             {
                 _isSelected = value;
+                StrokeColor = _isSelected ? Colors.Blue : Color;
                 OnPropertyChanged("IsSelected");
             }
         }
         private bool _isSelected;
+
+        public Color StrokeColor
+        {
+            get { return _strokeColor; }
+            set
+            {
+                _strokeColor = value;
+                OnPropertyChanged("StrokeColor");
+            }
+        }
+        private Color _strokeColor;
 
         public abstract IVisualElement Copy();
 

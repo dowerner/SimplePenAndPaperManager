@@ -3,6 +3,7 @@ using SimplePenAndPaperManager.UserInterface.Model;
 using SimplePenAndPaperManager.UserInterface.Model.EditorActions.Interface;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -88,8 +89,8 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
 
             MapEntities = new ObservableCollection<IVisualElement>();
             MapEntities.CollectionChanged += MapEntities_CollectionChanged;
-            MapEntities.Add(new VisualElements.RectangleElement(new MapEditor.Entities.Buildings.RectangularBuilding() { X = 100, Y = 400, Width = 100, Height = 100, Orientation = 20 }));
-            MapEntities.Add(new VisualElements.RectangleElement(new MapEditor.Entities.Buildings.RectangularBuilding() { X = 150, Y = 600, Width = 130, Height = 100, Orientation = -34 }));
+            MapEntities.Add(new RectangleElement(new RectangularBuilding() { X = 100, Y = 400, Width = 100, Height = 100, Orientation = 20 }));
+            MapEntities.Add(new RectangleElement(new RectangularBuilding() { X = 150, Y = 600, Width = 130, Height = 100, Orientation = -34 }));
 
             // stress test
             //for(int i = 0; i < 3000; i++) MapEntities.Add(new VisualElements.RectangleElement(new MapEditor.Entities.Buildings.RectangularBuilding() { X = 150, Y = 600, Width = 130, Height = 100, Orientation = -34 }));
@@ -101,7 +102,8 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
             c.Add(new MapEditor.Entities.Point2D() { X = 30, Y = 50 });
             c.Add(new MapEditor.Entities.Point2D() { X = 60, Y = 50 });
 
-            MapEntities.Add(new VisualElements.PolygonElement(new MapEditor.Entities.Buildings.PolygonBuilding() { X = 500, Y = 700, Corners = c, Orientation = 37.4 }));
+            MapEntities.Add(new PolygonElement(new PolygonBuilding() { X = 500, Y = 700, Corners = c, Orientation = 37.4 }));
+            MapEntities.Add(new WallElement(new Wall() { X = 600, Y = 600, Length = 240, Thickness = 10 }));
         }
 
         private void MapEntities_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -163,7 +165,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
 
         public ObservableCollection<IVisualElement> Clipboard { get; set; }
         public Point CopyLocation { get; set; }
-        public Point RectangleStartLocation { get; set; }
+        public Point BuildingStartLocation { get; set; }
         public Point MousePosition
         {
             get { return _mousePosition; }
@@ -177,20 +179,55 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
 
         #region Creation Variables
         public RectangleElement NewRectangleBuilding { get; set; }
+        public PolygonElement NewPolygonalBuilding { get; set; }
+        public List<WallElement> NewPolygonalBuildingWalls { get; set; }
+        public WallElement CurrentPolygonWall { get; set; }
+
+        public string Debug
+        {
+            get { return _debug; }
+            set
+            {
+                _debug = value;
+                OnPropertyChanged("Debug");
+            }
+        }
+        private string _debug;
         #endregion
 
         #region Creation Methods
         private void InitiateRectangularBuilding()
         {
-            RectangleStartLocation = MousePosition;
+            BuildingStartLocation = MousePosition;
             NewRectangleBuilding = new RectangleElement(new RectangularBuilding()
             {
-                X = RectangleStartLocation.X,
-                Y = RectangleStartLocation.Y,
+                X = BuildingStartLocation.X,
+                Y = BuildingStartLocation.Y,
                 Width = 10,
                 Height = 10
             });
             MapEntities.Add(NewRectangleBuilding);
+        }
+
+        private void InitiatePolygonalBuilding()
+        {
+            if(CurrentPolygonWall == null)
+            {
+                // save mouse start position
+                BuildingStartLocation = MousePosition;
+                NewPolygonalBuildingWalls = new List<WallElement>();
+            }
+            // create wall of building
+            CurrentPolygonWall = new WallElement(new Wall());
+            CurrentPolygonWall.X1 = MousePosition.X;
+            CurrentPolygonWall.Y1 = MousePosition.Y;
+            CurrentPolygonWall.X2 = MousePosition.X;
+            CurrentPolygonWall.Y2 = MousePosition.Y;
+
+            NewPolygonalBuildingWalls.Add(CurrentPolygonWall);
+
+            // add wall to map
+            MapEntities.Add(CurrentPolygonWall);
         }
 
         public void StartBuilding()
@@ -199,9 +236,12 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
             {
                 InitiateRectangularBuilding();
             }
+            else if (IsCreatingPolygon)
+            {
+                InitiatePolygonalBuilding();
+            }
         }
         #endregion
-
 
         public bool IsCreatingRectangle
         {
@@ -213,6 +253,17 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
             }
         }
         private bool _isCreatingRectangle;
+
+        public bool IsCreatingPolygon
+        {
+            get { return _isCreatingPolygon; }
+            set
+            {
+                _isCreatingPolygon = value;
+                OnPropertyChanged("IsCreatingPolygon");
+            }
+        }
+        private bool _isCreatingPolygon;
 
         public ObservableCollection<IVisualElement> MapEntities
         {

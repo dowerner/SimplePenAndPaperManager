@@ -1,7 +1,12 @@
-﻿using SimplePenAndPaperManager.UserInterface.Model.EditorActions;
+﻿using SimplePenAndPaperManager.MapEditor.Entities;
+using SimplePenAndPaperManager.MathTools;
+using SimplePenAndPaperManager.UserInterface.Model.EditorActions;
 using SimplePenAndPaperManager.UserInterface.View.States;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -97,18 +102,23 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                 mouseHandlingMode = MouseHandlingMode.CreateRectangle;
             }
 
+            if (e.PropertyName == "IsCreatingPolygon" && DataModel.Instance.IsCreatingPolygon)
+            {
+                mouseHandlingMode = MouseHandlingMode.CreatePolygon;
+            }
+
             if(e.PropertyName == "SelectionLocation" && mouseHandlingMode != MouseHandlingMode.DragObject)
             {
                 Point canvasPoint = FromZoomControlToCanvasCoordinates(DataModel.Instance.SelectionLocation);
-                DataModel.Instance.GizmoX = canvasPoint.X;
-                DataModel.Instance.GizmoY = canvasPoint.Y;
+                DataModel.Instance.GizmoX = canvasPoint.X - Gizmo.Width / 2;
+                DataModel.Instance.GizmoY = canvasPoint.Y - Gizmo.Height / 2;
             }
 
             // update selected entities postion
             if((e.PropertyName == "GizmoX" || e.PropertyName == "GizmoY") && mouseHandlingMode == MouseHandlingMode.DragObject)
             {
                 TranslateAction translation = (TranslateAction)DataModel.Instance.CurrentAction;
-                translation.TransformEndPoint = FromCanvasToZoomControlCoordinates(new Point(DataModel.Instance.GizmoX, DataModel.Instance.GizmoY));
+                translation.TransformEndPoint = FromCanvasToZoomControlCoordinates(new Point(DataModel.Instance.GizmoX + Gizmo.Width / 2, DataModel.Instance.GizmoY + Gizmo.Height / 2));
                 translation.Do();
             }
 
@@ -153,6 +163,11 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
         {
             DataModel.Instance.SelectedEntities.Clear();
             if (DataModel.Instance.CurrentAction != null) DataModel.Instance.CurrentAction.Undo();
+            if(DataModel.Instance.NewRectangleBuilding != null)
+            {
+                DataModel.Instance.MapEntities.Remove(DataModel.Instance.NewRectangleBuilding);
+                DataModel.Instance.NewRectangleBuilding = null;
+            }
             mouseHandlingMode = MouseHandlingMode.None;
         }
         #endregion
@@ -178,7 +193,7 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
             origZoomAndPanControlMouseDownPoint = e.GetPosition(zoomAndPanControl);
             origContentMouseDownPoint = e.GetPosition(content);
 
-            if(mouseHandlingMode == MouseHandlingMode.CreateRectangle)
+            if ((mouseHandlingMode == MouseHandlingMode.CreateRectangle || mouseHandlingMode == MouseHandlingMode.CreatePolygon))
             {
                 DataModel.Instance.StartBuilding();
                 zoomAndPanControl.CaptureMouse();
@@ -237,13 +252,23 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                     // When releasing dragged objects
                     Gizmo_TransformationChanged(Gizmo, TransformationEvent.TranslationEnded);
                 }
+                if(mouseHandlingMode == MouseHandlingMode.CreateRectangle)
+                {
+                    // When releasing during the creation of a rectangle
+                    CreateRectangleAction createAction = new CreateRectangleAction(null) { CreatedElement = DataModel.Instance.NewRectangleBuilding };
+                    DataModel.Instance.UndoStack.Push(createAction);
+                }
+                if(mouseHandlingMode == MouseHandlingMode.CreatePolygon)
+                {
+                    // don't stop if polygon being is created -> this is done via doubleclick
+                    return;
+                }
 
                 zoomAndPanControl.ReleaseMouseCapture();
                 mouseHandlingMode = MouseHandlingMode.None;
+                DataModel.Instance.IsCreatingRectangle = false;
                 DataModel.Instance.GizmoDragX = false;
                 DataModel.Instance.GizmoDragY = false;
-                DataModel.Instance.NewRectangleBuilding.CenterX = 0.5;
-                DataModel.Instance.NewRectangleBuilding.CenterY = 0.5;
                 DataModel.Instance.NewRectangleBuilding = null;
                 e.Handled = true;
             }
@@ -316,7 +341,7 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
             {
                 // Update rectangle that is being created
                 Point point = e.GetPosition(content);
-                Point start = DataModel.Instance.RectangleStartLocation;
+                Point start = DataModel.Instance.BuildingStartLocation;
 
                 if (point.X > start.X) DataModel.Instance.NewRectangleBuilding.Width = point.X - start.X;
                 else
@@ -330,6 +355,13 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                     DataModel.Instance.NewRectangleBuilding.Height = start.Y - point.Y;
                     DataModel.Instance.NewRectangleBuilding.Y = point.Y;
                 }
+            }
+            else if(mouseHandlingMode == MouseHandlingMode.CreatePolygon && DataModel.Instance.CurrentPolygonWall != null)
+            {
+                // Update polygon wall which is currently being placed
+                Point point = e.GetPosition(content);
+                DataModel.Instance.CurrentPolygonWall.X2 = point.X;
+                DataModel.Instance.CurrentPolygonWall.Y2 = point.Y;
             }
             DataModel.Instance.MousePosition = e.GetPosition(content);
         }
@@ -598,6 +630,21 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
         /// </summary>
         private void zoomAndPanControl_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
+            if(mouseHandlingMode == MouseHandlingMode.CreatePolygon)
+            {
+                CreatePolygonAction action = new CreatePolygonAction(null);
+                action.Do();
+                DataModel.Instance.UndoStack.Push(action);
+                DataModel.Instance.CurrentPolygonWall = null;   // remove current polygon building wall (is now replaced with complete building)
+                DataModel.Instance.NewPolygonalBuildingWalls = null;    // remove wall collection
+                DataModel.Instance.IsCreatingPolygon = false;           // polygon creation completed
+                mouseHandlingMode = MouseHandlingMode.None;
+                zoomAndPanControl.ReleaseMouseCapture();
+                e.Handled = true;
+
+                return;
+            }
+
             if ((Keyboard.Modifiers & ModifierKeys.Shift) == 0)
             {
                 Point doubleClickPoint = e.GetPosition(content);
@@ -610,6 +657,9 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
         /// </summary>
         private void Rectangle_MouseUp(object sender, MouseButtonEventArgs e)
         {
+            // When creating a polygon a doubleclick terminates the procedure
+            if (mouseHandlingMode == MouseHandlingMode.CreatePolygon) return;
+
             if (mouseHandlingMode != MouseHandlingMode.DraggingRectangles)
             {
                 //
@@ -624,6 +674,17 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
             rectangle.ReleaseMouseCapture();
 
             e.Handled = true;
+        }
+
+        private void Canvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if(!Keyboard.IsKeyDown(Key.LeftCtrl) && !Keyboard.IsKeyDown(Key.RightCtrl))
+            {
+                DataModel.Instance.SelectedEntities.Clear();
+            }
+
+            FrameworkElement selectedObject = e.OriginalSource as FrameworkElement;
+            ((IVisualElement)selectedObject.DataContext).IsSelected = true;
         }
     }
 }

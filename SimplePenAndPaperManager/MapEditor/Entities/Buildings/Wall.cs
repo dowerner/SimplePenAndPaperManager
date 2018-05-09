@@ -9,6 +9,7 @@ namespace SimplePenAndPaperManager.MapEditor.Entities.Buildings
         public List<IDoorEntity> Doors { get; set; }
         public BuildingMaterial Material { get; set; }
         public double Thickness { get; set; }
+        public double Length { get; set; }
         public List<IWindowEntity> Windows { get; set; }
 
         public override IMapEntity Copy()

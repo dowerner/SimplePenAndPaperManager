@@ -15,6 +15,16 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.Commands
             }
         }
         private static CreateRecangularBuildingCommand _createRecangularBuildingCommand;
+
+        public static CreatePolygonalBuildingCommand CreatePolygonalBuildingCommand
+        {
+            get
+            {
+                if (_createPolygonalBuildingCommand == null) _createPolygonalBuildingCommand = new CreatePolygonalBuildingCommand();
+                return _createPolygonalBuildingCommand;
+            }
+        }
+        private static CreatePolygonalBuildingCommand _createPolygonalBuildingCommand;
     }
 
     public class CreateRecangularBuildingCommand : ICommand
@@ -29,6 +39,21 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.Commands
         public void Execute(object parameter)
         {
             DataModel.Instance.IsCreatingRectangle = true;
+        }
+    }
+
+    public class CreatePolygonalBuildingCommand : ICommand
+    {
+        public event EventHandler CanExecuteChanged;
+
+        public bool CanExecute(object parameter)
+        {
+            return true;
+        }
+
+        public void Execute(object parameter)
+        {
+            DataModel.Instance.IsCreatingPolygon = true;
         }
     }
 }

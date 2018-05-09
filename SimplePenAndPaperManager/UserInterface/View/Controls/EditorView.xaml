@@ -320,14 +320,24 @@
                 The list box contains instances of RectangleData, the DataTemplate for RectangleData is in
                 the UserControl.Resources section of this file.
                 -->
-                    <ListBox
+                    <!--<ListBox
                     x:Name="content"
                     Background="White"
                     SelectionMode="Extended"
                     ItemsSource="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=MapEntities}"
                     Style="{StaticResource noScrollViewerListBoxStyle}"
                     ItemContainerStyle="{StaticResource listBoxItemStyle}"
-                    />
+                    />-->
+                    <ItemsControl
+                        x:Name="content"
+                        Background="White"
+                        ItemsSource="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=MapEntities}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <Canvas MouseLeftButtonDown="Canvas_MouseLeftButtonDown"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
 
                     <!--
                 This Canvas and Border are used as a very simple way to render a drag rectangle that the user
@@ -348,8 +358,11 @@
                     </Canvas>
                 </Grid>
             </zoomAndPan:ZoomAndPanControl>
-            <TextBlock Text="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=MousePosition}"
-                       IsHitTestVisible="False"/>
+            <StackPanel IsHitTestVisible="False">
+                <TextBlock Text="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=MousePosition}"
+                           IsHitTestVisible="False"/>
+                <TextBlock Text="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=Debug}" IsHitTestVisible="False" />
+            </StackPanel>
             <Canvas>
                 <local:TransformationGizmo x:Name="Gizmo"
                                            Orientation="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=GizmoOrientation, Mode=TwoWay}"
@@ -357,8 +370,12 @@
                                            IsRotating="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=GizmoIsRotating, Mode=OneWayToSource}"
                                            DraggingX="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=GizmoDragX, Mode=TwoWay}"
                                            DraggingY="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=GizmoDragY, Mode=TwoWay}"
-                                           Canvas.Top="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=GizmoY}" 
-                                           Canvas.Left="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=GizmoX}"/>
+                                           RenderTransformOrigin="0.5 0.5">
+                    <local:TransformationGizmo.RenderTransform>
+                        <TranslateTransform X="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=GizmoX, Mode=TwoWay}"
+                                            Y="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=GizmoY, Mode=TwoWay}"/>
+                    </local:TransformationGizmo.RenderTransform>
+                </local:TransformationGizmo>
             </Canvas>
         </Grid>
     </DockPanel>
