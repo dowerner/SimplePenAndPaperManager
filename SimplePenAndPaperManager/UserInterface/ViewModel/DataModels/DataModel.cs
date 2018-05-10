@@ -2,6 +2,7 @@
 using SimplePenAndPaperManager.UserInterface.Model;
 using SimplePenAndPaperManager.UserInterface.Model.EditorActions.Interface;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Buildings;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
 using System;
 using System.Collections.Generic;
@@ -102,7 +103,6 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
             c.Add(new MapEditor.Entities.Point2D() { X = 30, Y = 50 });
             c.Add(new MapEditor.Entities.Point2D() { X = 60, Y = 50 });
 
-            MapEntities.Add(new PolygonElement(new PolygonBuilding() { X = 500, Y = 700, Corners = c, Orientation = 37.4 }));
             MapEntities.Add(new WallElement(new Wall() { X = 600, Y = 600, Length = 240, Thickness = 10 }));
         }
 
@@ -178,7 +178,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
         private Point _mousePosition;
 
         #region Creation Variables
-        public RectangleElement NewRectangleBuilding { get; set; }
+        public VisualRectangularBuilding NewRectangleBuilding { get; set; }
         public PolygonElement NewPolygonalBuilding { get; set; }
         public List<WallElement> NewPolygonalBuildingWalls { get; set; }
         public WallElement CurrentPolygonWall { get; set; }
@@ -199,7 +199,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
         private void InitiateRectangularBuilding()
         {
             BuildingStartLocation = MousePosition;
-            NewRectangleBuilding = new RectangleElement(new RectangularBuilding()
+            NewRectangleBuilding = new VisualRectangularBuilding(new RectangularBuilding()
             {
                 X = BuildingStartLocation.X,
                 Y = BuildingStartLocation.Y,

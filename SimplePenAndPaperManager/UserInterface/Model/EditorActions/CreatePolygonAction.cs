@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels;
 using System.Collections.Generic;
 using SimplePenAndPaperManager.MapEditor.Entities;
 using SimplePenAndPaperManager.MathTools;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Buildings;
 
 namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
 {
@@ -50,7 +50,7 @@ namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
                 }
 
                 // create polygon element
-                Building = new PolygonElement(new MapEditor.Entities.Buildings.PolygonBuilding() { Corners = points, X = x, Y = y });
+                Building = new VisualPolygonalBuilding(new MapEditor.Entities.Buildings.PolygonBuilding() { Corners = points, X = x, Y = y });
             }            
 
             DataModel.Instance.MapEntities.Add(Building);   // add polygon to the world

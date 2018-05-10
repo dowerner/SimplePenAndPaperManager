@@ -1,12 +1,10 @@
-﻿using SimplePenAndPaperManager.MapEditor.Entities;
-using SimplePenAndPaperManager.MathTools;
+﻿using SimplePenAndPaperManager.MathTools;
 using SimplePenAndPaperManager.UserInterface.Model.EditorActions;
 using SimplePenAndPaperManager.UserInterface.View.States;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels;
-using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Buildings;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -254,9 +252,20 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                 }
                 if(mouseHandlingMode == MouseHandlingMode.CreateRectangle)
                 {
+                    // mouse rectangle location to center of shape
+                    VisualRectangularBuilding building = DataModel.Instance.NewRectangleBuilding;
+                    Point diagonal = building.C.Sub(building.A);
+                    building.X += diagonal.X / 2;
+                    building.Y += diagonal.Y / 2;
+                    building.A = building.A.Sub(diagonal.Mult(0.5));
+                    building.C = building.C.Sub(diagonal.Mult(0.5));
+
                     // When releasing during the creation of a rectangle
-                    CreateRectangleAction createAction = new CreateRectangleAction(null) { CreatedElement = DataModel.Instance.NewRectangleBuilding };
+                    CreateRectangleAction createAction = new CreateRectangleAction(null) { Building = DataModel.Instance.NewRectangleBuilding };
                     DataModel.Instance.UndoStack.Push(createAction);
+                    DataModel.Instance.SelectedEntities.Clear();
+                    DataModel.Instance.NewRectangleBuilding.IsSelected = true;
+                    DataModel.Instance.NewRectangleBuilding = null;
                 }
                 if(mouseHandlingMode == MouseHandlingMode.CreatePolygon)
                 {
@@ -343,18 +352,11 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                 Point point = e.GetPosition(content);
                 Point start = DataModel.Instance.BuildingStartLocation;
 
-                if (point.X > start.X) DataModel.Instance.NewRectangleBuilding.Width = point.X - start.X;
-                else
-                {
-                    DataModel.Instance.NewRectangleBuilding.Width = start.X - point.X;
-                    DataModel.Instance.NewRectangleBuilding.X = point.X;
-                }
-                if (point.Y > start.Y) DataModel.Instance.NewRectangleBuilding.Height = point.Y - start.Y;
-                else
-                {
-                    DataModel.Instance.NewRectangleBuilding.Height = start.Y - point.Y;
-                    DataModel.Instance.NewRectangleBuilding.Y = point.Y;
-                }
+                DataModel.Instance.NewRectangleBuilding.C = point.Sub(start);
+
+                // update building in map
+                DataModel.Instance.MapEntities.Remove(DataModel.Instance.NewRectangleBuilding);
+                DataModel.Instance.MapEntities.Add(DataModel.Instance.NewRectangleBuilding);
             }
             else if(mouseHandlingMode == MouseHandlingMode.CreatePolygon && DataModel.Instance.CurrentPolygonWall != null)
             {
@@ -650,30 +652,6 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                 Point doubleClickPoint = e.GetPosition(content);
                 zoomAndPanControl.AnimatedSnapTo(doubleClickPoint);
             }
-        }
-
-        /// <summary>
-        /// Event raised when a mouse button is released over a Rectangle.
-        /// </summary>
-        private void Rectangle_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            // When creating a polygon a doubleclick terminates the procedure
-            if (mouseHandlingMode == MouseHandlingMode.CreatePolygon) return;
-
-            if (mouseHandlingMode != MouseHandlingMode.DraggingRectangles)
-            {
-                //
-                // We are not in rectangle dragging mode.
-                //
-                return;
-            }
-
-            mouseHandlingMode = MouseHandlingMode.None;
-
-            Rectangle rectangle = (Rectangle)sender;
-            rectangle.ReleaseMouseCapture();
-
-            e.Handled = true;
         }
 
         private void Canvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

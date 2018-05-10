@@ -36,5 +36,25 @@ namespace SimplePenAndPaperManager.MathTools
         {
             return Math.Sqrt(Math.Pow(point2.X - point1.X, 2) + Math.Pow(point2.Y - point1.Y, 2));
         }
+
+        public static Point Sub(this Point point1, Point point2)
+        {
+            return new Point(point1.X - point2.X, point1.Y - point2.Y);
+        }
+
+        public static Point Add(this Point point1, Point point2)
+        {
+            return new Point(point1.X + point2.X, point1.Y + point2.Y);
+        }
+
+        public static Point Mult(this Point point, double factor)
+        {
+            return new Point(factor * point.X, factor * point.Y);
+        }
+
+        public static double Dot(this Point point1, Point point2)
+        {
+            return point1.X * point2.X + point1.Y * point2.Y;
+        }
     }
 }

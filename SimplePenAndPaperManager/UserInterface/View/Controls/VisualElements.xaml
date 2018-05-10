@@ -29,7 +29,7 @@
 
     <DataTemplate DataType="{x:Type datamodel:PolygonElement}">
         <Polygon
-            Points="{Binding Corners}"
+            Points="{Binding Corners, UpdateSourceTrigger=PropertyChanged}"
             Fill="{Binding Color, Converter={StaticResource ColorToBrushConverter}}"
             Stroke="{Binding StrokeColor, Converter={StaticResource ColorToBrushConverter}}"
             StrokeThickness="3"

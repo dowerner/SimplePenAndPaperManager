@@ -1,27 +1,27 @@
 ﻿using System.Collections.ObjectModel;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
-using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Buildings;
 
 namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
 {
     public class CreateRectangleAction : BaseAction
     {
-        public RectangleElement CreatedElement { get; set; }
+        public VisualRectangularBuilding Building { get; set; }
 
         public override void Do()
         {
-            DataModel.Instance.MapEntities.Add(CreatedElement);
+            DataModel.Instance.MapEntities.Add(Building);
             DataModel.Instance.SelectedEntities.Clear();
-            DataModel.Instance.SelectedEntities.Add(CreatedElement);
+            Building.IsSelected = true;
         }
 
         public override void Undo()
         {
-            DataModel.Instance.MapEntities.Remove(CreatedElement);
-            if (DataModel.Instance.SelectedEntities.Contains(CreatedElement))
+            DataModel.Instance.MapEntities.Remove(Building);
+            if (DataModel.Instance.SelectedEntities.Contains(Building))
             {
-                DataModel.Instance.SelectedEntities.Remove(CreatedElement);
+                DataModel.Instance.SelectedEntities.Remove(Building);
             }
         }
 
