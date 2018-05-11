@@ -5,12 +5,13 @@
                     xmlns:local="clr-namespace:SimplePenAndPaperManager.UserInterface.View.Controls">
 
     <converter:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
-    
+    <converter:MeterToPixelConverter x:Key="MeterToPixelConverter"/>
+
     <!--REPLACE THIS WITH RECTANGULAR POLYGON -> Polygons behave better!!!!-->
     <DataTemplate DataType="{x:Type datamodel:RectangleElement}">
         <Rectangle
-                Width="{Binding Width}"
-                Height="{Binding Height}"
+                Width="{Binding Width, Converter={StaticResource MeterToPixelConverter}}"
+                Height="{Binding Height, Converter={StaticResource MeterToPixelConverter}}"
                 Fill="{Binding Color, Converter={StaticResource ColorToBrushConverter}}"
                 Stroke="{Binding StrokeColor, Converter={StaticResource ColorToBrushConverter}}"
                 HorizontalAlignment="Center"
@@ -21,7 +22,8 @@
             <Rectangle.RenderTransform>
                 <TransformGroup>
                     <RotateTransform Angle="{Binding Orientation}"/>
-                    <TranslateTransform X="{Binding X}" Y="{Binding Y}"/>
+                    <TranslateTransform X="{Binding X, Converter={StaticResource MeterToPixelConverter}}" 
+                                        Y="{Binding Y, Converter={StaticResource MeterToPixelConverter}}"/>
                 </TransformGroup>
             </Rectangle.RenderTransform>
         </Rectangle>
@@ -29,7 +31,7 @@
 
     <DataTemplate DataType="{x:Type datamodel:PolygonElement}">
         <Polygon
-            Points="{Binding Corners, UpdateSourceTrigger=PropertyChanged}"
+            Points="{Binding Corners, Converter={StaticResource MeterToPixelConverter}}"
             Fill="{Binding Color, Converter={StaticResource ColorToBrushConverter}}"
             Stroke="{Binding StrokeColor, Converter={StaticResource ColorToBrushConverter}}"
             StrokeThickness="3"
@@ -38,7 +40,8 @@
             <Polygon.RenderTransform>
                 <TransformGroup>
                     <RotateTransform Angle="{Binding Orientation}"/>
-                    <TranslateTransform X="{Binding X}" Y="{Binding Y}"/>
+                    <TranslateTransform X="{Binding X, Converter={StaticResource MeterToPixelConverter}}"
+                                        Y="{Binding Y, Converter={StaticResource MeterToPixelConverter}}"/>
                 </TransformGroup>
             </Polygon.RenderTransform>
         </Polygon>
@@ -63,12 +66,12 @@
 
     <DataTemplate DataType="{x:Type datamodel:WallElement}">
         <Line
-            X1="{Binding X1}"
-            Y1="{Binding Y1}"
-            X2="{Binding X2}"
-            Y2="{Binding Y2}"
+            X1="{Binding X1, Converter={StaticResource MeterToPixelConverter}}"
+            Y1="{Binding Y1, Converter={StaticResource MeterToPixelConverter}}"
+            X2="{Binding X2, Converter={StaticResource MeterToPixelConverter}}"
+            Y2="{Binding Y2, Converter={StaticResource MeterToPixelConverter}}"
             Stroke="Black"
-            StrokeThickness="{Binding Thickness}"
+            StrokeThickness="{Binding Thickness, Converter={StaticResource MeterToPixelConverter}}"
             Cursor="Hand"
             />
     </DataTemplate>

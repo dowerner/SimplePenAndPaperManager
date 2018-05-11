@@ -1,4 +1,5 @@
-﻿using SimplePenAndPaperManager.UserInterface.Model;
+﻿using SimplePenAndPaperManager.MathTools;
+using SimplePenAndPaperManager.UserInterface.Model;
 using SimplePenAndPaperManager.UserInterface.Model.EditorActions;
 using SimplePenAndPaperManager.UserInterface.Model.EditorActions.Interface;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels;
@@ -154,7 +155,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.Commands
         public void Execute(object parameter)
         {
             PasteAction pasteAction = new PasteAction(DataModel.Instance.Clipboard);
-            pasteAction.PasteLocation = DataModel.Instance.MousePosition;
+            pasteAction.PasteLocation = DataModel.Instance.MousePosition.PxToMeter();
             pasteAction.Do();
             DataModel.Instance.UndoStack.Push(pasteAction);
         }

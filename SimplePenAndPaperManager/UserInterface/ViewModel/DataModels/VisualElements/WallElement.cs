@@ -146,7 +146,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
         public WallElement(IWallEntity mapEntity) : base(mapEntity)
         {
             _wallEnity = mapEntity;
-            Thickness = 5;
+            Thickness = 1;
         }
 
         #region Help Functions

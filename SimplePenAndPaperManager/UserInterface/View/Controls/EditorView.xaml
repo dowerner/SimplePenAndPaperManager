@@ -26,6 +26,7 @@
             <converter:ScaleToPercentConverter x:Key="ScaleToPercentConverter"/>
             <converter:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
             <converter:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+            <converter:MeterToPixelConverter x:Key="MeterToPixelConverter"/>
 
             <!-- 
         Override the style of the ListBox to remove the ScrollViewer.
@@ -372,8 +373,8 @@
                                            DraggingY="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=GizmoDragY, Mode=TwoWay}"
                                            RenderTransformOrigin="0.5 0.5">
                     <local:TransformationGizmo.RenderTransform>
-                        <TranslateTransform X="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=GizmoX, Mode=TwoWay}"
-                                            Y="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=GizmoY, Mode=TwoWay}"/>
+                        <TranslateTransform X="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=GizmoX, Mode=TwoWay, Converter={StaticResource MeterToPixelConverter}}"
+                                            Y="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=GizmoY, Mode=TwoWay, Converter={StaticResource MeterToPixelConverter}}"/>
                     </local:TransformationGizmo.RenderTransform>
                 </local:TransformationGizmo>
             </Canvas>

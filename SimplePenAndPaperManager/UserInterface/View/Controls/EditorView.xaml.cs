@@ -107,16 +107,18 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
 
             if(e.PropertyName == "SelectionLocation" && mouseHandlingMode != MouseHandlingMode.DragObject)
             {
-                Point canvasPoint = FromZoomControlToCanvasCoordinates(DataModel.Instance.SelectionLocation);
-                DataModel.Instance.GizmoX = canvasPoint.X - Gizmo.Width / 2;
-                DataModel.Instance.GizmoY = canvasPoint.Y - Gizmo.Height / 2;
+                Point canvasPoint = FromZoomControlToCanvasCoordinates(DataModel.Instance.SelectionLocation.MeterToPx());
+                DataModel.Instance.GizmoX = Utils.PxToMeter(canvasPoint.X - Gizmo.Width / 2);
+                DataModel.Instance.GizmoY = Utils.PxToMeter(canvasPoint.Y - Gizmo.Height / 2);
             }
 
             // update selected entities postion
             if((e.PropertyName == "GizmoX" || e.PropertyName == "GizmoY") && mouseHandlingMode == MouseHandlingMode.DragObject)
             {
                 TranslateAction translation = (TranslateAction)DataModel.Instance.CurrentAction;
-                translation.TransformEndPoint = FromCanvasToZoomControlCoordinates(new Point(DataModel.Instance.GizmoX + Gizmo.Width / 2, DataModel.Instance.GizmoY + Gizmo.Height / 2));
+                Point pxPoint = FromCanvasToZoomControlCoordinates(new Point(Utils.MeterToPx(DataModel.Instance.GizmoX) + Gizmo.Width / 2,
+                                                                             Utils.MeterToPx(DataModel.Instance.GizmoY) + Gizmo.Height / 2));
+                translation.TransformEndPoint = pxPoint.PxToMeter();
                 translation.Do();
             }
 
@@ -174,9 +176,10 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
         /// Expand the content area to fit the rectangles.
         /// </summary>
         private void ExpandContent()
-        {
-            DataModel.Instance.ContentWidth = 4000;
-            DataModel.Instance.ContentHeight = 4000;
+        { 
+            // temp
+            DataModel.Instance.ContentWidth = Utils.MeterToPx(400);
+            DataModel.Instance.ContentHeight = Utils.MeterToPx(400);
         }
 
         /// <summary>
@@ -341,15 +344,15 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                 //
                 Point canvasPoint = FromZoomControlToCanvasCoordinates(e.GetPosition(content));
 
-                if (DataModel.Instance.GizmoDragX) DataModel.Instance.GizmoX = canvasPoint.X - (Gizmo.X + Gizmo.Width / 2);
-                if (DataModel.Instance.GizmoDragY) DataModel.Instance.GizmoY = canvasPoint.Y - (Gizmo.Y + Gizmo.Height / 2);
+                if (DataModel.Instance.GizmoDragX) DataModel.Instance.GizmoX = Utils.PxToMeter(canvasPoint.X - (Gizmo.X + Gizmo.Width / 2));
+                if (DataModel.Instance.GizmoDragY) DataModel.Instance.GizmoY = Utils.PxToMeter(canvasPoint.Y - (Gizmo.Y + Gizmo.Height / 2));
 
                 e.Handled = true;
             }
             else if(mouseHandlingMode == MouseHandlingMode.CreateRectangle && DataModel.Instance.NewRectangleBuilding != null)
             {
                 // Update rectangle that is being created
-                Point point = e.GetPosition(content);
+                Point point = e.GetPosition(content).PxToMeter();
                 Point start = DataModel.Instance.BuildingStartLocation;
 
                 DataModel.Instance.NewRectangleBuilding.C = point.Sub(start);
@@ -361,7 +364,7 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
             else if(mouseHandlingMode == MouseHandlingMode.CreatePolygon && DataModel.Instance.CurrentPolygonWall != null)
             {
                 // Update polygon wall which is currently being placed
-                Point point = e.GetPosition(content);
+                Point point = e.GetPosition(content).PxToMeter();
                 DataModel.Instance.CurrentPolygonWall.X2 = point.X;
                 DataModel.Instance.CurrentPolygonWall.Y2 = point.Y;
             }

@@ -1,12 +1,33 @@
 ﻿using SimplePenAndPaperManager.MapEditor.Entities;
+using SimplePenAndPaperManager.UserInterface.Model;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 
 namespace SimplePenAndPaperManager.MathTools
 {
-    public static class MathTools
+    public static class Utils
     {
+        public static double PxToMeter(double px)
+        {
+            return px / Constants.PxPerMeter;
+        }
+
+        public static double MeterToPx(double meter)
+        {
+            return meter * Constants.PxPerMeter;
+        }
+
+        public static Point PxToMeter(this Point pxPoint)
+        {
+            return pxPoint.Mult(1 / Constants.PxPerMeter);
+        }
+
+        public static Point MeterToPx(this Point meterPoint)
+        {
+            return meterPoint.Mult(Constants.PxPerMeter);
+        }
+
         public static bool AddIfNoPointPresent(this List<Point2D> points, Point2D point, double searchRadius = 3)
         {
             foreach(Point2D existingPoint in points)

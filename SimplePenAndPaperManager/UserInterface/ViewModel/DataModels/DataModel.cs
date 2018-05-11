@@ -1,4 +1,5 @@
 ﻿using SimplePenAndPaperManager.MapEditor.Entities.Buildings;
+using SimplePenAndPaperManager.MathTools;
 using SimplePenAndPaperManager.UserInterface.Model;
 using SimplePenAndPaperManager.UserInterface.Model.EditorActions.Interface;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements;
@@ -198,13 +199,13 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
         #region Creation Methods
         private void InitiateRectangularBuilding()
         {
-            BuildingStartLocation = MousePosition;
+            BuildingStartLocation = MousePosition.PxToMeter();
             NewRectangleBuilding = new VisualRectangularBuilding(new RectangularBuilding()
             {
                 X = BuildingStartLocation.X,
                 Y = BuildingStartLocation.Y,
-                Width = 10,
-                Height = 10
+                Width = 0,
+                Height = 0
             });
             MapEntities.Add(NewRectangleBuilding);
         }
@@ -214,15 +215,16 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
             if(CurrentPolygonWall == null)
             {
                 // save mouse start position
-                BuildingStartLocation = MousePosition;
+                BuildingStartLocation = MousePosition.PxToMeter();
                 NewPolygonalBuildingWalls = new List<WallElement>();
             }
             // create wall of building
             CurrentPolygonWall = new WallElement(new Wall());
-            CurrentPolygonWall.X1 = MousePosition.X;
-            CurrentPolygonWall.Y1 = MousePosition.Y;
-            CurrentPolygonWall.X2 = MousePosition.X;
-            CurrentPolygonWall.Y2 = MousePosition.Y;
+            Point meterPosition = MousePosition.PxToMeter();
+            CurrentPolygonWall.X1 = meterPosition.X;
+            CurrentPolygonWall.Y1 = meterPosition.Y;
+            CurrentPolygonWall.X2 = meterPosition.X;
+            CurrentPolygonWall.Y2 = meterPosition.Y;
 
             NewPolygonalBuildingWalls.Add(CurrentPolygonWall);
 
