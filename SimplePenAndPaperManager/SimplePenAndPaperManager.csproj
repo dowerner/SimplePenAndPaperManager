@@ -79,6 +79,7 @@
     <Compile Include="MapEditor\Entities\Items\Interface\IItemEntity.cs" />
     <Compile Include="MapEditor\Entities\Items\Interface\IKeyEntity.cs" />
     <Compile Include="MapEditor\Entities\Point2D.cs" />
+    <Compile Include="MapEditor\FloorMaterial.cs" />
     <Compile Include="MathTools\Utils.cs" />
     <Compile Include="UserInterface\Model\Constants.cs" />
     <Compile Include="UserInterface\Model\EditorActions\CreatePolygonAction.cs" />
@@ -92,6 +93,7 @@
     <Compile Include="UserInterface\Model\ObservableStack.cs" />
     <Compile Include="UserInterface\ViewModel\Commands\BuildingCommands.cs" />
     <Compile Include="UserInterface\ViewModel\Commands\EditCommands.cs" />
+    <Compile Include="UserInterface\ViewModel\Commands\TerrainCommands.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\DataModel.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\BaseVisualElement.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\Buildings\VisualPolygonalBuilding.cs" />
@@ -103,12 +105,18 @@
     <Compile Include="UserInterface\View\Controls\EditorView.xaml.cs">
       <DependentUpon>EditorView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserInterface\View\Controls\TerrainToolbox.xaml.cs">
+      <DependentUpon>TerrainToolbox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserInterface\View\Controls\TransformationGizmo.xaml.cs">
       <DependentUpon>TransformationGizmo.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserInterface\View\Converter\BoolToVisibilityConverter.cs" />
     <Compile Include="UserInterface\View\Converter\ColorToBrushConverter.cs" />
     <Compile Include="UserInterface\View\Converter\MeterToPixelConverter.cs" />
+    <Compile Include="UserInterface\View\Converter\NotConverter.cs" />
+    <Compile Include="UserInterface\View\Converter\TerrainBrushToBoolConverter.cs" />
+    <Compile Include="UserInterface\View\Converter\TerrainToColorConverter.cs" />
     <Compile Include="UserInterface\View\HelpTextWindow.xaml.cs">
       <DependentUpon>HelpTextWindow.xaml</DependentUpon>
     </Compile>
@@ -116,8 +124,13 @@
       <DependentUpon>OverviewWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserInterface\View\States\MouseHandleMode.cs" />
+    <Compile Include="UserInterface\View\States\TerrainBrush.cs" />
     <Compile Include="UserInterface\View\States\TransformationEvent.cs" />
     <Page Include="UserInterface\View\Controls\EditorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserInterface\View\Controls\TerrainToolbox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

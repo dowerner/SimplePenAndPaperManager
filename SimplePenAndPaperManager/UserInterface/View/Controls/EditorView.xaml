@@ -27,6 +27,8 @@
             <converter:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
             <converter:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
             <converter:MeterToPixelConverter x:Key="MeterToPixelConverter"/>
+            <converter:NotConverter x:Key="NotConverter"/>
+            <converter:TerrainToColorConverter x:Key="TerrainToColorConverter"/>
 
             <!-- 
         Override the style of the ListBox to remove the ScrollViewer.
@@ -329,9 +331,11 @@
                     Style="{StaticResource noScrollViewerListBoxStyle}"
                     ItemContainerStyle="{StaticResource listBoxItemStyle}"
                     />-->
-                    <ItemsControl
+                    <InkCanvas x:Name="TerrainMap" IsHitTestVisible="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=InTerrainEditingMode}">
+                    </InkCanvas>
+                    <ItemsControl IsHitTestVisible="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=InTerrainEditingMode, Converter={StaticResource NotConverter}}"
                         x:Name="content"
-                        Background="White"
+                        Background="Transparent"
                         ItemsSource="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=MapEntities}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>

@@ -1,7 +1,9 @@
-﻿using SimplePenAndPaperManager.MapEditor.Entities.Buildings;
+﻿using SimplePenAndPaperManager.MapEditor;
+using SimplePenAndPaperManager.MapEditor.Entities.Buildings;
 using SimplePenAndPaperManager.MathTools;
 using SimplePenAndPaperManager.UserInterface.Model;
 using SimplePenAndPaperManager.UserInterface.Model.EditorActions.Interface;
+using SimplePenAndPaperManager.UserInterface.View.States;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Buildings;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
@@ -110,24 +112,24 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
         private void MapEntities_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             // listen for entity changes
-            if(e.NewItems != null)
+            if (e.NewItems != null)
             {
                 foreach (IVisualElement element in e.NewItems) element.PropertyChanged += EntityChanged;
             }
-            if(e.OldItems != null)
+            if (e.OldItems != null)
             {
                 foreach (IVisualElement element in e.OldItems) element.PropertyChanged -= EntityChanged;
             }
-            
+
         }
 
         private void SelectedEntities_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             // handle items where selection was removed
-            foreach(IVisualElement element in MapEntities)
+            foreach (IVisualElement element in MapEntities)
             {
                 if (!SelectedEntities.Contains(element)) element.IsSelected = false;
-            }            
+            }
 
             // set selection position
             _selectionLocation = new Point(0, 0);
@@ -152,10 +154,10 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
         {
             IVisualElement entity = (IVisualElement)sender;
 
-            if(e.PropertyName == "IsSelected")
+            if (e.PropertyName == "IsSelected")
             {
                 if (entity.IsSelected && !_selectedEntities.Contains(entity)) _selectedEntities.Add(entity);
-                else if (!entity.IsSelected && _selectedEntities.Contains(entity)) _selectedEntities.Remove(entity); 
+                else if (!entity.IsSelected && _selectedEntities.Contains(entity)) _selectedEntities.Remove(entity);
             }
         }
 
@@ -212,7 +214,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
 
         private void InitiatePolygonalBuilding()
         {
-            if(CurrentPolygonWall == null)
+            if (CurrentPolygonWall == null)
             {
                 // save mouse start position
                 BuildingStartLocation = MousePosition.PxToMeter();
@@ -266,6 +268,51 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
             }
         }
         private bool _isCreatingPolygon;
+
+        public bool InTerrainEditingMode
+        {
+            get { return _inTerrainEditingMode; }
+            set
+            {
+                _inTerrainEditingMode = value;
+                OnPropertyChanged("InTerrainEditingMode");
+            }
+        }
+        private bool _inTerrainEditingMode;
+
+        public TerrainBrush TerrainBrush
+        {
+            get { return _terrainBrush; }
+            set
+            {
+                _terrainBrush = value;
+                InTerrainEditingMode = _terrainBrush != TerrainBrush.None;
+                OnPropertyChanged("TerrainBrush");
+            }
+        }
+        private TerrainBrush _terrainBrush = TerrainBrush.Circle;
+
+        public double TerrainBrushSize
+        {
+            get { return _brushSize; }
+            set
+            {
+                _brushSize = value;
+                OnPropertyChanged("TerrainBrushSize");
+            }
+        }
+        private double _brushSize = 10;
+
+        public FloorMaterial Terrain
+        {
+            get { return _terrain; }
+            set
+            {
+                _terrain = value;
+                OnPropertyChanged("Terrain");
+            }
+        }
+        private FloorMaterial _terrain = FloorMaterial.Grass;
 
         public ObservableCollection<IVisualElement> MapEntities
         {

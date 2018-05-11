@@ -47,7 +47,7 @@
                 <MenuItem Header="Create Door"/>
             </MenuItem>
             <MenuItem Header="Terrain">
-                <MenuItem Header="Create Terrain"/>
+                <MenuItem Header="Edit Terrain" Command="{Binding Source={x:Static commands:TerrainCommands.EditTerrainCommand}}"/>
                 <MenuItem Header="Map Size"/>
             </MenuItem>
             <MenuItem Header="Vegetation">

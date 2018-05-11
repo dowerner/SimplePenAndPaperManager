@@ -1,4 +1,5 @@
-﻿using SimplePenAndPaperManager.MathTools;
+﻿using SimplePenAndPaperManager.MapEditor;
+using SimplePenAndPaperManager.MathTools;
 using SimplePenAndPaperManager.UserInterface.Model.EditorActions;
 using SimplePenAndPaperManager.UserInterface.View.States;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels;
@@ -9,7 +10,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Shapes;
+using System.Windows.Media;
 using ZoomAndPan;
 
 namespace SimplePenAndPaperManager.UserInterface.View.Controls
@@ -59,6 +60,8 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
             InitializeComponent();
             DataModel.Instance.PropertyChanged += Instance_PropertyChanged;
             Gizmo.TransformationChanged += Gizmo_TransformationChanged;
+            DataModel.Instance.TerrainBrushSize = 10;
+            DataModel.Instance.Terrain = FloorMaterial.Grass;
         }
 
         private void Gizmo_TransformationChanged(object sender, TransformationEvent transformationEvent)
@@ -129,6 +132,53 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                 rotation.EndRotation = DataModel.Instance.GizmoOrientation;
                 rotation.Do();
             }
+
+            #region terrain
+            if (e.PropertyName == "TerrainBrushSize")
+            {
+                TerrainMap.DefaultDrawingAttributes.Width = Utils.MeterToPx(DataModel.Instance.TerrainBrushSize);
+                TerrainMap.DefaultDrawingAttributes.Height = Utils.MeterToPx(DataModel.Instance.TerrainBrushSize);
+            }
+            else if (e.PropertyName == "TerrainBrush")
+            {
+                switch (DataModel.Instance.TerrainBrush)
+                {
+                    case TerrainBrush.Circle:
+                        TerrainMap.DefaultDrawingAttributes.StylusTip = System.Windows.Ink.StylusTip.Ellipse;
+                        break;
+                    case TerrainBrush.Rectangle:
+                        TerrainMap.DefaultDrawingAttributes.StylusTip = System.Windows.Ink.StylusTip.Rectangle;
+                        break;
+                }
+            }
+            else if (e.PropertyName == "Terrain")
+            {
+                switch (DataModel.Instance.Terrain)
+                {
+                    case FloorMaterial.Asphalt:
+                        TerrainMap.DefaultDrawingAttributes.Color = Colors.LightGray;
+                        break;
+                    case FloorMaterial.Grass:
+                        TerrainMap.DefaultDrawingAttributes.Color = Colors.OliveDrab;
+                        break;
+                    case FloorMaterial.Stone:
+                        TerrainMap.DefaultDrawingAttributes.Color = Colors.Gray;
+                        break;
+                    case FloorMaterial.Water:
+                        TerrainMap.DefaultDrawingAttributes.Color = Colors.CornflowerBlue;
+                        break;
+                    case FloorMaterial.Wood:
+                        TerrainMap.DefaultDrawingAttributes.Color = Colors.DarkGoldenrod;
+                        break;
+                    case FloorMaterial.Sand:
+                        TerrainMap.DefaultDrawingAttributes.Color = Colors.PaleGoldenrod;
+                        break;
+                    default:
+                        TerrainMap.DefaultDrawingAttributes.Color = Colors.White;
+                        break;
+                }
+            }
+            #endregion
         }
 
         /// <summary>
