@@ -1,6 +1,5 @@
 ﻿using SimplePenAndPaperManager.MapEditor.Entities.Interface;
 using System.Windows.Media;
-using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
 
 namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements
 {

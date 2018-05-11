@@ -73,27 +73,25 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
 
         public double Width
         {
-            get { return _width; }
+            get { return _rectangleSource.Width; }
             set
             {
-                _width = value;
+                _rectangleSource.Width = value;
                 OnPropertyChanged("Width");
                 UpdateCorners();
             }
         }
-        private double _width;
 
         public double Height
         {
-            get { return _height; }
+            get { return _rectangleSource.Height; }
             set
             {
-                _height = value;
+                _rectangleSource.Height = value;
                 OnPropertyChanged("Height");
                 UpdateCorners();
             }
         }
-        private double _height;
 
         private IRectangularMapEntity _rectangleSource;
 
@@ -102,25 +100,27 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             _rectangleSource = mapEntity;
             _corners = new PointCollection();
             for (int i = 0; i < 4; i++) _corners.Add(new Point());
+            UpdateCorners();
         }
 
         public override IVisualElement Copy()
         {
-            return new VisualRectangularBuilding((IRectangularMapEntity)_rectangleSource);
+            return new VisualRectangularBuilding((IRectangularMapEntity)_rectangleSource.Copy());
         }
 
         private void UpdateCorners()
         {
-            A = new Point(-Width / 2, -Height / 2);
-            B = new Point(Width / 2, -Height / 2);
-            C = new Point(Width / 2, Height / 2);
-            D = new Point(-Width / 2, Height / 2);
+            Corners[0] = new Point(-Width / 2, -Height / 2);
+            Corners[1] = new Point(Width / 2, -Height / 2);
+            Corners[2] = new Point(Width / 2, Height / 2);
+            Corners[3] = new Point(-Width / 2, Height / 2);
+            OnPropertyChanged("Corners");
         }
 
         private void UpdateDimensions()
         {
-            _width = B.X - A.X;
-            _height = D.Y - A.Y;
+            _rectangleSource.Width = B.X - A.X;
+            _rectangleSource.Height = D.Y - A.Y;
             OnPropertyChanged("Width");
             OnPropertyChanged("Height");
         }
