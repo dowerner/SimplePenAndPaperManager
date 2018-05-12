@@ -98,11 +98,14 @@
     <Compile Include="UserInterface\ViewModel\Commands\TerrainCommands.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\DataModel.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\BaseVisualElement.cs" />
+    <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\Buildings\VisualPolygon.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\Buildings\VisualPolygonalBuilding.cs" />
+    <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\Buildings\VisualRectangle.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\Buildings\VisualRectangularBuilding.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\Interface\IVisualElement.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\PolygonElement.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\RectangleElement.cs" />
+    <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\VisualElementHelper.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\WallElement.cs" />
     <Compile Include="UserInterface\View\Controls\EditorView.xaml.cs">
       <DependentUpon>EditorView.xaml</DependentUpon>

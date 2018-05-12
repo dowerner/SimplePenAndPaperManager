@@ -7,7 +7,7 @@ namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
 {
     public class CreateRectangleAction : BaseAction
     {
-        public VisualRectangularBuilding Building { get; set; }
+        public VisualRectangle Building { get; set; }
 
         public override void Do()
         {

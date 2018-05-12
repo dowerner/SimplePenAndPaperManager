@@ -1,5 +1,7 @@
 ﻿using SimplePenAndPaperManager.MapEditor;
+using SimplePenAndPaperManager.MapEditor.Entities;
 using SimplePenAndPaperManager.MapEditor.Entities.Buildings;
+using SimplePenAndPaperManager.MapEditor.Entities.Interface;
 using SimplePenAndPaperManager.MathTools;
 using SimplePenAndPaperManager.UserInterface.Model;
 using SimplePenAndPaperManager.UserInterface.Model.EditorActions;
@@ -85,8 +87,8 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
 
         public DataModel()
         {
-            TerrainStrokes = new StrokeCollection();
-            TerrainStrokes.StrokesChanged += TerrainStrokes_StrokesChanged;
+            /*TerrainStrokes = new StrokeCollection();
+            TerrainStrokes.StrokesChanged += TerrainStrokes_StrokesChanged;*/
 
             UndoStack = new ObservableStack<IEditorAction>();
             RedoStack = new ObservableStack<IEditorAction>();
@@ -97,20 +99,8 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
 
             MapEntities = new ObservableCollection<IVisualElement>();
             MapEntities.CollectionChanged += MapEntities_CollectionChanged;
-            MapEntities.Add(new RectangleElement(new RectangularBuilding() { X = 100, Y = 400, Width = 100, Height = 100, Orientation = 20 }));
-            MapEntities.Add(new RectangleElement(new RectangularBuilding() { X = 150, Y = 600, Width = 130, Height = 100, Orientation = -34 }));
 
-            // stress test
-            //for(int i = 0; i < 3000; i++) MapEntities.Add(new VisualElements.RectangleElement(new MapEditor.Entities.Buildings.RectangularBuilding() { X = 150, Y = 600, Width = 130, Height = 100, Orientation = -34 }));
-
-            List<MapEditor.Entities.Point2D> c = new List<MapEditor.Entities.Point2D>();
-            c.Add(new MapEditor.Entities.Point2D() { X = 10, Y = 10 });
-            c.Add(new MapEditor.Entities.Point2D() { X = 24, Y = 10 });
-            c.Add(new MapEditor.Entities.Point2D() { X = 15, Y = 34 });
-            c.Add(new MapEditor.Entities.Point2D() { X = 30, Y = 50 });
-            c.Add(new MapEditor.Entities.Point2D() { X = 60, Y = 50 });
-
-            MapEntities.Add(new WallElement(new Wall() { X = 600, Y = 600, Length = 240, Thickness = 10 }));
+            CurrentMap = new Map() { Width = 400, Height = 400 };
         }
 
         private void TerrainStrokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
@@ -126,13 +116,20 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
             // listen for entity changes
             if (e.NewItems != null)
             {
-                foreach (IVisualElement element in e.NewItems) element.PropertyChanged += EntityChanged;
+                foreach (IVisualElement element in e.NewItems)
+                {
+                    element.PropertyChanged += EntityChanged;
+                    CurrentMap.Entities.Add(element.SourceEntity);
+                }
             }
             if (e.OldItems != null)
             {
-                foreach (IVisualElement element in e.OldItems) element.PropertyChanged -= EntityChanged;
+                foreach (IVisualElement element in e.OldItems)
+                {
+                    element.PropertyChanged -= EntityChanged;
+                    CurrentMap.Entities.Remove(element.SourceEntity);
+                }
             }
-
         }
 
         private void SelectedEntities_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -205,7 +202,6 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
 
         #region Creation Variables
         public VisualRectangularBuilding NewRectangleBuilding { get; set; }
-        public PolygonElement NewPolygonalBuilding { get; set; }
         public List<WallElement> NewPolygonalBuildingWalls { get; set; }
         public WallElement CurrentPolygonWall { get; set; }
 
@@ -230,7 +226,8 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
                 X = BuildingStartLocation.X,
                 Y = BuildingStartLocation.Y,
                 Width = 0,
-                Height = 0
+                Height = 0,
+                Id = CurrentMap.GetNewId()
             });
             MapEntities.Add(NewRectangleBuilding);
         }
@@ -370,6 +367,28 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
             }
         }
         private ObservableCollection<IVisualElement> _mapEntities;
+
+        public Map CurrentMap
+        {
+            get { return _currentMap; }
+            set
+            {
+                MapEntities.Clear();
+                if (_currentMap != null) _currentMap.Terrain.StrokesChanged -= TerrainStrokes_StrokesChanged;
+                _currentMap = value;
+
+                if (_currentMap.Entities == null) _currentMap.Entities = new List<IMapEntity>();
+                if (_currentMap.Terrain == null) _currentMap.Terrain = new StrokeCollection();
+
+                TerrainStrokes = _currentMap.Terrain;
+                TerrainStrokes.StrokesChanged += TerrainStrokes_StrokesChanged;
+
+                OnPropertyChanged("CurrentMap");
+
+                foreach (IMapEntity enity in _currentMap.Entities) MapEntities.Add(VisualElementHelper.CreateFromMapEntity(enity));
+            }
+        }
+        private Map _currentMap;
 
         public ObservableCollection<IVisualElement> SelectedEntities
         {

@@ -137,6 +137,12 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
 
         public abstract IVisualElement Copy();
 
+
+        public IMapEntity SourceEntity
+        {
+            get { return _source; }
+            set { _source = value; }
+        }
         protected IMapEntity _source;
 
         public BaseVisualElement(IMapEntity mapEntity)

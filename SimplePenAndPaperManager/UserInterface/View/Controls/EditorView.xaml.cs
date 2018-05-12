@@ -143,6 +143,8 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
             }
 
             #region terrain
+            if (e.PropertyName == "CurrentMap") ExpandContent();
+
             if (e.PropertyName == "TerrainBrushSize" || e.PropertyName == "ContentScale")
             {
                 TerrainMap.DefaultDrawingAttributes.Width = Utils.MeterToPx(DataModel.Instance.TerrainBrushSize);
@@ -245,8 +247,8 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
         private void ExpandContent()
         { 
             // temp
-            DataModel.Instance.ContentWidth = Utils.MeterToPx(400);
-            DataModel.Instance.ContentHeight = Utils.MeterToPx(400);
+            DataModel.Instance.ContentWidth = Utils.MeterToPx(DataModel.Instance.CurrentMap.Width);
+            DataModel.Instance.ContentHeight = Utils.MeterToPx(DataModel.Instance.CurrentMap.Height);
         }
 
         /// <summary>
