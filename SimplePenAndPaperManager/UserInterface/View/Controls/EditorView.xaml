@@ -331,7 +331,8 @@
                     Style="{StaticResource noScrollViewerListBoxStyle}"
                     ItemContainerStyle="{StaticResource listBoxItemStyle}"
                     />-->
-                    <InkCanvas x:Name="TerrainMap" IsHitTestVisible="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=InTerrainEditingMode}">
+                    <InkCanvas x:Name="TerrainMap" IsHitTestVisible="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=InTerrainEditingMode}"
+                               Strokes="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=TerrainStrokes}">
                     </InkCanvas>
                     <ItemsControl IsHitTestVisible="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=InTerrainEditingMode, Converter={StaticResource NotConverter}}"
                         x:Name="content"
@@ -381,6 +382,20 @@
                                             Y="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=GizmoY, Mode=TwoWay, Converter={StaticResource MeterToPixelConverter}}"/>
                     </local:TransformationGizmo.RenderTransform>
                 </local:TransformationGizmo>
+                <Ellipse x:Name="TerrainEllipse" Stroke="Black" IsHitTestVisible="False"
+                         Visibility="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=ShowTerrainEllipse, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <Ellipse.RenderTransform>
+                        <TranslateTransform  X="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=CanvasPosition.X, Mode=TwoWay}"
+                                            Y="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=CanvasPosition.Y, Mode=TwoWay}"/>
+                    </Ellipse.RenderTransform>
+                </Ellipse>
+                <Rectangle x:Name="TerrainRectangle" Stroke="Black" IsHitTestVisible="False"
+                         Visibility="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=ShowTerrainRectangle, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <Rectangle.RenderTransform>
+                        <TranslateTransform  X="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=CanvasPosition.X, Mode=TwoWay}"
+                                            Y="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=CanvasPosition.Y, Mode=TwoWay}"/>
+                    </Rectangle.RenderTransform>
+                </Rectangle>
             </Canvas>
         </Grid>
     </DockPanel>

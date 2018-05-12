@@ -78,10 +78,12 @@
     <Compile Include="MapEditor\Entities\Interface\IRectangularMapEntity.cs" />
     <Compile Include="MapEditor\Entities\Items\Interface\IItemEntity.cs" />
     <Compile Include="MapEditor\Entities\Items\Interface\IKeyEntity.cs" />
+    <Compile Include="MapEditor\Entities\Map.cs" />
     <Compile Include="MapEditor\Entities\Point2D.cs" />
     <Compile Include="MapEditor\FloorMaterial.cs" />
     <Compile Include="MathTools\Utils.cs" />
     <Compile Include="UserInterface\Model\Constants.cs" />
+    <Compile Include="UserInterface\Model\EditorActions\AddTerrainStrokeAction.cs" />
     <Compile Include="UserInterface\Model\EditorActions\CreatePolygonAction.cs" />
     <Compile Include="UserInterface\Model\EditorActions\CreateRectangleAction.cs" />
     <Compile Include="UserInterface\Model\EditorActions\DeleteAction.cs" />

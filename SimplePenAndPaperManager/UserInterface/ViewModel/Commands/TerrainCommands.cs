@@ -1,5 +1,6 @@
 ﻿using SimplePenAndPaperManager.MapEditor;
 using SimplePenAndPaperManager.UserInterface.View.Controls;
+using SimplePenAndPaperManager.UserInterface.View.States;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels;
 using System;
 using System.ComponentModel;
@@ -43,6 +44,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.Commands
         public void Execute(object parameter)
         {
             DataModel.Instance.InTerrainEditingMode = true;
+            DataModel.Instance.TerrainBrush = TerrainBrush.Circle;
             TerrainToolbox toolbox = new TerrainToolbox();
             toolbox.Owner = Application.Current.MainWindow;
             toolbox.Show();
@@ -71,6 +73,8 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.Commands
         public void Execute(object parameter)
         {
             DataModel.Instance.Terrain = (FloorMaterial)parameter;
+            DataModel.Instance.InTerrainEditingMode = true;
+            if(DataModel.Instance.TerrainBrush == TerrainBrush.None) DataModel.Instance.TerrainBrush = TerrainBrush.Circle;
         }
     }
 }

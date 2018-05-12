@@ -60,8 +60,17 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
             InitializeComponent();
             DataModel.Instance.PropertyChanged += Instance_PropertyChanged;
             Gizmo.TransformationChanged += Gizmo_TransformationChanged;
+
+            TerrainMap.UseCustomCursor = true;
+            TerrainMap.Cursor = Cursors.Pen;
+
             DataModel.Instance.TerrainBrushSize = 10;
             DataModel.Instance.Terrain = FloorMaterial.Grass;
+        }
+
+        private void TerrainMap_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape) HandleEscape();
         }
 
         private void Gizmo_TransformationChanged(object sender, TransformationEvent transformationEvent)
@@ -134,10 +143,17 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
             }
 
             #region terrain
-            if (e.PropertyName == "TerrainBrushSize")
+            if (e.PropertyName == "TerrainBrushSize" || e.PropertyName == "ContentScale")
             {
                 TerrainMap.DefaultDrawingAttributes.Width = Utils.MeterToPx(DataModel.Instance.TerrainBrushSize);
                 TerrainMap.DefaultDrawingAttributes.Height = Utils.MeterToPx(DataModel.Instance.TerrainBrushSize);
+
+                TerrainEllipse.Width = Utils.MeterToPx(DataModel.Instance.TerrainBrushSize) * DataModel.Instance.ContentScale;
+                TerrainEllipse.Height = Utils.MeterToPx(DataModel.Instance.TerrainBrushSize) * DataModel.Instance.ContentScale;
+                TerrainEllipse.Margin = new Thickness(-TerrainEllipse.Width / 2, -TerrainEllipse.Height / 2, 0, 0);
+                TerrainRectangle.Width = Utils.MeterToPx(DataModel.Instance.TerrainBrushSize) * DataModel.Instance.ContentScale;
+                TerrainRectangle.Height = Utils.MeterToPx(DataModel.Instance.TerrainBrushSize) * DataModel.Instance.ContentScale;
+                TerrainRectangle.Margin = new Thickness(-TerrainRectangle.Width / 2, -TerrainRectangle.Height / 2, 0, 0);
             }
             else if (e.PropertyName == "TerrainBrush")
             {
@@ -218,6 +234,7 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                 DataModel.Instance.MapEntities.Remove(DataModel.Instance.NewRectangleBuilding);
                 DataModel.Instance.NewRectangleBuilding = null;
             }
+            DataModel.Instance.InTerrainEditingMode = false;
             mouseHandlingMode = MouseHandlingMode.None;
         }
         #endregion
@@ -419,6 +436,7 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                 DataModel.Instance.CurrentPolygonWall.Y2 = point.Y;
             }
             DataModel.Instance.MousePosition = e.GetPosition(content);
+            DataModel.Instance.CanvasPosition = FromZoomControlToCanvasCoordinates(DataModel.Instance.MousePosition);
         }
 
         #region Math Tools

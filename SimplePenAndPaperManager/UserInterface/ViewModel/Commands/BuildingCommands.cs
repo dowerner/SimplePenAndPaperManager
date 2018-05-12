@@ -33,12 +33,22 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.Commands
 
         public bool CanExecute(object parameter)
         {
-            return true;
+            return !DataModel.Instance.InTerrainEditingMode;
         }
 
         public void Execute(object parameter)
         {
             DataModel.Instance.IsCreatingRectangle = true;
+        }
+
+        public CreateRecangularBuildingCommand()
+        {
+            DataModel.Instance.PropertyChanged += Instance_PropertyChanged;
+        }
+
+        private void Instance_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "InTerrainEditingMode") CanExecuteChanged?.Invoke(this, null);
         }
     }
 
@@ -48,12 +58,22 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.Commands
 
         public bool CanExecute(object parameter)
         {
-            return true;
+            return !DataModel.Instance.InTerrainEditingMode;
         }
 
         public void Execute(object parameter)
         {
             DataModel.Instance.IsCreatingPolygon = true;
+        }
+
+        public CreatePolygonalBuildingCommand()
+        {
+            DataModel.Instance.PropertyChanged += Instance_PropertyChanged;
+        }
+
+        private void Instance_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "InTerrainEditingMode") CanExecuteChanged?.Invoke(this, null);
         }
     }
 }

@@ -2,17 +2,18 @@
 using SimplePenAndPaperManager.MapEditor.Entities.Buildings;
 using SimplePenAndPaperManager.MathTools;
 using SimplePenAndPaperManager.UserInterface.Model;
+using SimplePenAndPaperManager.UserInterface.Model.EditorActions;
 using SimplePenAndPaperManager.UserInterface.Model.EditorActions.Interface;
 using SimplePenAndPaperManager.UserInterface.View.States;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Buildings;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Ink;
 
 namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
 {
@@ -84,6 +85,9 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
 
         public DataModel()
         {
+            TerrainStrokes = new StrokeCollection();
+            TerrainStrokes.StrokesChanged += TerrainStrokes_StrokesChanged;
+
             UndoStack = new ObservableStack<IEditorAction>();
             RedoStack = new ObservableStack<IEditorAction>();
 
@@ -107,6 +111,14 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
             c.Add(new MapEditor.Entities.Point2D() { X = 60, Y = 50 });
 
             MapEntities.Add(new WallElement(new Wall() { X = 600, Y = 600, Length = 240, Thickness = 10 }));
+        }
+
+        private void TerrainStrokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
+        {
+            if(e.Added != null && e.Added.Count > 0)
+            {
+                UndoStack.Push(new AddTerrainStrokeAction(null) { Added = e.Added });
+            }
         }
 
         private void MapEntities_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -179,6 +191,17 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
             }
         }
         private Point _mousePosition;
+
+        public Point CanvasPosition
+        {
+            get { return _canvasPosition; }
+            set
+            {
+                _canvasPosition = value;
+                OnPropertyChanged("CanvasPosition");
+            }
+        }
+        private Point _canvasPosition;
 
         #region Creation Variables
         public VisualRectangularBuilding NewRectangleBuilding { get; set; }
@@ -275,7 +298,14 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
             set
             {
                 _inTerrainEditingMode = value;
+                if (!_inTerrainEditingMode)
+                {
+                    _terrainBrush = TerrainBrush.None;
+                    OnPropertyChanged("TerrainBrush");
+                }
                 OnPropertyChanged("InTerrainEditingMode");
+                OnPropertyChanged("ShowTerrainEllipse");
+                OnPropertyChanged("ShowTerrainRectangle");
             }
         }
         private bool _inTerrainEditingMode;
@@ -288,9 +318,14 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
                 _terrainBrush = value;
                 InTerrainEditingMode = _terrainBrush != TerrainBrush.None;
                 OnPropertyChanged("TerrainBrush");
+                OnPropertyChanged("ShowTerrainEllipse");
+                OnPropertyChanged("ShowTerrainRectangle");
             }
         }
         private TerrainBrush _terrainBrush = TerrainBrush.Circle;
+
+        public bool ShowTerrainEllipse { get { return _terrainBrush == TerrainBrush.Circle && InTerrainEditingMode; } }
+        public bool ShowTerrainRectangle { get { return _terrainBrush == TerrainBrush.Rectangle && InTerrainEditingMode; } }
 
         public double TerrainBrushSize
         {
@@ -313,6 +348,17 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
             }
         }
         private FloorMaterial _terrain = FloorMaterial.Grass;
+
+        public StrokeCollection TerrainStrokes
+        {
+            get { return _terrainStrokes; }
+            set
+            {
+                _terrainStrokes = value;
+                OnPropertyChanged("TerrainStrokes");
+            }
+        }
+        private StrokeCollection _terrainStrokes;
 
         public ObservableCollection<IVisualElement> MapEntities
         {
