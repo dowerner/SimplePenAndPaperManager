@@ -1,7 +1,12 @@
 ﻿using SimplePenAndPaperManager.MapEditor;
 using SimplePenAndPaperManager.MapEditor.Entities;
 using SimplePenAndPaperManager.MapEditor.Entities.Buildings;
+using SimplePenAndPaperManager.MapEditor.Entities.Buildings.Interface;
+using SimplePenAndPaperManager.MapEditor.Entities.Characters.Interface;
 using SimplePenAndPaperManager.MapEditor.Entities.Interface;
+using SimplePenAndPaperManager.MapEditor.Entities.Items.Interface;
+using SimplePenAndPaperManager.MapEditor.Entities.Markers.Interface;
+using SimplePenAndPaperManager.MapEditor.Entities.Vegetation.Interface;
 using SimplePenAndPaperManager.MathTools;
 using SimplePenAndPaperManager.UserInterface.Model;
 using SimplePenAndPaperManager.UserInterface.Model.EditorActions;
@@ -15,6 +20,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Ink;
 
 namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
@@ -227,7 +233,8 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
                 Y = BuildingStartLocation.Y,
                 Width = 0,
                 Height = 0,
-                Id = CurrentMap.GetNewId()
+                Id = CurrentMap.GetNewId(),
+                Name = Constants.DefaultHouseName
             });
             MapEntities.Add(NewRectangleBuilding);
         }
@@ -300,6 +307,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
                     _terrainBrush = TerrainBrush.None;
                     OnPropertyChanged("TerrainBrush");
                 }
+                else SelectedEntities.Clear();
                 OnPropertyChanged("InTerrainEditingMode");
                 OnPropertyChanged("ShowTerrainEllipse");
                 OnPropertyChanged("ShowTerrainRectangle");
@@ -357,12 +365,30 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
         }
         private StrokeCollection _terrainStrokes;
 
+        public ICollectionView CharacterView { get; set; }
+        public ICollectionView ItemView { get; set; }
+        public ICollectionView BuildingsView { get; set; }
+        public ICollectionView VegetationView { get; set; }
+        public ICollectionView MarkersView { get; set; }
+
         public ObservableCollection<IVisualElement> MapEntities
         {
             get { return _mapEntities; }
             set
             {
                 _mapEntities = value;
+
+                CharacterView = new CollectionViewSource() { Source = _mapEntities }.View;
+                CharacterView.Filter = delegate (object item) { return ((IVisualElement)item).SourceEntity is ICharacterEntity; };
+                ItemView = new CollectionViewSource() { Source = _mapEntities }.View;
+                ItemView.Filter = delegate (object item) { return ((IVisualElement)item).SourceEntity is IItemEntity; };
+                BuildingsView = new CollectionViewSource() { Source = _mapEntities }.View;
+                BuildingsView.Filter = delegate (object item) { return ((IVisualElement)item).SourceEntity is IBuildingEntity; };
+                VegetationView = new CollectionViewSource() { Source = _mapEntities }.View;
+                VegetationView.Filter = delegate (object item) { return ((IVisualElement)item).SourceEntity is IVegetationEntity; };
+                MarkersView = new CollectionViewSource() { Source = _mapEntities }.View;
+                MarkersView.Filter = delegate (object item) { return ((IVisualElement)item).SourceEntity is IMarkerEntity; };
+
                 OnPropertyChanged("MapEntities");
             }
         }

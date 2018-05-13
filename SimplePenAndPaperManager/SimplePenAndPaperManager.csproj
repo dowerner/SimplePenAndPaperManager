@@ -72,6 +72,7 @@
     <Compile Include="MapEditor\Entities\Buildings\Stairs.cs" />
     <Compile Include="MapEditor\Entities\Buildings\Wall.cs" />
     <Compile Include="MapEditor\Entities\Buildings\Window.cs" />
+    <Compile Include="MapEditor\Entities\Characters\Interface\ICharacterEntity.cs" />
     <Compile Include="MapEditor\Entities\Interface\IMapEntity.cs" />
     <Compile Include="MapEditor\Entities\Interface\IPathEntity.cs" />
     <Compile Include="MapEditor\Entities\Interface\IPolygonMapEntity.cs" />
@@ -79,7 +80,9 @@
     <Compile Include="MapEditor\Entities\Items\Interface\IItemEntity.cs" />
     <Compile Include="MapEditor\Entities\Items\Interface\IKeyEntity.cs" />
     <Compile Include="MapEditor\Entities\Map.cs" />
+    <Compile Include="MapEditor\Entities\Markers\Interface\IMarkerEntity.cs" />
     <Compile Include="MapEditor\Entities\Point2D.cs" />
+    <Compile Include="MapEditor\Entities\Vegetation\Interface\IVegetationEntity.cs" />
     <Compile Include="MapEditor\FloorMaterial.cs" />
     <Compile Include="MathTools\Utils.cs" />
     <Compile Include="UserInterface\Model\Constants.cs" />
@@ -116,6 +119,7 @@
     <Compile Include="UserInterface\View\Controls\TransformationGizmo.xaml.cs">
       <DependentUpon>TransformationGizmo.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserInterface\View\Converter\BoolToColorConverter.cs" />
     <Compile Include="UserInterface\View\Converter\BoolToVisibilityConverter.cs" />
     <Compile Include="UserInterface\View\Converter\ColorToBrushConverter.cs" />
     <Compile Include="UserInterface\View\Converter\MeterToPixelConverter.cs" />
@@ -200,10 +204,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="MapEditor\Entities\Characters\Interface\" />
-    <Folder Include="MapEditor\Entities\Vegetation\Interface\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\ZoomAndPan\ZoomAndPan.csproj">
       <Project>{468adede-6f5e-40c0-99c9-c6dac4fac934}</Project>

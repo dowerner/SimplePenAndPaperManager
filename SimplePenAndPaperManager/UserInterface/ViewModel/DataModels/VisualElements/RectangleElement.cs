@@ -1,5 +1,4 @@
-﻿using System;
-using SimplePenAndPaperManager.MapEditor.Entities.Interface;
+﻿using SimplePenAndPaperManager.MapEditor.Entities.Interface;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
 
 namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements

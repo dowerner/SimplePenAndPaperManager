@@ -6,10 +6,22 @@
         xmlns:local="clr-namespace:SimplePenAndPaperManager"
         xmlns:controls="clr-namespace:SimplePenAndPaperManager.UserInterface.View.Controls"
         xmlns:commands="clr-namespace:SimplePenAndPaperManager.UserInterface.ViewModel.Commands"
+        xmlns:vm="clr-namespace:SimplePenAndPaperManager.UserInterface.ViewModel.DataModels"
+        xmlns:converter="clr-namespace:SimplePenAndPaperManager.UserInterface.View.Converter"
         mc:Ignorable="d"
         Title="Simple Pen &amp; Paper Manager"
         Height="600" 
         Width="800">
+    <Window.Resources>
+        <converter:BoolToColorConverter x:Key="BoolToColorConverter"/>
+        <Color x:Key="SelectedColor">#0078d7</Color>
+        <Color x:Key="SelectedForegroundColor">White</Color>
+
+        <DataTemplate x:Key="EntityListItemTemplate">
+            <ListBoxItem Content="{Binding Name}" 
+                         MouseLeftButtonDown="ListBoxItem_MouseLeftButtonDown" />
+        </DataTemplate>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="26"/>
@@ -71,6 +83,44 @@
         </Menu>
         <controls:EditorView Grid.Row="1" />
         <GridSplitter HorizontalAlignment="Stretch" Grid.Row="1" Grid.Column="1"/>
-        <TreeView Grid.Row="1" Grid.Column="2"/>
+        <TreeView Grid.Row="1" Grid.Column="2">
+            <!--<TreeView.ItemContainerStyle>
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
+                    <Setter Property="HorizontalAlignment" Value="Left"/>
+                </Style>
+            </TreeView.ItemContainerStyle>-->
+
+            <!--<TreeView.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding}">
+                    <StackPanel>
+                        <TextBlock Text="{Binding Name}"/>
+                        <Rectangle Width="100" Height="20" Fill="Red"/>
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>-->
+            <TreeViewItem Header="Characters" 
+                          ItemsSource="{Binding Source={x:Static vm:DataModel.Instance}, Path=CharacterView}" 
+                          ItemTemplate="{StaticResource EntityListItemTemplate}" />
+            <TreeViewItem Header="Items" 
+                          ItemsSource="{Binding Source={x:Static vm:DataModel.Instance}, Path=ItemView}" 
+                          ItemTemplate="{StaticResource EntityListItemTemplate}" />
+            <TreeViewItem Header="Buildings"
+                          ItemsSource="{Binding Source={x:Static vm:DataModel.Instance}, Path=BuildingsView}">
+                <TreeViewItem.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Background="{Binding IsSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter={StaticResource SelectedColor}}" 
+                                   Foreground="{Binding IsSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter={StaticResource SelectedForegroundColor}}" 
+                                   MouseLeftButtonDown="ListBoxItem_MouseLeftButtonDown" Text="{Binding Name}"/>
+                    </DataTemplate>
+                </TreeViewItem.ItemTemplate>
+            </TreeViewItem>
+            <TreeViewItem Header="Vegetation" 
+                          ItemsSource="{Binding Source={x:Static vm:DataModel.Instance}, Path=VegetationView}" 
+                          ItemTemplate="{StaticResource EntityListItemTemplate}" />
+            <TreeViewItem Header="Markers" 
+                          ItemsSource="{Binding Source={x:Static vm:DataModel.Instance}, Path=MarkersView}" 
+                          ItemTemplate="{StaticResource EntityListItemTemplate}" />
+        </TreeView>
     </Grid>
 </Window>

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using SimplePenAndPaperManager.MapEditor.Entities;
 using SimplePenAndPaperManager.MathTools;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Buildings;
+using SimplePenAndPaperManager.MapEditor.Entities.Buildings;
 
 namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
 {
@@ -50,7 +51,7 @@ namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
                 }
 
                 // create polygon element
-                Building = new VisualPolygon(new MapEditor.Entities.Buildings.PolygonBuilding() { Corners = points, X = x, Y = y, Id = DataModel.Instance.CurrentMap.GetNewId() });
+                Building = new VisualPolygon(new PolygonBuilding() { Corners = points, X = x, Y = y, Id = DataModel.Instance.CurrentMap.GetNewId(), Name = Constants.DefaultHouseName });
             }            
 
             DataModel.Instance.MapEntities.Add(Building);   // add polygon to the world

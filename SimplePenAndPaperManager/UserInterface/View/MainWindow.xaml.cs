@@ -1,4 +1,7 @@
-﻿using System.Windows;
+﻿using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
+using System.Windows;
+using System.Windows.Input;
 
 namespace SimplePenAndPaperManager.UserInterface.View
 {
@@ -11,6 +14,18 @@ namespace SimplePenAndPaperManager.UserInterface.View
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void ListBoxItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            IVisualElement selectedElement = (IVisualElement)((FrameworkElement)sender).DataContext;
+
+
+            if(!(Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
+            {
+                DataModel.Instance.SelectedEntities.Clear();
+            }
+            selectedElement.IsSelected = !selectedElement.IsSelected;
         }
     }
 }
