@@ -7,5 +7,6 @@
         public const double MaxBrushSize = 100; // 100 m
 
         public const string DefaultHouseName = "House";
+        public const string DefaultMarkerName = "Marker";
     }
 }

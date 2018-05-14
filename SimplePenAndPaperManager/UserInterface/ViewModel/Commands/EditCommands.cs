@@ -60,6 +60,26 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.Commands
             }
         }
         private static DeleteCommand _deleteCommand;
+
+        public static DeselectAllCommand DeselectAllCommand
+        {
+            get
+            {
+                if (_deselectAllCommand == null) _deselectAllCommand = new DeselectAllCommand();
+                return _deselectAllCommand;
+            }
+        }
+        private static DeselectAllCommand _deselectAllCommand;
+
+        public static EditEntityCommand EditEntityCommand
+        {
+            get
+            {
+                if (_editEntityCommand == null) _editEntityCommand = new EditEntityCommand();
+                return _editEntityCommand;
+            }
+        }
+        private static EditEntityCommand _editEntityCommand;
     }
 
     public class UndoCommand : ICommand
@@ -195,6 +215,38 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.Commands
         private void SelectedEntities_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             CanExecuteChanged?.Invoke(this, null);
+        }
+    }
+
+    public class DeselectAllCommand : ICommand
+    {
+        public event EventHandler CanExecuteChanged;
+
+        public bool CanExecute(object parameter)
+        {
+            return true;
+        }
+
+        public void Execute(object parameter)
+        {
+            DataModel.Instance.SelectedEntities.Clear();
+        }
+    }
+
+    public class EditEntityCommand : ICommand
+    {
+        public event EventHandler CanExecuteChanged;
+
+        public bool CanExecute(object parameter)
+        {
+            return true;
+        }
+
+        public void Execute(object parameter)
+        {
+            EditEntityAction action = new EditEntityAction(null) { AffectedElement = (IVisualElement)parameter };
+            action.Do();
+            DataModel.Instance.UndoStack.Push(action);
         }
     }
 }

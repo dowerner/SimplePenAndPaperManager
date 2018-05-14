@@ -1,10 +1,13 @@
 ﻿using SimplePenAndPaperManager.MapEditor;
+using SimplePenAndPaperManager.MapEditor.Entities.Markers;
 using SimplePenAndPaperManager.MathTools;
+using SimplePenAndPaperManager.UserInterface.Model;
 using SimplePenAndPaperManager.UserInterface.Model.EditorActions;
 using SimplePenAndPaperManager.UserInterface.View.States;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Buildings;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Markers;
 using System;
 using System.ComponentModel;
 using System.Windows;
@@ -115,6 +118,12 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
             if (e.PropertyName == "IsCreatingPolygon" && DataModel.Instance.IsCreatingPolygon)
             {
                 mouseHandlingMode = MouseHandlingMode.CreatePolygon;
+            }
+
+            if(e.PropertyName == "IsCreatingTextMarker" && DataModel.Instance.IsCreatingTextMarker)
+            {
+                mouseHandlingMode = MouseHandlingMode.CreateTextMarker;
+                zoomAndPanControl.Cursor = Cursors.Pen;
             }
 
             if(e.PropertyName == "SelectionLocation" && mouseHandlingMode != MouseHandlingMode.DragObject)
@@ -270,6 +279,12 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                 e.Handled = true;
                 return;
             }
+            if(mouseHandlingMode == MouseHandlingMode.CreateTextMarker)
+            {
+                zoomAndPanControl.CaptureMouse();
+                e.Handled = true;
+                return;
+            }
 
             if ((Keyboard.Modifiers & ModifierKeys.Shift) != 0 &&
                 (e.ChangedButton == MouseButton.Left ||
@@ -343,6 +358,24 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                 {
                     // don't stop if polygon being is created -> this is done via doubleclick
                     return;
+                }
+                if(mouseHandlingMode == MouseHandlingMode.CreateTextMarker)
+                {
+                    // place text marker
+                    CreateTextMarkerAction action = new CreateTextMarkerAction(null);
+                    action.Marker = new VisualTextMarker(new TextMarker()
+                    {
+                        X = Utils.PxToMeter(DataModel.Instance.MousePosition.X),
+                        Y = Utils.PxToMeter(DataModel.Instance.MousePosition.Y),
+                        Text = "Text",
+                        Name = Constants.DefaultMarkerName,
+                        Id = DataModel.Instance.CurrentMap.GetNewId()
+                    });
+                    TextMarkerInputBox.SetMarkerData(action.Marker);
+                    action.Marker.Name = Constants.DefaultMarkerName + "_" + action.Marker.Text.Replace(' ', '_');
+                    action.Do();
+                    zoomAndPanControl.Cursor = Cursors.Arrow;
+                    DataModel.Instance.UndoStack.Push(action);
                 }
 
                 zoomAndPanControl.ReleaseMouseCapture();

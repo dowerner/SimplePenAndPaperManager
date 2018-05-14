@@ -18,10 +18,26 @@
         <Color x:Key="SelectedForegroundColor">White</Color>
 
         <DataTemplate x:Key="EntityListItemTemplate">
-            <ListBoxItem Content="{Binding Name}" 
-                         MouseLeftButtonDown="ListBoxItem_MouseLeftButtonDown" />
+            <TextBlock Background="{Binding IsSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter={StaticResource SelectedColor}}" 
+                        Foreground="{Binding IsSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter={StaticResource SelectedForegroundColor}}" 
+                        MouseLeftButtonDown="ListBoxItem_MouseLeftButtonDown" Text="{Binding Name}"
+                        Focusable="False" FocusVisualStyle="{x:Null}">
+                <TextBlock.InputBindings>
+                    <MouseBinding MouseAction="LeftDoubleClick"
+                                  Command="{Binding Source={x:Static commands:EditCommands.EditEntityCommand}}"
+                                  CommandParameter="{Binding}"/>
+                </TextBlock.InputBindings>
+            </TextBlock>
         </DataTemplate>
     </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding Key="Delete" Command="{Binding Source={x:Static commands:EditCommands.DeleteCommand}}"/>
+        <KeyBinding Modifiers="Ctrl" Key="C" Command="{Binding Source={x:Static commands:EditCommands.CopyCommand}}"/>
+        <KeyBinding Modifiers="Ctrl" Key="V" Command="{Binding Source={x:Static commands:EditCommands.PasteCommand}}"/>
+        <KeyBinding Modifiers="Ctrl" Key="Z" Command="{Binding Source={x:Static commands:EditCommands.UndoCommand}}"/>
+        <KeyBinding Modifiers="Ctrl" Key="Y" Command="{Binding Source={x:Static commands:EditCommands.RedoCommand}}"/>
+        <KeyBinding Key="Esc" Command="{Binding Source={x:Static commands:EditCommands.DeselectAllCommand}}"/>
+    </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="26"/>
@@ -66,7 +82,7 @@
                 <MenuItem Header="Create Vegetation"/>
             </MenuItem>
             <MenuItem Header="Markers">
-                <MenuItem Header="Create Marker"/>
+                <MenuItem Header="Create Marker" Command="{Binding Source={x:Static commands:MarkerCommands.CreateMarkerCommand}}"/>
                 <MenuItem Header="Create Link"/>
                 <MenuItem Header="Create Quest Marker"/>
             </MenuItem>
@@ -84,37 +100,15 @@
         <controls:EditorView Grid.Row="1" />
         <GridSplitter HorizontalAlignment="Stretch" Grid.Row="1" Grid.Column="1"/>
         <TreeView Grid.Row="1" Grid.Column="2">
-            <!--<TreeView.ItemContainerStyle>
-                <Style TargetType="{x:Type TreeViewItem}">
-                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
-                    <Setter Property="HorizontalAlignment" Value="Left"/>
-                </Style>
-            </TreeView.ItemContainerStyle>-->
-
-            <!--<TreeView.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding}">
-                    <StackPanel>
-                        <TextBlock Text="{Binding Name}"/>
-                        <Rectangle Width="100" Height="20" Fill="Red"/>
-                    </StackPanel>
-                </HierarchicalDataTemplate>
-            </TreeView.ItemTemplate>-->
-            <TreeViewItem Header="Characters" 
+            <TreeViewItem Header="Characters"
                           ItemsSource="{Binding Source={x:Static vm:DataModel.Instance}, Path=CharacterView}" 
                           ItemTemplate="{StaticResource EntityListItemTemplate}" />
             <TreeViewItem Header="Items" 
                           ItemsSource="{Binding Source={x:Static vm:DataModel.Instance}, Path=ItemView}" 
                           ItemTemplate="{StaticResource EntityListItemTemplate}" />
             <TreeViewItem Header="Buildings"
-                          ItemsSource="{Binding Source={x:Static vm:DataModel.Instance}, Path=BuildingsView}">
-                <TreeViewItem.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Background="{Binding IsSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter={StaticResource SelectedColor}}" 
-                                   Foreground="{Binding IsSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter={StaticResource SelectedForegroundColor}}" 
-                                   MouseLeftButtonDown="ListBoxItem_MouseLeftButtonDown" Text="{Binding Name}"/>
-                    </DataTemplate>
-                </TreeViewItem.ItemTemplate>
-            </TreeViewItem>
+                          ItemsSource="{Binding Source={x:Static vm:DataModel.Instance}, Path=BuildingsView}"
+                          ItemTemplate="{StaticResource EntityListItemTemplate}"/>
             <TreeViewItem Header="Vegetation" 
                           ItemsSource="{Binding Source={x:Static vm:DataModel.Instance}, Path=VegetationView}" 
                           ItemTemplate="{StaticResource EntityListItemTemplate}" />

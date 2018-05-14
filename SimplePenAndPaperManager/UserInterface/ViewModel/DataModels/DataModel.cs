@@ -296,6 +296,17 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
         }
         private bool _isCreatingPolygon;
 
+        public bool IsCreatingTextMarker
+        {
+            get { return _isCreatingTextMarker; }
+            set
+            {
+                _isCreatingTextMarker = value;
+                OnPropertyChanged("IsCreatingTextMarker");
+            }
+        }
+        private bool _isCreatingTextMarker;
+
         public bool InTerrainEditingMode
         {
             get { return _inTerrainEditingMode; }

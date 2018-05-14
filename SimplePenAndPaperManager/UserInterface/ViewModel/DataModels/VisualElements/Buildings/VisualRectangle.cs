@@ -5,7 +5,7 @@ using System.Windows.Media;
 
 namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Buildings
 {
-    public class VisualRectangle : PolygonElement
+    public abstract class VisualRectangle : PolygonElement
     {
         public Point A
         {
@@ -93,7 +93,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             }
         }
 
-        private IRectangularMapEntity _rectangleSource;
+        protected IRectangularMapEntity _rectangleSource;
 
         public VisualRectangle(IRectangularMapEntity mapEntity) : base(mapEntity)
         {
@@ -101,11 +101,6 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             _corners = new PointCollection();
             for (int i = 0; i < 4; i++) _corners.Add(new Point());
             UpdateCorners();
-        }
-
-        public override IVisualElement Copy()
-        {
-            return new VisualRectangle((IRectangularMapEntity)_rectangleSource.Copy());
         }
 
         private void UpdateCorners()

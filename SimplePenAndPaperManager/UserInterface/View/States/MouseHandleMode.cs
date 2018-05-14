@@ -48,6 +48,8 @@
         /// <summary>
         /// The user is creating a polygon.
         /// </summary>
-        CreatePolygon
+        CreatePolygon,
+
+        CreateTextMarker
     }
 }

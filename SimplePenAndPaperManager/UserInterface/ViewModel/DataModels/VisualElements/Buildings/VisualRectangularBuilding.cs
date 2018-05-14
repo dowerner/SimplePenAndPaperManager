@@ -1,4 +1,5 @@
 ﻿using SimplePenAndPaperManager.MapEditor.Entities.Interface;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
 
 namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Buildings
 {
@@ -6,5 +7,10 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
     {
         public VisualRectangularBuilding(IRectangularMapEntity mapEntity) : base(mapEntity)
         {}
+
+        public override IVisualElement Copy()
+        {
+            return new VisualRectangularBuilding((IRectangularMapEntity)_rectangleSource.Copy());
+        }
     }
 }

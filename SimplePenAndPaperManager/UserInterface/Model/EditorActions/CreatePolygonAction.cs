@@ -51,7 +51,7 @@ namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
                 }
 
                 // create polygon element
-                Building = new VisualPolygon(new PolygonBuilding() { Corners = points, X = x, Y = y, Id = DataModel.Instance.CurrentMap.GetNewId(), Name = Constants.DefaultHouseName });
+                Building = new VisualPolygonalBuilding(new PolygonBuilding() { Corners = points, X = x, Y = y, Id = DataModel.Instance.CurrentMap.GetNewId(), Name = Constants.DefaultHouseName });
             }            
 
             DataModel.Instance.MapEntities.Add(Building);   // add polygon to the world

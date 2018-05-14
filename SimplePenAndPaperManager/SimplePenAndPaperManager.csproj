@@ -81,6 +81,8 @@
     <Compile Include="MapEditor\Entities\Items\Interface\IKeyEntity.cs" />
     <Compile Include="MapEditor\Entities\Map.cs" />
     <Compile Include="MapEditor\Entities\Markers\Interface\IMarkerEntity.cs" />
+    <Compile Include="MapEditor\Entities\Markers\Interface\ITextMarkerEntity.cs" />
+    <Compile Include="MapEditor\Entities\Markers\TextMarker.cs" />
     <Compile Include="MapEditor\Entities\Point2D.cs" />
     <Compile Include="MapEditor\Entities\Vegetation\Interface\IVegetationEntity.cs" />
     <Compile Include="MapEditor\FloorMaterial.cs" />
@@ -89,7 +91,9 @@
     <Compile Include="UserInterface\Model\EditorActions\AddTerrainStrokeAction.cs" />
     <Compile Include="UserInterface\Model\EditorActions\CreatePolygonAction.cs" />
     <Compile Include="UserInterface\Model\EditorActions\CreateRectangleAction.cs" />
+    <Compile Include="UserInterface\Model\EditorActions\CreateTextMarkerAction.cs" />
     <Compile Include="UserInterface\Model\EditorActions\DeleteAction.cs" />
+    <Compile Include="UserInterface\Model\EditorActions\EditEntityAction.cs" />
     <Compile Include="UserInterface\Model\EditorActions\Interface\IEditorAction.cs" />
     <Compile Include="UserInterface\Model\EditorActions\PasteAction.cs" />
     <Compile Include="UserInterface\Model\EditorActions\RotateAction.cs" />
@@ -98,6 +102,7 @@
     <Compile Include="UserInterface\Model\ObservableStack.cs" />
     <Compile Include="UserInterface\ViewModel\Commands\BuildingCommands.cs" />
     <Compile Include="UserInterface\ViewModel\Commands\EditCommands.cs" />
+    <Compile Include="UserInterface\ViewModel\Commands\MarkerCommands.cs" />
     <Compile Include="UserInterface\ViewModel\Commands\TerrainCommands.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\DataModel.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\BaseVisualElement.cs" />
@@ -105,6 +110,7 @@
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\Buildings\VisualPolygonalBuilding.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\Buildings\VisualRectangle.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\Buildings\VisualRectangularBuilding.cs" />
+    <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\Markers\VisualTextMarker.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\Interface\IVisualElement.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\PolygonElement.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\RectangleElement.cs" />
@@ -115,6 +121,9 @@
     </Compile>
     <Compile Include="UserInterface\View\Controls\TerrainToolbox.xaml.cs">
       <DependentUpon>TerrainToolbox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterface\View\Controls\TextMarkerInputBox.xaml.cs">
+      <DependentUpon>TextMarkerInputBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserInterface\View\Controls\TransformationGizmo.xaml.cs">
       <DependentUpon>TransformationGizmo.xaml</DependentUpon>
@@ -140,6 +149,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserInterface\View\Controls\TerrainToolbox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserInterface\View\Controls\TextMarkerInputBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
