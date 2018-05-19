@@ -5,6 +5,7 @@ using SimplePenAndPaperManager.UserInterface.Model;
 using SimplePenAndPaperManager.UserInterface.Model.EditorActions;
 using SimplePenAndPaperManager.UserInterface.View.States;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.Interface;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Buildings;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Markers;
@@ -58,17 +59,23 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
         /// </summary>
         private bool prevZoomRectSet = false;
 
+        private IDataModel _vm;
+
         public EditorView()
         {
             InitializeComponent();
-            DataModel.Instance.PropertyChanged += Instance_PropertyChanged;
-            Gizmo.TransformationChanged += Gizmo_TransformationChanged;
 
             TerrainMap.UseCustomCursor = true;
             TerrainMap.Cursor = Cursors.Pen;
 
-            DataModel.Instance.TerrainBrushSize = 10;
-            DataModel.Instance.Terrain = FloorMaterial.Grass;
+            DataContextChanged += EditorView_DataContextChanged;
+        }
+
+        private void EditorView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            _vm = (DataModel)DataContext;
+            _vm.PropertyChanged += Instance_PropertyChanged;
+            Gizmo.TransformationChanged += Gizmo_TransformationChanged;
         }
 
         private void TerrainMap_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -81,8 +88,8 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
             switch (transformationEvent)
             {
                 case TransformationEvent.TranslationStarted:
-                    TranslateAction translation = new TranslateAction(DataModel.Instance.SelectedEntities);
-                    translation.TransformStartPoint = DataModel.Instance.SelectionLocation;
+                    TranslateAction translation = new TranslateAction(_vm.SelectedEntities);
+                    translation.TransformStartPoint = _vm.SelectionLocation;
                     DataModel.Instance.CurrentAction = translation;
                     break;
                 case TransformationEvent.TranslationEnded:
@@ -90,10 +97,10 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                     DataModel.Instance.CurrentAction = null;
                     break;
                 case TransformationEvent.RotationStarted:
-                    RotateAction rotation = new RotateAction(DataModel.Instance.SelectedEntities);
+                    RotateAction rotation = new RotateAction(_vm.SelectedEntities);
                     mouseHandlingMode = MouseHandlingMode.RotateObject;
-                    rotation.StartRotation = DataModel.Instance.GizmoOrientation;
-                    rotation.PivotPoint = DataModel.Instance.SelectionLocation;
+                    rotation.StartRotation = _vm.GizmoOrientation;
+                    rotation.PivotPoint = _vm.SelectionLocation;
                     DataModel.Instance.CurrentAction = rotation;
                     break;
                 case TransformationEvent.RotationEnded:
@@ -106,8 +113,8 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
 
         private void Instance_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if ((e.PropertyName == "GizmoDragX" && DataModel.Instance.GizmoDragX)
-                || (e.PropertyName == "GizmoDragY" && DataModel.Instance.GizmoDragY))
+            if ((e.PropertyName == "GizmoDragX" && _vm.GizmoDragX)
+                || (e.PropertyName == "GizmoDragY" && _vm.GizmoDragY))
                 mouseHandlingMode = MouseHandlingMode.DragObject;
 
             if (e.PropertyName == "IsCreatingRectangle" && DataModel.Instance.IsCreatingRectangle)
@@ -128,17 +135,17 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
 
             if(e.PropertyName == "SelectionLocation" && mouseHandlingMode != MouseHandlingMode.DragObject)
             {
-                Point canvasPoint = FromZoomControlToCanvasCoordinates(DataModel.Instance.SelectionLocation.MeterToPx());
-                DataModel.Instance.GizmoX = Utils.PxToMeter(canvasPoint.X - Gizmo.Width / 2);
-                DataModel.Instance.GizmoY = Utils.PxToMeter(canvasPoint.Y - Gizmo.Height / 2);
+                Point canvasPoint = FromZoomControlToCanvasCoordinates(_vm.SelectionLocation.MeterToPx());
+                _vm.GizmoX = Utils.PxToMeter(canvasPoint.X - Gizmo.Width / 2);
+                _vm.GizmoY = Utils.PxToMeter(canvasPoint.Y - Gizmo.Height / 2);
             }
 
             // update selected entities postion
             if((e.PropertyName == "GizmoX" || e.PropertyName == "GizmoY") && mouseHandlingMode == MouseHandlingMode.DragObject)
             {
                 TranslateAction translation = (TranslateAction)DataModel.Instance.CurrentAction;
-                Point pxPoint = FromCanvasToZoomControlCoordinates(new Point(Utils.MeterToPx(DataModel.Instance.GizmoX) + Gizmo.Width / 2,
-                                                                             Utils.MeterToPx(DataModel.Instance.GizmoY) + Gizmo.Height / 2));
+                Point pxPoint = FromCanvasToZoomControlCoordinates(new Point(Utils.MeterToPx(_vm.GizmoX) + Gizmo.Width / 2,
+                                                                             Utils.MeterToPx(_vm.GizmoY) + Gizmo.Height / 2));
                 translation.TransformEndPoint = pxPoint.PxToMeter();
                 translation.Do();
             }
@@ -147,7 +154,7 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
             if(e.PropertyName == "GizmoOrientation" && mouseHandlingMode == MouseHandlingMode.RotateObject)
             {
                 RotateAction rotation = (RotateAction)DataModel.Instance.CurrentAction;
-                rotation.EndRotation = DataModel.Instance.GizmoOrientation;
+                rotation.EndRotation = _vm.GizmoOrientation;
                 rotation.Do();
             }
 
@@ -159,11 +166,11 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                 TerrainMap.DefaultDrawingAttributes.Width = Utils.MeterToPx(DataModel.Instance.TerrainBrushSize);
                 TerrainMap.DefaultDrawingAttributes.Height = Utils.MeterToPx(DataModel.Instance.TerrainBrushSize);
 
-                TerrainEllipse.Width = Utils.MeterToPx(DataModel.Instance.TerrainBrushSize) * DataModel.Instance.ContentScale;
-                TerrainEllipse.Height = Utils.MeterToPx(DataModel.Instance.TerrainBrushSize) * DataModel.Instance.ContentScale;
+                TerrainEllipse.Width = Utils.MeterToPx(DataModel.Instance.TerrainBrushSize) * _vm.ContentScale;
+                TerrainEllipse.Height = Utils.MeterToPx(DataModel.Instance.TerrainBrushSize) * _vm.ContentScale;
                 TerrainEllipse.Margin = new Thickness(-TerrainEllipse.Width / 2, -TerrainEllipse.Height / 2, 0, 0);
-                TerrainRectangle.Width = Utils.MeterToPx(DataModel.Instance.TerrainBrushSize) * DataModel.Instance.ContentScale;
-                TerrainRectangle.Height = Utils.MeterToPx(DataModel.Instance.TerrainBrushSize) * DataModel.Instance.ContentScale;
+                TerrainRectangle.Width = Utils.MeterToPx(DataModel.Instance.TerrainBrushSize) * _vm.ContentScale;
+                TerrainRectangle.Height = Utils.MeterToPx(DataModel.Instance.TerrainBrushSize) * _vm.ContentScale;
                 TerrainRectangle.Margin = new Thickness(-TerrainRectangle.Width / 2, -TerrainRectangle.Height / 2, 0, 0);
             }
             else if (e.PropertyName == "TerrainBrush")
@@ -238,14 +245,14 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
         #region Key Handling
         private void HandleEscape()
         {
-            DataModel.Instance.SelectedEntities.Clear();
+            _vm.SelectedEntities.Clear();
             if (DataModel.Instance.CurrentAction != null) DataModel.Instance.CurrentAction.Undo();
             if(DataModel.Instance.NewRectangleBuilding != null)
             {
-                DataModel.Instance.MapEntities.Remove(DataModel.Instance.NewRectangleBuilding);
+                _vm.MapEntities.Remove(DataModel.Instance.NewRectangleBuilding);
                 DataModel.Instance.NewRectangleBuilding = null;
             }
-            DataModel.Instance.InTerrainEditingMode = false;
+            _vm.InTerrainEditingMode = false;
             mouseHandlingMode = MouseHandlingMode.None;
         }
         #endregion
@@ -255,9 +262,8 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
         /// </summary>
         private void ExpandContent()
         { 
-            // temp
-            DataModel.Instance.ContentWidth = Utils.MeterToPx(DataModel.Instance.CurrentMap.Width);
-            DataModel.Instance.ContentHeight = Utils.MeterToPx(DataModel.Instance.CurrentMap.Height);
+            _vm.ContentWidth = Utils.MeterToPx(_vm.MapWidth);
+            _vm.ContentHeight = Utils.MeterToPx(_vm.MapHeight);
         }
 
         /// <summary>
@@ -350,7 +356,7 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                     // When releasing during the creation of a rectangle
                     CreateRectangleAction createAction = new CreateRectangleAction(null) { Building = DataModel.Instance.NewRectangleBuilding };
                     DataModel.Instance.UndoStack.Push(createAction);
-                    DataModel.Instance.SelectedEntities.Clear();
+                    _vm.SelectedEntities.Clear();
                     DataModel.Instance.NewRectangleBuilding.IsSelected = true;
                     DataModel.Instance.NewRectangleBuilding = null;
                 }
@@ -365,8 +371,8 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                     CreateTextMarkerAction action = new CreateTextMarkerAction(null);
                     action.Marker = new VisualTextMarker(new TextMarker()
                     {
-                        X = Utils.PxToMeter(DataModel.Instance.MousePosition.X),
-                        Y = Utils.PxToMeter(DataModel.Instance.MousePosition.Y),
+                        X = Utils.PxToMeter(_vm.MousePosition.X),
+                        Y = Utils.PxToMeter(_vm.MousePosition.Y),
                         Text = "Text",
                         Name = Constants.DefaultMarkerName,
                         Id = DataModel.Instance.CurrentMap.GetNewId()
@@ -381,8 +387,8 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                 zoomAndPanControl.ReleaseMouseCapture();
                 mouseHandlingMode = MouseHandlingMode.None;
                 DataModel.Instance.IsCreatingRectangle = false;
-                DataModel.Instance.GizmoDragX = false;
-                DataModel.Instance.GizmoDragY = false;
+                _vm.GizmoDragX = false;
+                _vm.GizmoDragY = false;
                 DataModel.Instance.NewRectangleBuilding = null;
                 e.Handled = true;
             }
@@ -446,8 +452,8 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                 //
                 Point canvasPoint = FromZoomControlToCanvasCoordinates(e.GetPosition(content));
 
-                if (DataModel.Instance.GizmoDragX) DataModel.Instance.GizmoX = Utils.PxToMeter(canvasPoint.X - (Gizmo.X + Gizmo.Width / 2));
-                if (DataModel.Instance.GizmoDragY) DataModel.Instance.GizmoY = Utils.PxToMeter(canvasPoint.Y - (Gizmo.Y + Gizmo.Height / 2));
+                if (_vm.GizmoDragX) _vm.GizmoX = Utils.PxToMeter(canvasPoint.X - (Gizmo.X + Gizmo.Width / 2));
+                if (_vm.GizmoDragY) _vm.GizmoY = Utils.PxToMeter(canvasPoint.Y - (Gizmo.Y + Gizmo.Height / 2));
 
                 e.Handled = true;
             }
@@ -460,8 +466,8 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                 DataModel.Instance.NewRectangleBuilding.C = point.Sub(start);
 
                 // update building in map
-                DataModel.Instance.MapEntities.Remove(DataModel.Instance.NewRectangleBuilding);
-                DataModel.Instance.MapEntities.Add(DataModel.Instance.NewRectangleBuilding);
+                _vm.MapEntities.Remove(DataModel.Instance.NewRectangleBuilding);
+                _vm.MapEntities.Add(DataModel.Instance.NewRectangleBuilding);
             }
             else if(mouseHandlingMode == MouseHandlingMode.CreatePolygon && DataModel.Instance.CurrentPolygonWall != null)
             {
@@ -470,8 +476,8 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                 DataModel.Instance.CurrentPolygonWall.X2 = point.X;
                 DataModel.Instance.CurrentPolygonWall.Y2 = point.Y;
             }
-            DataModel.Instance.MousePosition = e.GetPosition(content);
-            DataModel.Instance.CanvasPosition = FromZoomControlToCanvasCoordinates(DataModel.Instance.MousePosition);
+            _vm.MousePosition = e.GetPosition(content);
+            DataModel.Instance.CanvasPosition = FromZoomControlToCanvasCoordinates(_vm.MousePosition);
         }
 
         #region Math Tools
@@ -486,15 +492,15 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
             double yContentOffset = zoomAndPanControl.ContentOffsetY;   // get y content offset
 
             // check if Viewport is wider than the content and calculate the offst that has to be subtracted in this case
-            if (zoomAndPanControl.ContentViewportWidth > DataModel.Instance.ContentWidth)
+            if (zoomAndPanControl.ContentViewportWidth > _vm.ContentWidth)
             {
-                xContentOffset -= (zoomAndPanControl.ContentViewportWidth - DataModel.Instance.ContentWidth) / 2;
+                xContentOffset -= (zoomAndPanControl.ContentViewportWidth - _vm.ContentWidth) / 2;
             }
 
             // check if Viewport is higher than the content and calculate the offst that has to be subtracted in this case
-            if (zoomAndPanControl.ContentViewportHeight > DataModel.Instance.ContentHeight)
+            if (zoomAndPanControl.ContentViewportHeight > _vm.ContentHeight)
             {
-                yContentOffset -= (zoomAndPanControl.ContentViewportHeight - DataModel.Instance.ContentHeight) / 2;
+                yContentOffset -= (zoomAndPanControl.ContentViewportHeight - _vm.ContentHeight) / 2;
             }
 
             // return point in canvas coordinate system
@@ -513,15 +519,15 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
             double yContentOffset = zoomAndPanControl.ContentOffsetY;   // get y content offset
 
             // check if Viewport is wider than the content and calculate the offst that has to be subtracted in this case
-            if (zoomAndPanControl.ContentViewportWidth > DataModel.Instance.ContentWidth)
+            if (zoomAndPanControl.ContentViewportWidth > _vm.ContentWidth)
             {
-                xContentOffset -= (zoomAndPanControl.ContentViewportWidth - DataModel.Instance.ContentWidth) / 2;
+                xContentOffset -= (zoomAndPanControl.ContentViewportWidth - _vm.ContentWidth) / 2;
             }
 
             // check if Viewport is higher than the content and calculate the offst that has to be subtracted in this case
-            if (zoomAndPanControl.ContentViewportHeight > DataModel.Instance.ContentHeight)
+            if (zoomAndPanControl.ContentViewportHeight > _vm.ContentHeight)
             {
-                yContentOffset -= (zoomAndPanControl.ContentViewportHeight - DataModel.Instance.ContentHeight) / 2;
+                yContentOffset -= (zoomAndPanControl.ContentViewportHeight - _vm.ContentHeight) / 2;
             }
 
             // return point in zoom control coordinate system
@@ -764,7 +770,7 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
         {
             if(!Keyboard.IsKeyDown(Key.LeftCtrl) && !Keyboard.IsKeyDown(Key.RightCtrl))
             {
-                DataModel.Instance.SelectedEntities.Clear();
+                _vm.SelectedEntities.Clear();
             }
 
             FrameworkElement selectedObject = e.OriginalSource as FrameworkElement;

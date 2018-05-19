@@ -20,7 +20,6 @@ namespace SimplePenAndPaperManager.UserInterface.View
         {
             IVisualElement selectedElement = (IVisualElement)((FrameworkElement)sender).DataContext;
 
-
             if(!(Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
             {
                 DataModel.Instance.SelectedEntities.Clear();

@@ -2,8 +2,11 @@
 using SimplePenAndPaperManager.UserInterface.Model;
 using SimplePenAndPaperManager.UserInterface.Model.EditorActions;
 using SimplePenAndPaperManager.UserInterface.Model.EditorActions.Interface;
+using SimplePenAndPaperManager.UserInterface.View.Controls;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.Interface;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Markers;
 using System;
 using System.Windows.Input;
 
@@ -244,9 +247,13 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.Commands
 
         public void Execute(object parameter)
         {
-            EditEntityAction action = new EditEntityAction(null) { AffectedElement = (IVisualElement)parameter };
-            action.Do();
-            DataModel.Instance.UndoStack.Push(action);
+            if (parameter is IDataModel) BuildingEditor.OpenBuildingMap((IDataModel)parameter);
+            else if (parameter is VisualTextMarker)
+            {
+                EditEntityAction action = new EditEntityAction(null) { AffectedElement = (IVisualElement)parameter };
+                action.Do();
+                DataModel.Instance.UndoStack.Push(action);
+            }
         }
     }
 }

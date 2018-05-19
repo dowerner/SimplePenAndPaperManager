@@ -12,6 +12,7 @@ using SimplePenAndPaperManager.UserInterface.Model;
 using SimplePenAndPaperManager.UserInterface.Model.EditorActions;
 using SimplePenAndPaperManager.UserInterface.Model.EditorActions.Interface;
 using SimplePenAndPaperManager.UserInterface.View.States;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.Interface;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Buildings;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
@@ -29,7 +30,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
     /// A simple example of a data-model.  
     /// The purpose of this data-model is to share display data between the main window and overview window.
     /// </summary>
-    public class DataModel : INotifyPropertyChanged
+    public class DataModel : IDataModel
     {
         #region Data Members
 
@@ -93,8 +94,8 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
 
         public DataModel()
         {
-            /*TerrainStrokes = new StrokeCollection();
-            TerrainStrokes.StrokesChanged += TerrainStrokes_StrokesChanged;*/
+            TerrainBrushSize = 10;
+            Terrain = FloorMaterial.Grass;
 
             UndoStack = new ObservableStack<IEditorAction>();
             RedoStack = new ObservableStack<IEditorAction>();
@@ -379,6 +380,9 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
         public ICollectionView CharacterView { get; set; }
         public ICollectionView ItemView { get; set; }
         public ICollectionView BuildingsView { get; set; }
+        public ICollectionView WallsView { get; set; }
+        public ICollectionView DoorsView { get; set; }
+        public ICollectionView WindowsView { get; set; }
         public ICollectionView VegetationView { get; set; }
         public ICollectionView MarkersView { get; set; }
 
@@ -395,6 +399,12 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
                 ItemView.Filter = delegate (object item) { return ((IVisualElement)item).SourceEntity is IItemEntity; };
                 BuildingsView = new CollectionViewSource() { Source = _mapEntities }.View;
                 BuildingsView.Filter = delegate (object item) { return ((IVisualElement)item).SourceEntity is IBuildingEntity; };
+                WallsView = new CollectionViewSource() { Source = _mapEntities }.View;
+                WallsView.Filter = delegate (object item) { return ((IVisualElement)item).SourceEntity is IWallEntity; };
+                DoorsView = new CollectionViewSource() { Source = _mapEntities }.View;
+                DoorsView.Filter = delegate (object item) { return ((IVisualElement)item).SourceEntity is IDoorEntity; };
+                WindowsView = new CollectionViewSource() { Source = _mapEntities }.View;
+                WindowsView.Filter = delegate (object item) { return ((IVisualElement)item).SourceEntity is IWindowEntity; };
                 VegetationView = new CollectionViewSource() { Source = _mapEntities }.View;
                 VegetationView.Filter = delegate (object item) { return ((IVisualElement)item).SourceEntity is IVegetationEntity; };
                 MarkersView = new CollectionViewSource() { Source = _mapEntities }.View;
@@ -426,6 +436,18 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
             }
         }
         private Map _currentMap;
+
+        public double MapWidth
+        {
+            get { return _currentMap.Width; }
+            set { _currentMap.Height = value; }
+        }
+
+        public double MapHeight
+        {
+            get { return _currentMap.Width; }
+            set { _currentMap.Height = value; }
+        }
 
         public ObservableCollection<IVisualElement> SelectedEntities
         {

@@ -61,6 +61,7 @@
     <Compile Include="MapEditor\Entities\Buildings\BaseBuilding.cs" />
     <Compile Include="MapEditor\Entities\Buildings\BuildingMaterial.cs" />
     <Compile Include="MapEditor\Entities\Buildings\Door.cs" />
+    <Compile Include="MapEditor\Entities\Buildings\Floor.cs" />
     <Compile Include="MapEditor\Entities\Buildings\Interface\IBuildingEntity.cs" />
     <Compile Include="MapEditor\Entities\Buildings\Interface\IDoorEntity.cs" />
     <Compile Include="MapEditor\Entities\Buildings\Interface\IFloorEntity.cs" />
@@ -105,17 +106,23 @@
     <Compile Include="UserInterface\ViewModel\Commands\MarkerCommands.cs" />
     <Compile Include="UserInterface\ViewModel\Commands\TerrainCommands.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\DataModel.cs" />
+    <Compile Include="UserInterface\ViewModel\DataModels\Interface\IDataModel.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\BaseVisualElement.cs" />
+    <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\Buildings\VisualFloor.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\Buildings\VisualPolygon.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\Buildings\VisualPolygonalBuilding.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\Buildings\VisualRectangle.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\Buildings\VisualRectangularBuilding.cs" />
+    <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\Interface\IVisualBuilding.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\Markers\VisualTextMarker.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\Interface\IVisualElement.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\PolygonElement.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\RectangleElement.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\VisualElementHelper.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\WallElement.cs" />
+    <Compile Include="UserInterface\View\Controls\BuildingEditor.xaml.cs">
+      <DependentUpon>BuildingEditor.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserInterface\View\Controls\EditorView.xaml.cs">
       <DependentUpon>EditorView.xaml</DependentUpon>
     </Compile>
@@ -144,6 +151,10 @@
     <Compile Include="UserInterface\View\States\MouseHandleMode.cs" />
     <Compile Include="UserInterface\View\States\TerrainBrush.cs" />
     <Compile Include="UserInterface\View\States\TransformationEvent.cs" />
+    <Page Include="UserInterface\View\Controls\BuildingEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserInterface\View\Controls\EditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

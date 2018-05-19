@@ -41,11 +41,6 @@
                                         Y="{Binding Y, Converter={StaticResource MeterToPixelConverter}}"/>
                 </TransformGroup>
             </Border.RenderTransform>
-            <Border.InputBindings>
-                <MouseBinding MouseAction="LeftDoubleClick" 
-                              Command="{Binding Source={x:Static commands:EditCommands.EditEntityCommand}}"
-                              CommandParameter="{Binding}"/>
-            </Border.InputBindings>
         </Border>
     </DataTemplate>
 

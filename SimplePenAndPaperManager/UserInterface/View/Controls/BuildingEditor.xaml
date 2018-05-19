@@ -1,18 +1,15 @@
-﻿<Window x:Class="SimplePenAndPaperManager.UserInterface.View.MainWindow"
+﻿<Window x:Class="SimplePenAndPaperManager.UserInterface.View.Controls.BuildingEditor"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SimplePenAndPaperManager"
-        xmlns:controls="clr-namespace:SimplePenAndPaperManager.UserInterface.View.Controls"
+        xmlns:local="clr-namespace:SimplePenAndPaperManager.UserInterface.View.Controls"
         xmlns:commands="clr-namespace:SimplePenAndPaperManager.UserInterface.ViewModel.Commands"
-        xmlns:vm="clr-namespace:SimplePenAndPaperManager.UserInterface.ViewModel.DataModels"
         xmlns:converter="clr-namespace:SimplePenAndPaperManager.UserInterface.View.Converter"
         mc:Ignorable="d"
-        Title="Simple Pen &amp; Paper Manager"
-        Height="600" 
-        Width="800">
+        Title="{Binding Name}" Height="500" Width="600">
     <Window.Resources>
+        <RoutedUICommand x:Key="SaveAndCloseCommand"/>
         <converter:BoolToColorConverter x:Key="BoolToColorConverter"/>
         <Color x:Key="SelectedColor">#0078d7</Color>
         <Color x:Key="SelectedForegroundColor">White</Color>
@@ -20,7 +17,7 @@
         <DataTemplate x:Key="EntityListItemTemplate">
             <TextBlock Background="{Binding IsSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter={StaticResource SelectedColor}}" 
                         Foreground="{Binding IsSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter={StaticResource SelectedForegroundColor}}" 
-                        MouseLeftButtonDown="ListBoxItem_MouseLeftButtonDown" Text="{Binding Name}"
+                        MouseLeftButtonDown="TextBlock_MouseLeftButtonDown" Text="{Binding Name}"
                         Focusable="False" FocusVisualStyle="{x:Null}">
                 <TextBlock.InputBindings>
                     <MouseBinding MouseAction="LeftDoubleClick"
@@ -30,33 +27,22 @@
             </TextBlock>
         </DataTemplate>
     </Window.Resources>
-    <Window.InputBindings>
-        <KeyBinding Key="Delete" Command="{Binding Source={x:Static commands:EditCommands.DeleteCommand}}"/>
-        <KeyBinding Modifiers="Ctrl" Key="C" Command="{Binding Source={x:Static commands:EditCommands.CopyCommand}}"/>
-        <KeyBinding Modifiers="Ctrl" Key="V" Command="{Binding Source={x:Static commands:EditCommands.PasteCommand}}"/>
-        <KeyBinding Modifiers="Ctrl" Key="Z" Command="{Binding Source={x:Static commands:EditCommands.UndoCommand}}"/>
-        <KeyBinding Modifiers="Ctrl" Key="Y" Command="{Binding Source={x:Static commands:EditCommands.RedoCommand}}"/>
-        <KeyBinding Key="Esc" Command="{Binding Source={x:Static commands:EditCommands.DeselectAllCommand}}"/>
-    </Window.InputBindings>
+    <Window.CommandBindings>
+        <CommandBinding Command="{StaticResource SaveAndCloseCommand}" Executed="SaveAndClose" />
+    </Window.CommandBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="26"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="4*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="4*"/>
+            <ColumnDefinition Width="2*"/>
             <ColumnDefinition Width="5"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Menu Grid.ColumnSpan="3">
-            <MenuItem Header="File">
-                <MenuItem Header="New Adventure"/>
-                <MenuItem Header="Open Adventure"/>
-                <MenuItem Header="Save Adventure"/>
-                <MenuItem Header="Save Advendture As"/>
-                <MenuItem Header="New Exterior"/>
-                <MenuItem Header="Open Exterior"/>
-            </MenuItem>
             <MenuItem Header="Edit">
                 <MenuItem Header="Undo (CTRL + Z)" Command="{Binding Source={x:Static commands:EditCommands.UndoCommand}}"/>
                 <MenuItem Header="Redo (CTRL + Y)" Command="{Binding Source={x:Static commands:EditCommands.RedoCommand}}"/>
@@ -68,15 +54,9 @@
             <MenuItem Header="Adventure">
                 <MenuItem Header="Show Content"/>
             </MenuItem>
-            <MenuItem Header="Buildings">
-                <MenuItem Header="Create Rectangular Building" Command="{Binding Source={x:Static commands:BuildingCommands.CreateRecangularBuildingCommand}}"/>
-                <MenuItem Header="Create Polygonal Building" Command="{Binding Source={x:Static commands:BuildingCommands.CreatePolygonalBuildingCommand}}"/>
+            <MenuItem Header="Building">
                 <MenuItem Header="Create Wall"/>
                 <MenuItem Header="Create Door"/>
-            </MenuItem>
-            <MenuItem Header="Terrain">
-                <MenuItem Header="Edit Terrain" Command="{Binding Source={x:Static commands:TerrainCommands.EditTerrainCommand}}"/>
-                <MenuItem Header="Map Size"/>
             </MenuItem>
             <MenuItem Header="Vegetation">
                 <MenuItem Header="Create Vegetation"/>
@@ -92,38 +72,56 @@
                 </MenuItem>
                 <MenuItem Header="Create NPC"/>
             </MenuItem>
-            <MenuItem Header="Help">
-                <MenuItem Header="Help"/>
-                <MenuItem Header="About"/>
-            </MenuItem>
         </Menu>
-        <controls:EditorView Grid.Row="1" DataContext="{Binding Source={x:Static vm:DataModel.Instance}}" />
-        <GridSplitter HorizontalAlignment="Stretch" Grid.Row="1" Grid.Column="1"/>
+        <local:EditorView Grid.Row="1" Grid.RowSpan="3" />
         <TreeView Grid.Row="1" Grid.Column="2">
             <TreeViewItem Header="Characters"
-                          ItemsSource="{Binding Source={x:Static vm:DataModel.Instance}, Path=CharacterView}" 
                           ItemTemplate="{StaticResource EntityListItemTemplate}" />
             <TreeViewItem Header="Items" 
-                          ItemsSource="{Binding Source={x:Static vm:DataModel.Instance}, Path=ItemView}" 
                           ItemTemplate="{StaticResource EntityListItemTemplate}" />
-            <TreeViewItem Header="Buildings"
-                          ItemsSource="{Binding Source={x:Static vm:DataModel.Instance}, Path=BuildingsView}"
-                          ItemTemplate="{StaticResource EntityListItemTemplate}"/>
             <TreeViewItem Header="Walls"
-                          ItemsSource="{Binding Source={x:Static vm:DataModel.Instance}, Path=WallsView}"
                           ItemTemplate="{StaticResource EntityListItemTemplate}"/>
+            <TreeViewItem Header="Floors"
+                          />
             <TreeViewItem Header="Doors"
-                          ItemsSource="{Binding Source={x:Static vm:DataModel.Instance}, Path=DoorsView}"
                           ItemTemplate="{StaticResource EntityListItemTemplate}"/>
             <TreeViewItem Header="Windows"
-                          ItemsSource="{Binding Source={x:Static vm:DataModel.Instance}, Path=WindowsView}"
                           ItemTemplate="{StaticResource EntityListItemTemplate}"/>
-            <TreeViewItem Header="Vegetation" 
-                          ItemsSource="{Binding Source={x:Static vm:DataModel.Instance}, Path=VegetationView}" 
-                          ItemTemplate="{StaticResource EntityListItemTemplate}" />
             <TreeViewItem Header="Markers" 
-                          ItemsSource="{Binding Source={x:Static vm:DataModel.Instance}, Path=MarkersView}" 
                           ItemTemplate="{StaticResource EntityListItemTemplate}" />
         </TreeView>
+        <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" Grid.Column="1" Grid.RowSpan="3"/>
+        <GridSplitter Grid.Row="2" VerticalAlignment="Stretch" Grid.Column="2" />
+        <Grid Grid.Row="3" Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid Margin="5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="26"/>
+                    <RowDefinition Height="26"/>
+                    <RowDefinition Height="26"/>
+                    <RowDefinition Height="26"/>
+                    <RowDefinition Height="26"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Name:" VerticalAlignment="Center" Grid.Row="0"/>
+                <TextBox Text="{Binding Name, Mode=TwoWay}" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Margin="2"/>
+                <TextBlock Text="X:" VerticalAlignment="Center" Grid.Row="1"/>
+                <TextBox Text="{Binding X, Mode=TwoWay}" Grid.Row="1" Grid.Column="1" Margin="2"/>
+                <TextBlock Text="[m]" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <TextBlock Text="Y:" VerticalAlignment="Center" Grid.Row="2"/>
+                <TextBlock Text="[m]" Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <TextBox Text="{Binding Y, Mode=TwoWay}" Grid.Row="2" Grid.Column="1" Margin="2"/>
+                <TextBlock Text="Orientation:" VerticalAlignment="Center" Grid.Row="3"/>
+                <TextBox Text="{Binding Orientation, Mode=TwoWay}" Grid.Row="3" Grid.Column="1" Margin="2"/>
+                <TextBlock Text="[°]" Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <Button Content="Ok" Command="{StaticResource SaveAndCloseCommand}" Grid.Row="5" Grid.ColumnSpan="3" HorizontalAlignment="Right" Width="50" Margin="3"/>
+            </Grid>
+        </Grid>
     </Grid>
 </Window>

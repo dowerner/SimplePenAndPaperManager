@@ -298,11 +298,11 @@
         <Grid>
             <zoomAndPan:ZoomAndPanControl
             x:Name="zoomAndPanControl"
-            ContentScale="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=ContentScale, Mode=TwoWay}"
-            ContentOffsetX="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=ContentOffsetX, Mode=TwoWay}"
-            ContentOffsetY="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=ContentOffsetY, Mode=TwoWay}"
-            ContentViewportWidth="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=ContentViewportWidth, Mode=OneWayToSource}"
-            ContentViewportHeight="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=ContentViewportHeight, Mode=OneWayToSource}"
+            ContentScale="{Binding ContentScale, Mode=TwoWay}"
+            ContentOffsetX="{Binding ContentOffsetX, Mode=TwoWay}"
+            ContentOffsetY="{Binding ContentOffsetY, Mode=TwoWay}"
+            ContentViewportWidth="{Binding ContentViewportWidth, Mode=OneWayToSource}"
+            ContentViewportHeight="{Binding ContentViewportHeight, Mode=OneWayToSource}"
             Background="LightGray"
             MouseDown="zoomAndPanControl_MouseDown"
             MouseUp="zoomAndPanControl_MouseUp"
@@ -315,8 +315,8 @@
             This is the content that is displayed.
             -->
                 <Grid
-                Width="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=ContentWidth}"
-                Height="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=ContentHeight}"
+                Width="{Binding ContentWidth}"
+                Height="{Binding ContentHeight}"
                 >
                     <!--
             	This ListBox is the main part of the content that is displayed.
@@ -331,16 +331,29 @@
                     Style="{StaticResource noScrollViewerListBoxStyle}"
                     ItemContainerStyle="{StaticResource listBoxItemStyle}"
                     />-->
-                    <InkCanvas x:Name="TerrainMap" IsHitTestVisible="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=InTerrainEditingMode}"
+                    <InkCanvas x:Name="TerrainMap" IsHitTestVisible="{Binding InTerrainEditingMode}"
                                Strokes="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=TerrainStrokes}">
                     </InkCanvas>
-                    <ItemsControl IsHitTestVisible="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=InTerrainEditingMode, Converter={StaticResource NotConverter}}"
+                    <ItemsControl IsHitTestVisible="{Binding InTerrainEditingMode, Converter={StaticResource NotConverter}}"
                         x:Name="content"
                         Background="Transparent"
-                        ItemsSource="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=MapEntities}">
+                        ItemsSource="{Binding MapEntities}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <Canvas MouseLeftButtonDown="Canvas_MouseLeftButtonDown"/>
+                                <Canvas MouseLeftButtonDown="Canvas_MouseLeftButtonDown">
+                                    <Canvas.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="Edit"/>
+                                            <MenuItem Header="Copy" Command="{Binding Source={x:Static commands:EditCommands.CopyCommand}}"/>
+                                            <MenuItem Header="Delete" Command="{Binding Source={x:Static commands:EditCommands.DeleteCommand}}"/>
+                                        </ContextMenu>
+                                    </Canvas.ContextMenu>
+                                    <Canvas.InputBindings>
+                                        <MouseBinding MouseAction="LeftDoubleClick" 
+                                                      Command="{Binding Source={x:Static commands:EditCommands.EditEntityCommand}}"
+                                                      CommandParameter="{Binding}"/>
+                                    </Canvas.InputBindings>
+                                </Canvas>
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
                     </ItemsControl>
@@ -365,32 +378,32 @@
                 </Grid>
             </zoomAndPan:ZoomAndPanControl>
             <StackPanel IsHitTestVisible="False">
-                <TextBlock Text="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=MousePosition}"
+                <TextBlock Text="{Binding MousePosition}"
                            IsHitTestVisible="False"/>
                 <TextBlock Text="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=Debug}" IsHitTestVisible="False" />
             </StackPanel>
             <Canvas>
                 <local:TransformationGizmo x:Name="Gizmo"
-                                           Orientation="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=GizmoOrientation, Mode=TwoWay}"
-                                           Visibility="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=EntitiesSelected, Converter={StaticResource BoolToVisibilityConverter}}"
-                                           IsRotating="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=GizmoIsRotating, Mode=OneWayToSource}"
-                                           DraggingX="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=GizmoDragX, Mode=TwoWay}"
-                                           DraggingY="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=GizmoDragY, Mode=TwoWay}"
+                                           Orientation="{Binding GizmoOrientation, Mode=TwoWay}"
+                                           Visibility="{Binding EntitiesSelected, Converter={StaticResource BoolToVisibilityConverter}}"
+                                           IsRotating="{Binding GizmoIsRotating, Mode=OneWayToSource}"
+                                           DraggingX="{Binding GizmoDragX, Mode=TwoWay}"
+                                           DraggingY="{Binding GizmoDragY, Mode=TwoWay}"
                                            RenderTransformOrigin="0.5 0.5">
                     <local:TransformationGizmo.RenderTransform>
-                        <TranslateTransform X="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=GizmoX, Mode=TwoWay, Converter={StaticResource MeterToPixelConverter}}"
-                                            Y="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=GizmoY, Mode=TwoWay, Converter={StaticResource MeterToPixelConverter}}"/>
+                        <TranslateTransform X="{Binding GizmoX, Mode=TwoWay, Converter={StaticResource MeterToPixelConverter}}"
+                                            Y="{Binding GizmoY, Mode=TwoWay, Converter={StaticResource MeterToPixelConverter}}"/>
                     </local:TransformationGizmo.RenderTransform>
                 </local:TransformationGizmo>
                 <Ellipse x:Name="TerrainEllipse" Stroke="Black" IsHitTestVisible="False"
-                         Visibility="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=ShowTerrainEllipse, Converter={StaticResource BoolToVisibilityConverter}}">
+                         Visibility="{Binding ShowTerrainEllipse, Converter={StaticResource BoolToVisibilityConverter}}">
                     <Ellipse.RenderTransform>
                         <TranslateTransform  X="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=CanvasPosition.X, Mode=TwoWay}"
                                             Y="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=CanvasPosition.Y, Mode=TwoWay}"/>
                     </Ellipse.RenderTransform>
                 </Ellipse>
                 <Rectangle x:Name="TerrainRectangle" Stroke="Black" IsHitTestVisible="False"
-                         Visibility="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=ShowTerrainRectangle, Converter={StaticResource BoolToVisibilityConverter}}">
+                         Visibility="{Binding ShowTerrainRectangle, Converter={StaticResource BoolToVisibilityConverter}}">
                     <Rectangle.RenderTransform>
                         <TranslateTransform X="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=CanvasPosition.X, Mode=TwoWay}"
                                             Y="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=CanvasPosition.Y, Mode=TwoWay}"/>
