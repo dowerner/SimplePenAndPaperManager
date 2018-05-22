@@ -2,17 +2,43 @@
 using SimplePenAndPaperManager.MapEditor.Entities.Buildings.Interface;
 using System.Collections.ObjectModel;
 using SimplePenAndPaperManager.MapEditor.Entities.Interface;
+using System.ComponentModel;
+using System.Windows.Data;
+using SimplePenAndPaperManager.MapEditor.Entities.Markers.Interface;
+using SimplePenAndPaperManager.MapEditor.Entities.Items.Interface;
+using SimplePenAndPaperManager.MapEditor.Entities.Characters.Interface;
 
 namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Buildings
 {
     public class VisualFloor : BaseVisualElement
     {
+        public ICollectionView CharacterView { get; set; }
+        public ICollectionView ItemView { get; set; }
+        public ICollectionView WallsView { get; set; }
+        public ICollectionView DoorsView { get; set; }
+        public ICollectionView WindowsView { get; set; }
+        public ICollectionView MarkersView { get; set; }
+
         public ObservableCollection<IVisualElement> MapEntities
         {
             get { return _mapEntities; }
             set
             {
                 _mapEntities = value;
+
+                CharacterView = new CollectionViewSource() { Source = _mapEntities }.View;
+                CharacterView.Filter = delegate (object item) { return ((IVisualElement)item).SourceEntity is ICharacterEntity; };
+                ItemView = new CollectionViewSource() { Source = _mapEntities }.View;
+                ItemView.Filter = delegate (object item) { return ((IVisualElement)item).SourceEntity is IItemEntity; };
+                WallsView = new CollectionViewSource() { Source = _mapEntities }.View;
+                WallsView.Filter = delegate (object item) { return ((IVisualElement)item).SourceEntity is IWallEntity; };
+                DoorsView = new CollectionViewSource() { Source = _mapEntities }.View;
+                DoorsView.Filter = delegate (object item) { return ((IVisualElement)item).SourceEntity is IDoorEntity; };
+                WindowsView = new CollectionViewSource() { Source = _mapEntities }.View;
+                WindowsView.Filter = delegate (object item) { return ((IVisualElement)item).SourceEntity is IWindowEntity; };
+                MarkersView = new CollectionViewSource() { Source = _mapEntities }.View;
+                MarkersView.Filter = delegate (object item) { return ((IVisualElement)item).SourceEntity is IMarkerEntity; };
+
                 fillToSource();
                 OnPropertyChanged("MapEntities");
             }
@@ -23,7 +49,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
 
         public VisualFloor(IFloorEntity mapEntity) : base(mapEntity)
         {
-            _mapEntities = new ObservableCollection<IVisualElement>();
+            MapEntities = new ObservableCollection<IVisualElement>();
             _mapEntities.CollectionChanged += _mapEntities_CollectionChanged;
             _sourceFloor = mapEntity;
             fillFromSource();
@@ -34,7 +60,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             fillToSource();
         }
 
-        public override IVisualElement Copy()
+        public override BaseVisualElement Copy()
         {
             return new VisualFloor((IFloorEntity)_sourceFloor.Copy());
         }

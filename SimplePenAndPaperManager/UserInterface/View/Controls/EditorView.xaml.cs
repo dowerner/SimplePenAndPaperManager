@@ -73,7 +73,7 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
 
         private void EditorView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            _vm = (DataModel)DataContext;
+            _vm = (IDataModel)DataContext;
             _vm.PropertyChanged += Instance_PropertyChanged;
             Gizmo.TransformationChanged += Gizmo_TransformationChanged;
         }
@@ -352,6 +352,7 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                     building.Y += diagonal.Y / 2;
                     building.A = building.A.Sub(diagonal.Mult(0.5));
                     building.C = building.C.Sub(diagonal.Mult(0.5));
+                    building.CreateFloorFromDimensions(DataModel.Instance.CurrentMap);
 
                     // When releasing during the creation of a rectangle
                     CreateRectangleAction createAction = new CreateRectangleAction(null) { Building = DataModel.Instance.NewRectangleBuilding };
@@ -775,6 +776,11 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
 
             FrameworkElement selectedObject = e.OriginalSource as FrameworkElement;
             ((IVisualElement)selectedObject.DataContext).IsSelected = true;
+        }
+
+        private void Canvas_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            _vm.LastSelected = (IVisualElement)((FrameworkElement)e.OriginalSource).DataContext;
         }
     }
 }

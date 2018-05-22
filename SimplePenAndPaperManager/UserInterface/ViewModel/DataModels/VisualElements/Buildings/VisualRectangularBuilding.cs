@@ -1,253 +1,127 @@
-﻿using System.Collections.ObjectModel;
+﻿using SimplePenAndPaperManager.MapEditor.Entities.Buildings.Interface;
 using System.Windows;
-using SimplePenAndPaperManager.MapEditor.Entities.Interface;
-using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
+using System.Windows.Media;
 
 namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Buildings
 {
-    public class VisualRectangularBuilding : VisualRectangle, IVisualBuilding
+    public class VisualRectangularBuilding : VisualPolygonalBuilding
     {
-        public VisualRectangularBuilding(IRectangularMapEntity mapEntity) : base(mapEntity)
-        {}
-
-        public ObservableCollection<IVisualElement> SelectedEntities { get; set; }
-
-        public Point SelectionLocation { get; set; }
-
-        public VisualFloor CurrentFloor
+        public Point A
         {
-            get { return _currentFloor; }
+            get { return Corners[0]; }
             set
             {
-                _currentFloor = value;
-                OnPropertyChanged("CurrentFloor");
-            }
-        }
-        private VisualFloor _currentFloor;
+                Corners[0] = value;
 
-        public double MapWidth
-        {
-            get { return _currentFloor.BoundingWidth; }
-            set { _currentFloor.BoundingWidth = value; }
-        }
+                // update other corners to keep rectangle
+                Corners[1] = new Point(Corners[2].X, Corners[0].Y);
+                Corners[3] = new Point(Corners[0].X, Corners[2].Y);
 
-        public double MapHeight
-        {
-            get { return _currentFloor.BoundingHeight; }
-            set { _currentFloor.BoundingHeight = value; }
-        }
-
-        public ObservableCollection<VisualFloor> Floors
-        {
-            get { return _floors; }
-            set
-            {
-                _floors = value;
-                OnPropertyChanged("Floors");
-            }
-        }
-        private ObservableCollection<VisualFloor> _floors;
-
-        #region DataModel Implementation
-        public ObservableCollection<IVisualElement> MapEntities
-        {
-            get { return _currentFloor.MapEntities; }
-            set
-            {
-                _currentFloor.MapEntities = value;
-                OnPropertyChanged("MapEntities");
+                OnPropertyChanged("Corners");
+                UpdateDimensions();
             }
         }
 
-        public double ContentScale
+        public Point B
         {
-            get { return _contentScale; }
+            get { return Corners[1]; }
             set
             {
-                _contentScale = value;
-                OnPropertyChanged("ContentScale");
+                Corners[1] = value;
+
+                // update other corners to keep rectangle
+                Corners[0] = new Point(Corners[3].X, Corners[1].Y);
+                Corners[2] = new Point(Corners[1].X, Corners[3].Y);
+
+                OnPropertyChanged("Corners");
+                UpdateDimensions();
             }
         }
-        private double _contentScale;
 
-        public double ContentOffsetX
+        public Point C
         {
-            get { return _contentOffsetX; }
+            get { return Corners[2]; }
             set
             {
-                _contentOffsetX = value;
-                OnPropertyChanged("ContentOffsetX");
+                Corners[2] = value;
+
+                // update other corners to keep rectangle
+                Corners[1] = new Point(Corners[2].X, Corners[0].Y);
+                Corners[3] = new Point(Corners[0].X, Corners[2].Y);
+
+                OnPropertyChanged("Corners");
+                UpdateDimensions();
             }
         }
-        private double _contentOffsetX;
 
-        public double ContentOffsetY
+        public Point D
         {
-            get { return _contentOffsetY; }
+            get { return Corners[3]; }
             set
             {
-                _contentOffsetY = value;
-                OnPropertyChanged("ContentOffsetY");
+                Corners[3] = value;
+
+                // update other corners to keep rectangle
+                Corners[0] = new Point(Corners[3].X, Corners[1].Y);
+                Corners[2] = new Point(Corners[1].X, Corners[3].Y);
+
+                OnPropertyChanged("Corners");
+                UpdateDimensions();
             }
         }
-        private double _contentOffsetY;
 
-        public double ContentViewportWidth
+        public double Width
         {
-            get { return _contentViewportWidth; }
+            get { return _rectangleSource.Width; }
             set
             {
-                _contentViewportWidth = value;
-                OnPropertyChanged("ContentViewportWidth");
+                _rectangleSource.Width = value;
+                OnPropertyChanged("Width");
+                UpdateCorners();
             }
         }
-        private double _contentViewportWidth;
 
-        public double ContentViewportHeight
+        public double Height
         {
-            get { return _contentViewportHeight; }
+            get { return _rectangleSource.Height; }
             set
             {
-                _contentViewportHeight = value;
-                OnPropertyChanged("ContentViewportHeight");
+                _rectangleSource.Height = value;
+                OnPropertyChanged("Height");
+                UpdateCorners();
             }
         }
-        private double _contentViewportHeight;
 
-        public double ContentWidth
+        private void UpdateCorners()
         {
-            get { return _contentWidth; }
-            set
-            {
-                _contentWidth = value;
-                OnPropertyChanged("ContentWidth");
-            }
-        }
-        private double _contentWidth;
-
-        public double ContentHeight
-        {
-            get { return _contentHeight; }
-            set
-            {
-                _contentHeight = value;
-                OnPropertyChanged("ContentHeight");
-            }
-        }
-        private double _contentHeight;
-
-        public double GizmoOrientation
-        {
-            get { return _gizmoOrientation; }
-            set
-            {
-                _gizmoOrientation = value;
-                OnPropertyChanged("GizmoOrientation");
-            }
-        }
-        private double _gizmoOrientation;
-
-        public bool EntitiesSelected
-        {
-            get { return _entitiesSelected; }
-        }
-        private bool _entitiesSelected;
-
-        public bool GizmoIsRotating
-        {
-            get { return _gizmoIsRotating; }
-            set
-            {
-                _gizmoIsRotating = value;
-                OnPropertyChanged("GizmoIsRotating");
-            }
-        }
-        private bool _gizmoIsRotating;
-
-        public bool GizmoDragX
-        {
-            get { return _gizmoDragX; }
-            set
-            {
-                _gizmoDragX = value;
-                OnPropertyChanged("GizmoDragX");
-            }
-        }
-        private bool _gizmoDragX;
-
-        public bool GizmoDragY
-        {
-            get { return _gizmoDragY; }
-            set
-            {
-                _gizmoDragY = value;
-                OnPropertyChanged("GizmoDragY");
-            }
-        }
-        private bool _gizmoDragY;
-
-        public double GizmoX
-        {
-            get { return _gizmoX; }
-            set
-            {
-                _gizmoX = value;
-                OnPropertyChanged("GizmoX");
-            }
-        }
-        private double _gizmoX;
-
-        public double GizmoY
-        {
-            get { return _gizmoY; }
-            set
-            {
-                _gizmoY = value;
-                OnPropertyChanged("GizmoY");
-            }
-        }
-        private double _gizmoY;
-
-        public Point MousePosition
-        {
-            get { return _mousePosition; }
-            set
-            {
-                _mousePosition = value;
-                OnPropertyChanged("MousePosition");
-            }
-        }
-        private Point _mousePosition;
-
-        /// <summary>
-        /// Can only be false since there is no terrain inside of a building.
-        /// </summary>
-        public bool InTerrainEditingMode
-        {
-            get { return false; }
-            set { } // cannot be set
+            Corners[0] = new Point(-Width / 2, -Height / 2);
+            Corners[1] = new Point(Width / 2, -Height / 2);
+            Corners[2] = new Point(Width / 2, Height / 2);
+            Corners[3] = new Point(-Width / 2, Height / 2);
+            OnPropertyChanged("Corners");
         }
 
-        /// <summary>
-        /// Can only be false since there is no terrain inside of a building.
-        /// </summary>
-        public bool ShowTerrainEllipse
+        private void UpdateDimensions()
         {
-            get { return false; }
+            _rectangleSource.Width = B.X - A.X;
+            _rectangleSource.Height = D.Y - A.Y;
+            OnPropertyChanged("Width");
+            OnPropertyChanged("Height");
         }
 
-        /// <summary>
-        /// Can only be false since there is no terrain inside of a building.
-        /// </summary>
-        public bool ShowTerrainRectangle
-        {
-            get { return false; }
-        }
-        #endregion
+        private IRectangularBuildingEntity _rectangleSource;
 
-        public override IVisualElement Copy()
+        public VisualRectangularBuilding(IRectangularBuildingEntity mapEntity) : base(mapEntity)
         {
-            return new VisualRectangularBuilding((IRectangularMapEntity)_rectangleSource.Copy());
+            _rectangleSource = mapEntity;
+            _corners = new PointCollection();
+            for (int i = 0; i < 4; i++) _corners.Add(new Point());
+            UpdateCorners();
+        }
+
+        public override BaseVisualElement Copy()
+        {
+            return new VisualRectangularBuilding((IRectangularBuildingEntity)_rectangleSource.Copy());
         }
     }
 }

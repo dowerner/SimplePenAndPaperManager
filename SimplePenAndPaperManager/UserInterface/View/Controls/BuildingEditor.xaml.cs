@@ -33,8 +33,7 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
 
             if (!(Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
             {
-                // use local selected!
-                //DataModel.Instance.SelectedEntities.Clear();
+                ((IDataModel)DataContext).SelectedEntities.Clear();
             }
             selectedElement.IsSelected = !selectedElement.IsSelected;
         }

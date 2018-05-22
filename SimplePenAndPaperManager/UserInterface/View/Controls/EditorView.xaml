@@ -340,10 +340,11 @@
                         ItemsSource="{Binding MapEntities}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <Canvas MouseLeftButtonDown="Canvas_MouseLeftButtonDown">
+                                <Canvas MouseLeftButtonDown="Canvas_MouseLeftButtonDown"
+                                        MouseDown="Canvas_MouseDown">
                                     <Canvas.ContextMenu>
                                         <ContextMenu>
-                                            <MenuItem Header="Edit"/>
+                                            <MenuItem Header="Edit" Command="{Binding Source={x:Static commands:EditCommands.EditEntityCommand}}" CommandParameter="{Binding}"/>
                                             <MenuItem Header="Copy" Command="{Binding Source={x:Static commands:EditCommands.CopyCommand}}"/>
                                             <MenuItem Header="Delete" Command="{Binding Source={x:Static commands:EditCommands.DeleteCommand}}"/>
                                         </ContextMenu>

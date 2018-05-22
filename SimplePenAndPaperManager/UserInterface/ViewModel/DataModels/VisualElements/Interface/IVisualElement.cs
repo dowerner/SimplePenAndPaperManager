@@ -18,6 +18,6 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
         string Name { get; set; }
         bool IsSelected { get; set; }
         IMapEntity SourceEntity { get; set; }
-        IVisualElement Copy();
+        BaseVisualElement Copy();
     }
 }

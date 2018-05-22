@@ -247,10 +247,12 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.Commands
 
         public void Execute(object parameter)
         {
-            if (parameter is IDataModel) BuildingEditor.OpenBuildingMap((IDataModel)parameter);
-            else if (parameter is VisualTextMarker)
+            IVisualElement selectedElement = parameter is IDataModel ? ((IDataModel)parameter).LastSelected : (IVisualElement)parameter;
+
+            if (selectedElement is IDataModel) BuildingEditor.OpenBuildingMap((IDataModel)selectedElement);
+            else if (selectedElement is VisualTextMarker)
             {
-                EditEntityAction action = new EditEntityAction(null) { AffectedElement = (IVisualElement)parameter };
+                EditEntityAction action = new EditEntityAction(null) { AffectedElement = selectedElement };
                 action.Do();
                 DataModel.Instance.UndoStack.Push(action);
             }

@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 
 namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface
 {
-    public interface IVisualBuilding : IVisualElement, IDataModel
+    public interface IVisualBuilding : IDataModel
     {
         ObservableCollection<VisualFloor> Floors { get; set; }
         VisualFloor CurrentFloor { get; set; }

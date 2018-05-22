@@ -22,6 +22,13 @@
                         Foreground="{Binding IsSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter={StaticResource SelectedForegroundColor}}" 
                         MouseLeftButtonDown="ListBoxItem_MouseLeftButtonDown" Text="{Binding Name}"
                         Focusable="False" FocusVisualStyle="{x:Null}">
+                <TextBlock.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Edit" Command="{Binding Source={x:Static commands:EditCommands.EditEntityCommand}}" CommandParameter="{Binding}"/>
+                        <MenuItem Header="Copy" Command="{Binding Source={x:Static commands:EditCommands.CopyCommand}}"/>
+                        <MenuItem Header="Delete" Command="{Binding Source={x:Static commands:EditCommands.DeleteCommand}}"/>
+                    </ContextMenu>
+                </TextBlock.ContextMenu>
                 <TextBlock.InputBindings>
                     <MouseBinding MouseAction="LeftDoubleClick"
                                   Command="{Binding Source={x:Static commands:EditCommands.EditEntityCommand}}"

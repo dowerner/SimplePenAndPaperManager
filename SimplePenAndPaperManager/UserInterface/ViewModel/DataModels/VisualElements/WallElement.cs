@@ -1,12 +1,15 @@
-﻿using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
-using SimplePenAndPaperManager.MapEditor.Entities.Buildings.Interface;
+﻿using SimplePenAndPaperManager.MapEditor.Entities.Buildings.Interface;
 using SimplePenAndPaperManager.MapEditor.Entities.Buildings;
 using System;
+using System.Collections.Generic;
 
 namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements
 {
     public class WallElement : BaseVisualElement
     {
+        public List<IWindowEntity> Windows { get; set; } 
+        public List<IDoorEntity> Doors { get; set; }
+
         public double Thickness
         {
             get { return _wallEnity.Thickness; }
@@ -32,7 +35,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             }
         }
 
-        public new double X
+        public override double X
         {
             get { return _wallEnity.X; }
             set
@@ -47,7 +50,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             }
         }
 
-        public new double Y
+        public override double Y
         {
             get { return _wallEnity.Y; }
             set
@@ -136,7 +139,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
         }
         private double _y2;
 
-        public override IVisualElement Copy()
+        public override BaseVisualElement Copy()
         {
             return new WallElement((IWallEntity)_wallEnity.Copy());
         }
@@ -147,6 +150,9 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
         {
             _wallEnity = mapEntity;
             Thickness = 1;
+            Windows = new List<IWindowEntity>();
+            Doors = new List<IDoorEntity>();
+            CalculatePositionAndSize(X, Y);
         }
 
         #region Help Functions

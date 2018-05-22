@@ -65,6 +65,7 @@
     <Compile Include="MapEditor\Entities\Buildings\Interface\IBuildingEntity.cs" />
     <Compile Include="MapEditor\Entities\Buildings\Interface\IDoorEntity.cs" />
     <Compile Include="MapEditor\Entities\Buildings\Interface\IFloorEntity.cs" />
+    <Compile Include="MapEditor\Entities\Buildings\Interface\IRectangularBuildingEntity.cs" />
     <Compile Include="MapEditor\Entities\Buildings\Interface\IStairsEntity.cs" />
     <Compile Include="MapEditor\Entities\Buildings\Interface\IWallEntity.cs" />
     <Compile Include="MapEditor\Entities\Buildings\Interface\IWindowEntity.cs" />

@@ -1,10 +1,8 @@
 ﻿using SimplePenAndPaperManager.MapEditor.Entities.Interface;
-using System.Collections.Generic;
 
 namespace SimplePenAndPaperManager.MapEditor.Entities.Buildings.Interface
 {
-    public interface IBuildingEntity : IMapEntity, IPolygonMapEntity
+    public interface IRectangularBuildingEntity : IBuildingEntity, IRectangularMapEntity
     {
-        List<IFloorEntity> Floors { get; set; }
     }
 }

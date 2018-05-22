@@ -30,5 +30,6 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.Interface
         double GizmoX { get; set; }
         double GizmoY { get; set; }
         Point MousePosition { get; set; }
+        IVisualElement LastSelected { get; set; }
     }
 }

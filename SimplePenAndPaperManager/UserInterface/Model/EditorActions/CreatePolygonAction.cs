@@ -12,7 +12,7 @@ namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
 {
     public class CreatePolygonAction : BaseAction
     {
-        public PolygonElement Building { get; set; }
+        public VisualPolygonalBuilding Building { get; set; }
         public List<WallElement> ConstructionWalls { get; set; }
 
         public override void Do()
@@ -52,6 +52,7 @@ namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
 
                 // create polygon element
                 Building = new VisualPolygonalBuilding(new PolygonBuilding() { Corners = points, X = x, Y = y, Id = DataModel.Instance.CurrentMap.GetNewId(), Name = Constants.DefaultHouseName });
+                Building.CreateFloorFromDimensions(DataModel.Instance.CurrentMap);
             }            
 
             DataModel.Instance.MapEntities.Add(Building);   // add polygon to the world

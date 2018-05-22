@@ -185,6 +185,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
         public ObservableCollection<IVisualElement> Clipboard { get; set; }
         public Point CopyLocation { get; set; }
         public Point BuildingStartLocation { get; set; }
+        public IVisualElement LastSelected { get; set; }
         public Point MousePosition
         {
             get { return _mousePosition; }

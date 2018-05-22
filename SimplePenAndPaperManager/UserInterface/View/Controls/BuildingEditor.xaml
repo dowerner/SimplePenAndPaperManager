@@ -19,6 +19,13 @@
                         Foreground="{Binding IsSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter={StaticResource SelectedForegroundColor}}" 
                         MouseLeftButtonDown="TextBlock_MouseLeftButtonDown" Text="{Binding Name}"
                         Focusable="False" FocusVisualStyle="{x:Null}">
+                <TextBlock.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Edit" Command="{Binding Source={x:Static commands:EditCommands.EditEntityCommand}}" CommandParameter="{Binding}"/>
+                        <MenuItem Header="Copy" Command="{Binding Source={x:Static commands:EditCommands.CopyCommand}}"/>
+                        <MenuItem Header="Delete" Command="{Binding Source={x:Static commands:EditCommands.DeleteCommand}}"/>
+                    </ContextMenu>
+                </TextBlock.ContextMenu>
                 <TextBlock.InputBindings>
                     <MouseBinding MouseAction="LeftDoubleClick"
                                   Command="{Binding Source={x:Static commands:EditCommands.EditEntityCommand}}"
@@ -76,18 +83,25 @@
         <local:EditorView Grid.Row="1" Grid.RowSpan="3" />
         <TreeView Grid.Row="1" Grid.Column="2">
             <TreeViewItem Header="Characters"
+                          ItemsSource="{Binding CharacterView}"
                           ItemTemplate="{StaticResource EntityListItemTemplate}" />
             <TreeViewItem Header="Items" 
+                          ItemsSource="{Binding ItemView}"
                           ItemTemplate="{StaticResource EntityListItemTemplate}" />
             <TreeViewItem Header="Walls"
+                          ItemsSource="{Binding WallsView}"
                           ItemTemplate="{StaticResource EntityListItemTemplate}"/>
             <TreeViewItem Header="Floors"
+                          ItemsSource="{Binding Floors}"
                           />
             <TreeViewItem Header="Doors"
+                          ItemsSource="{Binding DoorsView}"
                           ItemTemplate="{StaticResource EntityListItemTemplate}"/>
             <TreeViewItem Header="Windows"
+                          ItemsSource="{Binding WindowsView}"
                           ItemTemplate="{StaticResource EntityListItemTemplate}"/>
             <TreeViewItem Header="Markers" 
+                          ItemsSource="{Binding MarkersView}"
                           ItemTemplate="{StaticResource EntityListItemTemplate}" />
         </TreeView>
         <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" Grid.Column="1" Grid.RowSpan="3"/>

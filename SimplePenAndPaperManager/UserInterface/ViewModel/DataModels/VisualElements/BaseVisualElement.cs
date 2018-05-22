@@ -62,7 +62,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
         }
         protected double _centerY;
 
-        public double X
+        public virtual double X
         {
             get { return _source.X; }
             set
@@ -72,7 +72,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             }
         }
 
-        public double Y
+        public virtual double Y
         {
             get { return _source.Y; }
             set
@@ -135,7 +135,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
         }
         private Color _strokeColor;
 
-        public abstract IVisualElement Copy();
+        public abstract BaseVisualElement Copy();
 
 
         public IMapEntity SourceEntity
