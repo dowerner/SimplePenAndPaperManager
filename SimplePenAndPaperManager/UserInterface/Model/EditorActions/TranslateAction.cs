@@ -1,4 +1,5 @@
 ﻿using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.Interface;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -38,31 +39,31 @@ namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
 
         public override void Do()
         {
-            DataModel.Instance.SelectedEntities.Clear();
+            _context.SelectedEntities.Clear();
             for (int i = 0; i < AffectedEntities.Count; i++)
             {
                 AffectedEntities[i].X = _transformEndPoint.X + EntityOffsets[i].X;
                 AffectedEntities[i].Y = _transformEndPoint.Y + EntityOffsets[i].Y;
-                DataModel.Instance.SelectedEntities.Add(AffectedEntities[i]);
+                _context.SelectedEntities.Add(AffectedEntities[i]);
                 AffectedEntities[i].IsSelected = true;
             }
-            DataModel.Instance.SelectionLocation = _transformEndPoint;
+            _context.SelectionLocation = _transformEndPoint;
         }
 
         public override void Undo()
         {
-            DataModel.Instance.SelectedEntities.Clear();
+            _context.SelectedEntities.Clear();
             for (int i = 0; i < AffectedEntities.Count; i++)
             {
                 AffectedEntities[i].X = _transformStartPoint.X + EntityOffsets[i].X;
                 AffectedEntities[i].Y = _transformStartPoint.Y + EntityOffsets[i].Y;
-                DataModel.Instance.SelectedEntities.Add(AffectedEntities[i]);
+                _context.SelectedEntities.Add(AffectedEntities[i]);
                 AffectedEntities[i].IsSelected = true;
             }
-            DataModel.Instance.SelectionLocation = _transformStartPoint;
+            _context.SelectionLocation = _transformStartPoint;
         }
 
-        public TranslateAction(ObservableCollection<IVisualElement> selectedEntities) : base(selectedEntities)
+        public TranslateAction(ObservableCollection<IVisualElement> selectedEntities, IDataModel context) : base(selectedEntities, context)
         {
             EntityOffsets = new List<Point>();
         }

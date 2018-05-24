@@ -7,6 +7,7 @@ using SimplePenAndPaperManager.MapEditor.Entities;
 using SimplePenAndPaperManager.MathTools;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Buildings;
 using SimplePenAndPaperManager.MapEditor.Entities.Buildings;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.Interface;
 
 namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
 {
@@ -17,7 +18,7 @@ namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
 
         public override void Do()
         {
-            DataModel.Instance.SelectedEntities.Clear();
+            _context.SelectedEntities.Clear();
 
             if(Building == null)
             {
@@ -25,7 +26,7 @@ namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
                 List<Point2D> points = new List<Point2D>();
                 double x = 0;   // sum of x coordinates
                 double y = 0;   // sum of y coordinates
-                foreach (WallElement wall in DataModel.Instance.NewPolygonalBuildingWalls)
+                foreach (WallElement wall in ((DataModel)_context).NewPolygonalBuildingWalls)
                 {
                     Point2D point1 = new Point2D() { X = wall.X1, Y = wall.Y1 };
                     Point2D point2 = new Point2D() { X = wall.X2, Y = wall.Y2 };
@@ -39,7 +40,7 @@ namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
                         x += point2.X;
                         y += point2.Y;
                     }
-                    DataModel.Instance.MapEntities.Remove(wall);    // remove wall from the world
+                    ((DataModel)_context).MapEntities.Remove(wall);    // remove wall from the world
                 }
 
                 x /= (points.Count);    // calculate x coordinate of the polygon center
@@ -51,24 +52,24 @@ namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
                 }
 
                 // create polygon element
-                Building = new VisualPolygonalBuilding(new PolygonBuilding() { Corners = points, X = x, Y = y, Id = DataModel.Instance.CurrentMap.GetNewId(), Name = Constants.DefaultHouseName });
-                Building.CreateFloorFromDimensions(DataModel.Instance.CurrentMap);
+                Building = new VisualPolygonalBuilding(new PolygonBuilding() { Corners = points, X = x, Y = y, Id = ((DataModel)_context).CurrentMap.GetNewId(), Name = Constants.DefaultHouseName });
+                Building.CreateFloorFromDimensions();
             }            
 
-            DataModel.Instance.MapEntities.Add(Building);   // add polygon to the world
+            ((DataModel)(_context)).MapEntities.Add(Building);   // add polygon to the world
             Building.IsSelected = true;
         }
 
         public override void Undo()
         {
-            if (DataModel.Instance.SelectedEntities.Contains(Building))
+            if (_context.SelectedEntities.Contains(Building))
             {
-                DataModel.Instance.SelectedEntities.Remove(Building);
+                _context.SelectedEntities.Remove(Building);
             }
-            DataModel.Instance.MapEntities.Remove(Building);
+            _context.MapEntities.Remove(Building);
         }
 
-        public CreatePolygonAction(ObservableCollection<IVisualElement> selectedEntities) : base(selectedEntities)
+        public CreatePolygonAction(ObservableCollection<IVisualElement> selectedEntities, IDataModel context) : base(selectedEntities, context)
         {
         }
     }

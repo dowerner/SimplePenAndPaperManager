@@ -24,26 +24,25 @@
                         Focusable="False" FocusVisualStyle="{x:Null}">
                 <TextBlock.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="Edit" Command="{Binding Source={x:Static commands:EditCommands.EditEntityCommand}}" CommandParameter="{Binding}"/>
-                        <MenuItem Header="Copy" Command="{Binding Source={x:Static commands:EditCommands.CopyCommand}}"/>
-                        <MenuItem Header="Delete" Command="{Binding Source={x:Static commands:EditCommands.DeleteCommand}}"/>
+                        <MenuItem Header="Edit" Command="{Binding EditEntityCommand}"/>
+                        <MenuItem Header="Copy" Command="{Binding CopyCommand}"/>
+                        <MenuItem Header="Delete" Command="{Binding DeleteCommand}"/>
                     </ContextMenu>
                 </TextBlock.ContextMenu>
                 <TextBlock.InputBindings>
                     <MouseBinding MouseAction="LeftDoubleClick"
-                                  Command="{Binding Source={x:Static commands:EditCommands.EditEntityCommand}}"
-                                  CommandParameter="{Binding}"/>
+                                  Command="{Binding EditEntityCommand}"/>
                 </TextBlock.InputBindings>
             </TextBlock>
         </DataTemplate>
     </Window.Resources>
     <Window.InputBindings>
-        <KeyBinding Key="Delete" Command="{Binding Source={x:Static commands:EditCommands.DeleteCommand}}"/>
-        <KeyBinding Modifiers="Ctrl" Key="C" Command="{Binding Source={x:Static commands:EditCommands.CopyCommand}}"/>
-        <KeyBinding Modifiers="Ctrl" Key="V" Command="{Binding Source={x:Static commands:EditCommands.PasteCommand}}"/>
-        <KeyBinding Modifiers="Ctrl" Key="Z" Command="{Binding Source={x:Static commands:EditCommands.UndoCommand}}"/>
-        <KeyBinding Modifiers="Ctrl" Key="Y" Command="{Binding Source={x:Static commands:EditCommands.RedoCommand}}"/>
-        <KeyBinding Key="Esc" Command="{Binding Source={x:Static commands:EditCommands.DeselectAllCommand}}"/>
+        <KeyBinding Key="Delete" Command="{Binding DeleteCommand}"/>
+        <KeyBinding Modifiers="Ctrl" Key="C" Command="{Binding CopyCommand}"/>
+        <KeyBinding Modifiers="Ctrl" Key="V" Command="{Binding PasteCommand}"/>
+        <KeyBinding Modifiers="Ctrl" Key="Z" Command="{Binding UndoCommand}"/>
+        <KeyBinding Modifiers="Ctrl" Key="Y" Command="{Binding RedoCommand}"/>
+        <KeyBinding Key="Esc" Command="{Binding DeselectAllCommand}"/>
     </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
@@ -65,11 +64,11 @@
                 <MenuItem Header="Open Exterior"/>
             </MenuItem>
             <MenuItem Header="Edit">
-                <MenuItem Header="Undo (CTRL + Z)" Command="{Binding Source={x:Static commands:EditCommands.UndoCommand}}"/>
-                <MenuItem Header="Redo (CTRL + Y)" Command="{Binding Source={x:Static commands:EditCommands.RedoCommand}}"/>
-                <MenuItem Header="Copy (CTRL + C)" Command="{Binding Source={x:Static commands:EditCommands.CopyCommand}}"/>
-                <MenuItem Header="Paste (CTRL + V)" Command="{Binding Source={x:Static commands:EditCommands.PasteCommand}}"/>
-                <MenuItem Header="Delete (DEL)" Command="{Binding Source={x:Static commands:EditCommands.DeleteCommand}}"/>
+                <MenuItem Header="Undo (CTRL + Z)" Command="{Binding UndoCommand}"/>
+                <MenuItem Header="Redo (CTRL + Y)" Command="{Binding RedoCommand}"/>
+                <MenuItem Header="Copy (CTRL + C)" Command="{Binding CopyCommand}"/>
+                <MenuItem Header="Paste (CTRL + V)" Command="{Binding PasteCommand}"/>
+                <MenuItem Header="Delete (DEL)" Command="{Binding DeleteCommand}"/>
             </MenuItem>
             <MenuItem Header="View"></MenuItem>
             <MenuItem Header="Adventure">
@@ -89,7 +88,7 @@
                 <MenuItem Header="Create Vegetation"/>
             </MenuItem>
             <MenuItem Header="Markers">
-                <MenuItem Header="Create Marker" Command="{Binding Source={x:Static commands:MarkerCommands.CreateMarkerCommand}}"/>
+                <MenuItem Header="Create Marker" Command="{Binding CreateMarkerCommand}"/>
                 <MenuItem Header="Create Link"/>
                 <MenuItem Header="Create Quest Marker"/>
             </MenuItem>
@@ -104,32 +103,32 @@
                 <MenuItem Header="About"/>
             </MenuItem>
         </Menu>
-        <controls:EditorView Grid.Row="1" DataContext="{Binding Source={x:Static vm:DataModel.Instance}}" />
+        <controls:EditorView Grid.Row="1" DataContext="{Binding}" />
         <GridSplitter HorizontalAlignment="Stretch" Grid.Row="1" Grid.Column="1"/>
         <TreeView Grid.Row="1" Grid.Column="2">
             <TreeViewItem Header="Characters"
-                          ItemsSource="{Binding Source={x:Static vm:DataModel.Instance}, Path=CharacterView}" 
+                          ItemsSource="{Binding Path=CharacterView}" 
                           ItemTemplate="{StaticResource EntityListItemTemplate}" />
             <TreeViewItem Header="Items" 
-                          ItemsSource="{Binding Source={x:Static vm:DataModel.Instance}, Path=ItemView}" 
+                          ItemsSource="{Binding Path=ItemView}" 
                           ItemTemplate="{StaticResource EntityListItemTemplate}" />
             <TreeViewItem Header="Buildings"
-                          ItemsSource="{Binding Source={x:Static vm:DataModel.Instance}, Path=BuildingsView}"
+                          ItemsSource="{Binding Path=BuildingsView}"
                           ItemTemplate="{StaticResource EntityListItemTemplate}"/>
             <TreeViewItem Header="Walls"
-                          ItemsSource="{Binding Source={x:Static vm:DataModel.Instance}, Path=WallsView}"
+                          ItemsSource="{Binding Path=WallsView}"
                           ItemTemplate="{StaticResource EntityListItemTemplate}"/>
             <TreeViewItem Header="Doors"
-                          ItemsSource="{Binding Source={x:Static vm:DataModel.Instance}, Path=DoorsView}"
+                          ItemsSource="{Binding Path=DoorsView}"
                           ItemTemplate="{StaticResource EntityListItemTemplate}"/>
             <TreeViewItem Header="Windows"
-                          ItemsSource="{Binding Source={x:Static vm:DataModel.Instance}, Path=WindowsView}"
+                          ItemsSource="{Binding Path=WindowsView}"
                           ItemTemplate="{StaticResource EntityListItemTemplate}"/>
             <TreeViewItem Header="Vegetation" 
-                          ItemsSource="{Binding Source={x:Static vm:DataModel.Instance}, Path=VegetationView}" 
+                          ItemsSource="{Binding Path=VegetationView}" 
                           ItemTemplate="{StaticResource EntityListItemTemplate}" />
             <TreeViewItem Header="Markers" 
-                          ItemsSource="{Binding Source={x:Static vm:DataModel.Instance}, Path=MarkersView}" 
+                          ItemsSource="{Binding Path=MarkersView}" 
                           ItemTemplate="{StaticResource EntityListItemTemplate}" />
         </TreeView>
     </Grid>

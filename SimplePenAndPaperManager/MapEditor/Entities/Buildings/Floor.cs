@@ -15,10 +15,14 @@ namespace SimplePenAndPaperManager.MapEditor.Entities.Buildings
             Entities = new List<IMapEntity>();
         }
 
-        public override IMapEntity Copy()
+        public override IMapEntity Copy(bool copyLocation = false)
         {
-            IMapEntity copy = new Floor();
-            CopyFillInBaseProperties(copy);
+            IFloorEntity copy = new Floor();
+            CopyFillInBaseProperties(copy, copyLocation);
+
+            foreach (IWallEntity wall in Walls) copy.Walls.Add((IWallEntity)wall.Copy(copyLocation = true));    // walls have to be at same place relative to copied location
+            foreach (IWallEntity entity in Entities) copy.Entities.Add(entity.Copy(copyLocation = true));    // entities have to be at same place relative to copied location
+
             return copy;
         }
     }

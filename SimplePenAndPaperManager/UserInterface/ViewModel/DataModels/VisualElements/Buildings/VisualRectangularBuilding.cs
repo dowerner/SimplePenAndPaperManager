@@ -1,4 +1,5 @@
 ﻿using SimplePenAndPaperManager.MapEditor.Entities.Buildings.Interface;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
 using System.Windows;
 using System.Windows.Media;
 
@@ -114,14 +115,16 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
         public VisualRectangularBuilding(IRectangularBuildingEntity mapEntity) : base(mapEntity)
         {
             _rectangleSource = mapEntity;
-            _corners = new PointCollection();
-            for (int i = 0; i < 4; i++) _corners.Add(new Point());
+            Corners = new PointCollection();
+            for (int i = 0; i < 4; i++) Corners.Add(new Point());
             UpdateCorners();
         }
 
-        public override BaseVisualElement Copy()
+        public override IVisualElement Copy()
         {
-            return new VisualRectangularBuilding((IRectangularBuildingEntity)_rectangleSource.Copy());
+            VisualRectangularBuilding copy = new VisualRectangularBuilding((IRectangularBuildingEntity)_rectangleSource.Copy());
+            copy.CurrentFloor = copy.Floors[Floors.IndexOf(CurrentFloor)];
+            return copy;
         }
     }
 }

@@ -7,6 +7,6 @@
         double X { get; set; }
         double Y { get; set; }
         double Orientation { get; set; }
-        IMapEntity Copy();
+        IMapEntity Copy(bool copyLocation = false);
     }
 }

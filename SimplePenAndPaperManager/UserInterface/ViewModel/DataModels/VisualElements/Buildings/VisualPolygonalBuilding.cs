@@ -1,5 +1,4 @@
-﻿using SimplePenAndPaperManager.MapEditor.Entities;
-using SimplePenAndPaperManager.MapEditor.Entities.Buildings;
+﻿using SimplePenAndPaperManager.MapEditor.Entities.Buildings;
 using SimplePenAndPaperManager.MapEditor.Entities.Buildings.Interface;
 using SimplePenAndPaperManager.UserInterface.Model;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
@@ -7,20 +6,22 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows;
+using SimplePenAndPaperManager.MapEditor.Entities.Interface;
 using System.Windows.Media;
 
 namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Buildings
 {
-    public class VisualPolygonalBuilding : VisualPolygon, IVisualBuilding
+    public class VisualPolygonalBuilding : BaseDataModel, IVisualBuilding
     {
         private IBuildingEntity _buildingSource;
+        protected VisualPolygon _polygonBuildingSource;
 
-        public VisualPolygonalBuilding(IBuildingEntity mapEntity) : base(mapEntity)
+        public VisualPolygonalBuilding(IBuildingEntity mapEntity) : base()
         {
-            SelectedEntities = new ObservableCollection<IVisualElement>();
-            SelectedEntities.CollectionChanged += SelectedEntities_CollectionChanged;
-            ContentScale = 1;
+            _polygonBuildingSource = new VisualPolygon(mapEntity);
+            _polygonBuildingSource.PropertyChanged += _polygonBuildingSource_PropertyChanged;
 
+            // setup
             _buildingSource = mapEntity;
             Floors = new ObservableCollection<VisualFloor>();
 
@@ -31,6 +32,11 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             Floors.CollectionChanged += Floors_CollectionChanged;
         }
 
+        private void _polygonBuildingSource_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            OnPropertyChanged(e.PropertyName);
+        }
+
         #region Help Methods
         private void EntityChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -38,8 +44,8 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
 
             if (e.PropertyName == "IsSelected")
             {
-                if (entity.IsSelected && !_selectedEntities.Contains(entity)) _selectedEntities.Add(entity);
-                else if (!entity.IsSelected && _selectedEntities.Contains(entity)) _selectedEntities.Remove(entity);
+                if (entity.IsSelected && !SelectedEntities.Contains(entity)) SelectedEntities.Add(entity);
+                else if (!entity.IsSelected && SelectedEntities.Contains(entity)) SelectedEntities.Remove(entity);
             }
         }
 
@@ -56,33 +62,6 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             {
                 foreach (IVisualElement element in e.OldItems) element.PropertyChanged -= EntityChanged;
             }
-        }
-
-        private void SelectedEntities_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            // handle items where selection was removed
-            foreach (IVisualElement element in MapEntities)
-            {
-                if (!SelectedEntities.Contains(element)) element.IsSelected = false;
-            }
-
-            // set selection position
-            _selectionLocation = new Point(0, 0);
-
-            foreach (IVisualElement element in SelectedEntities)
-            {
-                _selectionLocation.X += element.X;
-                _selectionLocation.Y += element.Y;
-            }
-            _selectionLocation.X /= SelectedEntities.Count;
-            _selectionLocation.Y /= SelectedEntities.Count;
-
-            OnPropertyChanged("EntitiesSelected");
-            OnPropertyChanged("SelectionLocation");
-
-            // set correct gizmo orientation
-            if (_selectedEntities.Count == 1 && !GizmoIsRotating) GizmoOrientation = _selectedEntities[0].Orientation;
-            else if (!GizmoIsRotating) GizmoOrientation = 0;
         }
 
         private void Floors_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -127,11 +106,11 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
         }
         #endregion
 
-        public void CreateFloorFromDimensions(Map map)
+        public void CreateFloorFromDimensions()
         {
             Floor floorSource = new Floor()
             {
-                Id = map.GetNewId(),
+                Id = 0,
                 Name = "Floor",
             };
 
@@ -139,16 +118,13 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
 
             SetBoundingDimensions();
 
-            PointCollection points = new PointCollection();
-            points.Add(Corners[0]);
-
             int i = 0;
             bool finished = false;
             Point offset = new Point(MapWidth / 2, MapHeight / 2);
 
             while(!finished)
             {
-                Wall wall = new Wall() { Id = map.GetNewId(), Thickness = Constants.DefaultOutsideWallThickness, Name = "OuterWall" };
+                Wall wall = new Wall() { Id = 0, Thickness = Constants.DefaultOutsideWallThickness, Name = "OuterWall" };
                 WallElement visualWall = new WallElement(wall);
                 visualWall.X1 = Corners[i].X + offset.X;
                 visualWall.Y1 = Corners[i].Y + offset.Y;
@@ -165,74 +141,33 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
                     visualWall.Y2 = Corners[i + 1].Y + offset.Y;
                     i++;
                 }
-                floor.MapEntities.Add(VisualElementHelper.CreateFromMapEntity(wall));
-                ((IFloorEntity)floor.SourceEntity).Walls.Add(wall);
+                floor.MapEntities.Add(visualWall);
             }
-
             Floors.Add(floor);
-            ((IBuildingEntity)SourceEntity).Floors.Add((IFloorEntity)floor.SourceEntity);
 
             if (CurrentFloor == null) CurrentFloor = floor;
         }
-
-        public ObservableCollection<IVisualElement> SelectedEntities
-        {
-            get { return _selectedEntities; }
-            set
-            {
-                _selectedEntities = value;
-                OnPropertyChanged("SelectedEntities");
-            }
-        }
-        private ObservableCollection<IVisualElement> _selectedEntities;
-
-        public Point SelectionLocation
-        {
-            get { return _selectionLocation; }
-            set
-            {
-                _selectionLocation = value;
-                OnPropertyChanged("SelectionLocation");
-            }
-        }
-        private Point _selectionLocation;
-
-        public IVisualElement LastSelected { get; set; }
 
         public VisualFloor CurrentFloor
         {
             get { return _currentFloor; }
             set
             {
-                if (_currentFloor != null) _currentFloor.MapEntities.CollectionChanged -= MapEntities_CollectionChanged;
+                if (_currentFloor != null)
+                {
+                    foreach (IVisualElement entity in _currentFloor.MapEntities) entity.PropertyChanged -= EntityChanged;
+                    _currentFloor.MapEntities.CollectionChanged -= MapEntities_CollectionChanged;
+                }
                 _currentFloor = value;
-                _currentFloor.MapEntities.CollectionChanged += MapEntities_CollectionChanged;
                 OnPropertyChanged("CurrentFloor");
+                if (_currentFloor == null) return;
+                SetBoundingDimensions();
+
+                _currentFloor.MapEntities.CollectionChanged += MapEntities_CollectionChanged;
+                foreach (IVisualElement entity in _currentFloor.MapEntities) entity.PropertyChanged += EntityChanged;
             }
         }
         private VisualFloor _currentFloor;
-
-        public double MapWidth
-        {
-            get { return _mapWidth; }
-            set
-            {
-                _mapWidth = value;
-                OnPropertyChanged("MapWidth");
-            }
-        }
-        private double _mapWidth;
-
-        public double MapHeight
-        {
-            get { return _mapHeight; }
-            set
-            {
-                _mapHeight = value;
-                OnPropertyChanged("MapHeight");
-            }
-        }
-        private double _mapHeight;
 
         public ObservableCollection<VisualFloor> Floors
         {
@@ -253,205 +188,96 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
         public ICollectionView WindowsView { get { return CurrentFloor.WindowsView; } set { CurrentFloor.WindowsView = value; } }
         public ICollectionView MarkersView { get { return CurrentFloor.MarkersView; } set { CurrentFloor.MarkersView = value; } }
 
-        public ObservableCollection<IVisualElement> MapEntities
+        public PointCollection Corners
         {
-            get { return _currentFloor.MapEntities; }
-            set
-            {
-                _currentFloor.MapEntities = value;
-                OnPropertyChanged("MapEntities");
-            }
+            get { return _polygonBuildingSource.Corners; }
+            set { _polygonBuildingSource.Corners = value; }
         }
 
-        public double ContentScale
+        public Color Color
         {
-            get { return _contentScale; }
-            set
-            {
-                _contentScale = value;
-                OnPropertyChanged("ContentScale");
-            }
-        }
-        private double _contentScale;
-
-        public double ContentOffsetX
-        {
-            get { return _contentOffsetX; }
-            set
-            {
-                _contentOffsetX = value;
-                OnPropertyChanged("ContentOffsetX");
-            }
-        }
-        private double _contentOffsetX;
-
-        public double ContentOffsetY
-        {
-            get { return _contentOffsetY; }
-            set
-            {
-                _contentOffsetY = value;
-                OnPropertyChanged("ContentOffsetY");
-            }
-        }
-        private double _contentOffsetY;
-
-        public double ContentViewportWidth
-        {
-            get { return _contentViewportWidth; }
-            set
-            {
-                _contentViewportWidth = value;
-                OnPropertyChanged("ContentViewportWidth");
-            }
-        }
-        private double _contentViewportWidth;
-
-        public double ContentViewportHeight
-        {
-            get { return _contentViewportHeight; }
-            set
-            {
-                _contentViewportHeight = value;
-                OnPropertyChanged("ContentViewportHeight");
-            }
-        }
-        private double _contentViewportHeight;
-
-        public double ContentWidth
-        {
-            get { return _contentWidth; }
-            set
-            {
-                _contentWidth = value;
-                OnPropertyChanged("ContentWidth");
-            }
-        }
-        private double _contentWidth;
-
-        public double ContentHeight
-        {
-            get { return _contentHeight; }
-            set
-            {
-                _contentHeight = value;
-                OnPropertyChanged("ContentHeight");
-            }
-        }
-        private double _contentHeight;
-
-        public double GizmoOrientation
-        {
-            get { return _gizmoOrientation; }
-            set
-            {
-                _gizmoOrientation = value;
-                OnPropertyChanged("GizmoOrientation");
-            }
-        }
-        private double _gizmoOrientation;
-
-        public bool EntitiesSelected
-        {
-            get { return _entitiesSelected; }
-        }
-        private bool _entitiesSelected;
-
-        public bool GizmoIsRotating
-        {
-            get { return _gizmoIsRotating; }
-            set
-            {
-                _gizmoIsRotating = value;
-                OnPropertyChanged("GizmoIsRotating");
-            }
-        }
-        private bool _gizmoIsRotating;
-
-        public bool GizmoDragX
-        {
-            get { return _gizmoDragX; }
-            set
-            {
-                _gizmoDragX = value;
-                OnPropertyChanged("GizmoDragX");
-            }
-        }
-        private bool _gizmoDragX;
-
-        public bool GizmoDragY
-        {
-            get { return _gizmoDragY; }
-            set
-            {
-                _gizmoDragY = value;
-                OnPropertyChanged("GizmoDragY");
-            }
-        }
-        private bool _gizmoDragY;
-
-        public double GizmoX
-        {
-            get { return _gizmoX; }
-            set
-            {
-                _gizmoX = value;
-                OnPropertyChanged("GizmoX");
-            }
-        }
-        private double _gizmoX;
-
-        public double GizmoY
-        {
-            get { return _gizmoY; }
-            set
-            {
-                _gizmoY = value;
-                OnPropertyChanged("GizmoY");
-            }
-        }
-        private double _gizmoY;
-
-        public Point MousePosition
-        {
-            get { return _mousePosition; }
-            set
-            {
-                _mousePosition = value;
-                OnPropertyChanged("MousePosition");
-            }
-        }
-        private Point _mousePosition;
-
-        /// <summary>
-        /// Can only be false since there is no terrain inside of a building.
-        /// </summary>
-        public bool InTerrainEditingMode
-        {
-            get { return false; }
-            set { } // cannot be set
+            get { return _polygonBuildingSource.Color; }
+            set { _polygonBuildingSource.Color = value; }
         }
 
-        /// <summary>
-        /// Can only be false since there is no terrain inside of a building.
-        /// </summary>
-        public bool ShowTerrainEllipse
+        public Color StrokeColor
         {
-            get { return false; }
+            get { return _polygonBuildingSource.StrokeColor; }
+            set { _polygonBuildingSource.StrokeColor = value; }
         }
 
-        /// <summary>
-        /// Can only be false since there is no terrain inside of a building.
-        /// </summary>
-        public bool ShowTerrainRectangle
+        public double CenterX
         {
-            get { return false; }
+            get { return _polygonBuildingSource.CenterX; }
+            set { _polygonBuildingSource.CenterX = value; }
+        }
+
+        public double CenterY
+        {
+            get { return _polygonBuildingSource.CenterY; }
+            set { _polygonBuildingSource.CenterY = value; }
+        }
+
+        public double BoundingWidth
+        {
+            get { return _polygonBuildingSource.BoundingWidth; }
+            set { _polygonBuildingSource.BoundingWidth = value; }
+        }
+
+        public double BoundingHeight
+        {
+            get { return _polygonBuildingSource.BoundingHeight; }
+            set { _polygonBuildingSource.BoundingHeight = value; }
+        }
+
+        public double X
+        {
+            get { return _polygonBuildingSource.X; }
+            set { _polygonBuildingSource.X = value; }
+        }
+
+        public double Y
+        {
+            get { return _polygonBuildingSource.Y; }
+            set { _polygonBuildingSource.Y = value; }
+        }
+
+        public double Orientation
+        {
+            get { return _polygonBuildingSource.Orientation; }
+            set { _polygonBuildingSource.Orientation = value; }
+        }
+
+        public int Id
+        {
+            get { return _polygonBuildingSource.Id; }
+            set { _polygonBuildingSource.Id = value; }
+        }
+
+        public string Name
+        {
+            get { return _polygonBuildingSource.Name; }
+            set { _polygonBuildingSource.Name = Name; }
+        }
+
+        public bool IsSelected
+        {
+            get { return _polygonBuildingSource.IsSelected; }
+            set { _polygonBuildingSource.IsSelected = value; }
+        }
+
+        public IMapEntity SourceEntity
+        {
+            get { return _polygonBuildingSource.SourceEntity; }
+            set { _polygonBuildingSource.SourceEntity = value; }
         }
         #endregion
 
-        public override BaseVisualElement Copy()
+        public virtual IVisualElement Copy()
         {
-            return new VisualPolygonalBuilding((IBuildingEntity)_polygonSource.Copy());
+            VisualPolygonalBuilding copy = new VisualPolygonalBuilding((IBuildingEntity)_buildingSource.Copy());
+            copy.CurrentFloor = copy.Floors[Floors.IndexOf(CurrentFloor)];
+            return copy;
         }
     }
 }

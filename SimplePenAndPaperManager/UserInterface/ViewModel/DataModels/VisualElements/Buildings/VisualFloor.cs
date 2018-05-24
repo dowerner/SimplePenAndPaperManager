@@ -60,7 +60,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             fillToSource();
         }
 
-        public override BaseVisualElement Copy()
+        public override IVisualElement Copy()
         {
             return new VisualFloor((IFloorEntity)_sourceFloor.Copy());
         }

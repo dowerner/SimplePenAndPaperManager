@@ -11,10 +11,10 @@ namespace SimplePenAndPaperManager.MapEditor.Entities.Buildings
         public bool Locked { get; set; }
         public BuildingMaterial Material { get; set; }
 
-        public override IMapEntity Copy()
+        public override IMapEntity Copy(bool copyLocation = false)
         {
             Door copy = new Door() { Locked = Locked, Material = Material, Keys = Keys };   // note that the keys aren't copied but the same keys can open the door which makes sense for a door
-            CopyFillInBaseProperties(copy);
+            CopyFillInBaseProperties(copy, copyLocation);
             return copy;
         }
     }

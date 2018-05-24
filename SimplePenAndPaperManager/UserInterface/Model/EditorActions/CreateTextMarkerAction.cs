@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
-using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Markers;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.Interface;
 
 namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
 {
@@ -11,18 +11,18 @@ namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
 
         public override void Do()
         {
-            DataModel.Instance.MapEntities.Add(Marker);
-            DataModel.Instance.SelectedEntities.Clear();
+            _context.MapEntities.Add(Marker);
+            _context.SelectedEntities.Clear();
             Marker.IsSelected = true;
         }
 
         public override void Undo()
         {
             Marker.IsSelected = false;
-            DataModel.Instance.MapEntities.Remove(Marker);
+            _context.MapEntities.Remove(Marker);
         }
 
-        public CreateTextMarkerAction(ObservableCollection<IVisualElement> selectedEntities) : base(selectedEntities)
+        public CreateTextMarkerAction(ObservableCollection<IVisualElement> selectedEntities, IDataModel context) : base(selectedEntities, context)
         {
         }
     }

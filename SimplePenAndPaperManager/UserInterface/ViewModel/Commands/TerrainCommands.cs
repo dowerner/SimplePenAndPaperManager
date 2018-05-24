@@ -38,13 +38,13 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.Commands
 
         public bool CanExecute(object parameter)
         {
-            return !DataModel.Instance.InTerrainEditingMode;
+            return true;
         }
 
         public void Execute(object parameter)
         {
-            DataModel.Instance.InTerrainEditingMode = true;
-            DataModel.Instance.TerrainBrush = TerrainBrush.Circle;
+            GlobalManagement.Instance.InTerrainEditingMode = true;
+            GlobalManagement.Instance.TerrainBrush = TerrainBrush.Circle;
             TerrainToolbox toolbox = new TerrainToolbox();
             toolbox.Owner = Application.Current.MainWindow;
             toolbox.Show();
@@ -52,7 +52,6 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.Commands
 
         public EditTerrainCommand()
         {
-            DataModel.Instance.PropertyChanged += Instance_PropertyChanged;
         }
 
         private void Instance_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -72,9 +71,9 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.Commands
 
         public void Execute(object parameter)
         {
-            DataModel.Instance.Terrain = (FloorMaterial)parameter;
-            DataModel.Instance.InTerrainEditingMode = true;
-            if(DataModel.Instance.TerrainBrush == TerrainBrush.None) DataModel.Instance.TerrainBrush = TerrainBrush.Circle;
+            GlobalManagement.Instance.Terrain = (FloorMaterial)parameter;
+            GlobalManagement.Instance.InTerrainEditingMode = true;
+            if(GlobalManagement.Instance.TerrainBrush == TerrainBrush.None) GlobalManagement.Instance.TerrainBrush = TerrainBrush.Circle;
         }
     }
 }

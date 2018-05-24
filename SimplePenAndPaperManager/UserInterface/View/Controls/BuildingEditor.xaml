@@ -21,14 +21,14 @@
                         Focusable="False" FocusVisualStyle="{x:Null}">
                 <TextBlock.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="Edit" Command="{Binding Source={x:Static commands:EditCommands.EditEntityCommand}}" CommandParameter="{Binding}"/>
-                        <MenuItem Header="Copy" Command="{Binding Source={x:Static commands:EditCommands.CopyCommand}}"/>
-                        <MenuItem Header="Delete" Command="{Binding Source={x:Static commands:EditCommands.DeleteCommand}}"/>
+                        <MenuItem Header="Edit" Command="{Binding EditEntityCommand}"/>
+                        <MenuItem Header="Copy" Command="{Binding CopyCommand}"/>
+                        <MenuItem Header="Delete" Command="{Binding DeleteCommand}"/>
                     </ContextMenu>
                 </TextBlock.ContextMenu>
                 <TextBlock.InputBindings>
                     <MouseBinding MouseAction="LeftDoubleClick"
-                                  Command="{Binding Source={x:Static commands:EditCommands.EditEntityCommand}}"
+                                  Command="{Binding EditEntityCommand}"
                                   CommandParameter="{Binding}"/>
                 </TextBlock.InputBindings>
             </TextBlock>
@@ -51,11 +51,11 @@
         </Grid.ColumnDefinitions>
         <Menu Grid.ColumnSpan="3">
             <MenuItem Header="Edit">
-                <MenuItem Header="Undo (CTRL + Z)" Command="{Binding Source={x:Static commands:EditCommands.UndoCommand}}"/>
-                <MenuItem Header="Redo (CTRL + Y)" Command="{Binding Source={x:Static commands:EditCommands.RedoCommand}}"/>
-                <MenuItem Header="Copy (CTRL + C)" Command="{Binding Source={x:Static commands:EditCommands.CopyCommand}}"/>
-                <MenuItem Header="Paste (CTRL + V)" Command="{Binding Source={x:Static commands:EditCommands.PasteCommand}}"/>
-                <MenuItem Header="Delete (DEL)" Command="{Binding Source={x:Static commands:EditCommands.DeleteCommand}}"/>
+                <MenuItem Header="Undo (CTRL + Z)" Command="{Binding UndoCommand}"/>
+                <MenuItem Header="Redo (CTRL + Y)" Command="{Binding RedoCommand}"/>
+                <MenuItem Header="Copy (CTRL + C)" Command="{Binding CopyCommand}"/>
+                <MenuItem Header="Paste (CTRL + V)" Command="{Binding PasteCommand}"/>
+                <MenuItem Header="Delete (DEL)" Command="{Binding DeleteCommand}"/>
             </MenuItem>
             <MenuItem Header="View"></MenuItem>
             <MenuItem Header="Adventure">
@@ -69,7 +69,7 @@
                 <MenuItem Header="Create Vegetation"/>
             </MenuItem>
             <MenuItem Header="Markers">
-                <MenuItem Header="Create Marker" Command="{Binding Source={x:Static commands:MarkerCommands.CreateMarkerCommand}}"/>
+                <MenuItem Header="Create Marker" Command="{Binding CreateMarkerCommand}"/>
                 <MenuItem Header="Create Link"/>
                 <MenuItem Header="Create Quest Marker"/>
             </MenuItem>
@@ -80,7 +80,7 @@
                 <MenuItem Header="Create NPC"/>
             </MenuItem>
         </Menu>
-        <local:EditorView Grid.Row="1" Grid.RowSpan="3" />
+        <local:EditorView Grid.Row="1" Grid.RowSpan="3" ShowOverview="False" />
         <TreeView Grid.Row="1" Grid.Column="2">
             <TreeViewItem Header="Characters"
                           ItemsSource="{Binding CharacterView}"

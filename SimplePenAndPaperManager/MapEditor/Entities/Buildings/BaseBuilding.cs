@@ -15,12 +15,12 @@ namespace SimplePenAndPaperManager.MapEditor.Entities.Buildings
             Corners = new List<Point2D>();
         }
 
-        protected override void CopyFillInBaseProperties(IMapEntity copy)
+        protected override void CopyFillInBaseProperties(IMapEntity copy, bool copyLocation = false)
         {
-            base.CopyFillInBaseProperties(copy);
+            base.CopyFillInBaseProperties(copy, copyLocation);
 
             IBuildingEntity copiedBuilding = (IBuildingEntity)copy;
-            foreach (IFloorEntity floor in Floors) copiedBuilding.Floors.Add((IFloorEntity)floor.Copy());
+            foreach (IFloorEntity floor in Floors) copiedBuilding.Floors.Add((IFloorEntity)floor.Copy(copyLocation));
         }
     }
 }

@@ -38,8 +38,8 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.Commands
 
         public void Execute(object parameter)
         {
-            DataModel.Instance.IsCreatingRectangle = true;
-            DataModel.Instance.InTerrainEditingMode = false;
+            GlobalManagement.Instance.IsCreatingRectangularBuilding = true;
+            GlobalManagement.Instance.InTerrainEditingMode = false;
         }
     }
 
@@ -54,8 +54,8 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.Commands
 
         public void Execute(object parameter)
         {
-            DataModel.Instance.IsCreatingPolygon = true;
-            DataModel.Instance.InTerrainEditingMode = false;
+            GlobalManagement.Instance.IsCreatingPolygonalBuilding = true;
+            GlobalManagement.Instance.InTerrainEditingMode = false;
         }
     }
 }

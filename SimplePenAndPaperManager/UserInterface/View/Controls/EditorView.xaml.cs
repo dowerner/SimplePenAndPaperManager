@@ -59,6 +59,8 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
         /// </summary>
         private bool prevZoomRectSet = false;
 
+        private OverviewWindow _overviewWindow;
+
         private IDataModel _vm;
 
         public EditorView()
@@ -69,6 +71,7 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
             TerrainMap.Cursor = Cursors.Pen;
 
             DataContextChanged += EditorView_DataContextChanged;
+            GlobalManagement.Instance.PropertyChanged += Instance_PropertyChanged;
         }
 
         private void EditorView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -76,6 +79,9 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
             _vm = (IDataModel)DataContext;
             _vm.PropertyChanged += Instance_PropertyChanged;
             Gizmo.TransformationChanged += Gizmo_TransformationChanged;
+
+            GlobalManagement.Instance.Terrain = GlobalManagement.Instance.Terrain;
+            GlobalManagement.Instance.TerrainBrushSize = GlobalManagement.Instance.TerrainBrushSize;
         }
 
         private void TerrainMap_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -88,25 +94,25 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
             switch (transformationEvent)
             {
                 case TransformationEvent.TranslationStarted:
-                    TranslateAction translation = new TranslateAction(_vm.SelectedEntities);
+                    TranslateAction translation = new TranslateAction(_vm.SelectedEntities, _vm);
                     translation.TransformStartPoint = _vm.SelectionLocation;
-                    DataModel.Instance.CurrentAction = translation;
+                    GlobalManagement.Instance.CurrentAction = translation;
                     break;
                 case TransformationEvent.TranslationEnded:
-                    DataModel.Instance.UndoStack.Push(DataModel.Instance.CurrentAction);
-                    DataModel.Instance.CurrentAction = null;
+                    GlobalManagement.Instance.UndoStack.Push(GlobalManagement.Instance.CurrentAction);
+                    GlobalManagement.Instance.CurrentAction = null;
                     break;
                 case TransformationEvent.RotationStarted:
-                    RotateAction rotation = new RotateAction(_vm.SelectedEntities);
+                    RotateAction rotation = new RotateAction(_vm.SelectedEntities, _vm);
                     mouseHandlingMode = MouseHandlingMode.RotateObject;
                     rotation.StartRotation = _vm.GizmoOrientation;
                     rotation.PivotPoint = _vm.SelectionLocation;
-                    DataModel.Instance.CurrentAction = rotation;
+                    GlobalManagement.Instance.CurrentAction = rotation;
                     break;
                 case TransformationEvent.RotationEnded:
                     mouseHandlingMode = MouseHandlingMode.None;
-                    DataModel.Instance.UndoStack.Push(DataModel.Instance.CurrentAction);
-                    DataModel.Instance.CurrentAction = null;
+                    GlobalManagement.Instance.UndoStack.Push(GlobalManagement.Instance.CurrentAction);
+                    GlobalManagement.Instance.CurrentAction = null;
                     break;
             }
         }
@@ -117,17 +123,17 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                 || (e.PropertyName == "GizmoDragY" && _vm.GizmoDragY))
                 mouseHandlingMode = MouseHandlingMode.DragObject;
 
-            if (e.PropertyName == "IsCreatingRectangle" && DataModel.Instance.IsCreatingRectangle)
+            if (e.PropertyName == "IsCreatingRectangularBuilding" && GlobalManagement.Instance.IsCreatingRectangularBuilding)
             {
                 mouseHandlingMode = MouseHandlingMode.CreateRectangle;
             }
 
-            if (e.PropertyName == "IsCreatingPolygon" && DataModel.Instance.IsCreatingPolygon)
+            if (e.PropertyName == "IsCreatingPolygonalBuilding" && GlobalManagement.Instance.IsCreatingPolygonalBuilding)
             {
                 mouseHandlingMode = MouseHandlingMode.CreatePolygon;
             }
 
-            if(e.PropertyName == "IsCreatingTextMarker" && DataModel.Instance.IsCreatingTextMarker)
+            if(e.PropertyName == "IsCreatingTextMarker" && _vm.IsCreatingTextMarker)
             {
                 mouseHandlingMode = MouseHandlingMode.CreateTextMarker;
                 zoomAndPanControl.Cursor = Cursors.Pen;
@@ -143,7 +149,7 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
             // update selected entities postion
             if((e.PropertyName == "GizmoX" || e.PropertyName == "GizmoY") && mouseHandlingMode == MouseHandlingMode.DragObject)
             {
-                TranslateAction translation = (TranslateAction)DataModel.Instance.CurrentAction;
+                TranslateAction translation = (TranslateAction)GlobalManagement.Instance.CurrentAction;
                 Point pxPoint = FromCanvasToZoomControlCoordinates(new Point(Utils.MeterToPx(_vm.GizmoX) + Gizmo.Width / 2,
                                                                              Utils.MeterToPx(_vm.GizmoY) + Gizmo.Height / 2));
                 translation.TransformEndPoint = pxPoint.PxToMeter();
@@ -153,7 +159,7 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
             // update selected entities rotation
             if(e.PropertyName == "GizmoOrientation" && mouseHandlingMode == MouseHandlingMode.RotateObject)
             {
-                RotateAction rotation = (RotateAction)DataModel.Instance.CurrentAction;
+                RotateAction rotation = (RotateAction)GlobalManagement.Instance.CurrentAction;
                 rotation.EndRotation = _vm.GizmoOrientation;
                 rotation.Do();
             }
@@ -163,19 +169,19 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
 
             if (e.PropertyName == "TerrainBrushSize" || e.PropertyName == "ContentScale")
             {
-                TerrainMap.DefaultDrawingAttributes.Width = Utils.MeterToPx(DataModel.Instance.TerrainBrushSize);
-                TerrainMap.DefaultDrawingAttributes.Height = Utils.MeterToPx(DataModel.Instance.TerrainBrushSize);
+                TerrainMap.DefaultDrawingAttributes.Width = Utils.MeterToPx(GlobalManagement.Instance.TerrainBrushSize);
+                TerrainMap.DefaultDrawingAttributes.Height = Utils.MeterToPx(GlobalManagement.Instance.TerrainBrushSize);
 
-                TerrainEllipse.Width = Utils.MeterToPx(DataModel.Instance.TerrainBrushSize) * _vm.ContentScale;
-                TerrainEllipse.Height = Utils.MeterToPx(DataModel.Instance.TerrainBrushSize) * _vm.ContentScale;
+                TerrainEllipse.Width = Utils.MeterToPx(GlobalManagement.Instance.TerrainBrushSize) * _vm.ContentScale;
+                TerrainEllipse.Height = Utils.MeterToPx(GlobalManagement.Instance.TerrainBrushSize) * _vm.ContentScale;
                 TerrainEllipse.Margin = new Thickness(-TerrainEllipse.Width / 2, -TerrainEllipse.Height / 2, 0, 0);
-                TerrainRectangle.Width = Utils.MeterToPx(DataModel.Instance.TerrainBrushSize) * _vm.ContentScale;
-                TerrainRectangle.Height = Utils.MeterToPx(DataModel.Instance.TerrainBrushSize) * _vm.ContentScale;
+                TerrainRectangle.Width = Utils.MeterToPx(GlobalManagement.Instance.TerrainBrushSize) * _vm.ContentScale;
+                TerrainRectangle.Height = Utils.MeterToPx(GlobalManagement.Instance.TerrainBrushSize) * _vm.ContentScale;
                 TerrainRectangle.Margin = new Thickness(-TerrainRectangle.Width / 2, -TerrainRectangle.Height / 2, 0, 0);
             }
             else if (e.PropertyName == "TerrainBrush")
             {
-                switch (DataModel.Instance.TerrainBrush)
+                switch (GlobalManagement.Instance.TerrainBrush)
                 {
                     case TerrainBrush.Circle:
                         TerrainMap.DefaultDrawingAttributes.StylusTip = System.Windows.Ink.StylusTip.Ellipse;
@@ -187,7 +193,7 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
             }
             else if (e.PropertyName == "Terrain")
             {
-                switch (DataModel.Instance.Terrain)
+                switch (GlobalManagement.Instance.Terrain)
                 {
                     case FloorMaterial.Asphalt:
                         TerrainMap.DefaultDrawingAttributes.Color = Colors.LightGray;
@@ -215,17 +221,50 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
             #endregion
         }
 
+        #region Dependency Properties
+        public static DependencyProperty ShowOverviewProperty = DependencyProperty.Register("ShowOverview", typeof(bool), typeof(EditorView), new PropertyMetadata(true, ShowOverviewPropertyChanged));
+
+        private static void ShowOverviewPropertyChanged(DependencyObject dp, DependencyPropertyChangedEventArgs e)
+        {
+            EditorView editorView = (EditorView)dp;
+
+            if ((bool)e.NewValue)
+            {
+                editorView._overviewWindow = new OverviewWindow(editorView._vm);
+                Window parent = Window.GetWindow(editorView);
+                editorView._overviewWindow.Left = parent.Left;
+                editorView._overviewWindow.Top = parent.Top + editorView.Height + 5;
+                editorView._overviewWindow.Owner = parent;
+                editorView._overviewWindow.Show();
+            }
+            else if(editorView._overviewWindow != null)
+            {
+                editorView._overviewWindow.Close();
+                editorView._overviewWindow = null;
+            }
+        }
+
+        public bool ShowOverview
+        {
+            get { return (bool)GetValue(ShowOverviewProperty); }
+            set { SetValue(ShowOverviewProperty, value); }
+        }
+        #endregion
+
         /// <summary>
         /// Event raised when the Window has loaded.
         /// </summary>
         private void EditorView_Loaded(object sender, RoutedEventArgs e)
         {
-            OverviewWindow overviewWindow = new OverviewWindow();
-            Window parent = Window.GetWindow(this);
-            overviewWindow.Left = parent.Left;
-            overviewWindow.Top = parent.Top + Height + 5;
-            overviewWindow.Owner = parent;
-            overviewWindow.Show();
+            if (ShowOverview)
+            {
+                _overviewWindow = new OverviewWindow(_vm);
+                Window parent = Window.GetWindow(this);
+                _overviewWindow.Left = parent.Left;
+                _overviewWindow.Top = parent.Top + Height + 5;
+                _overviewWindow.Owner = parent;
+                _overviewWindow.Show();
+            }
 
             KeyDown += EditorView_KeyDown;
 
@@ -246,13 +285,13 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
         private void HandleEscape()
         {
             _vm.SelectedEntities.Clear();
-            if (DataModel.Instance.CurrentAction != null) DataModel.Instance.CurrentAction.Undo();
-            if(DataModel.Instance.NewRectangleBuilding != null)
+            if (GlobalManagement.Instance.CurrentAction != null) GlobalManagement.Instance.CurrentAction.Undo();
+            if(GlobalManagement.Instance.NewRectangleBuilding != null)
             {
-                _vm.MapEntities.Remove(DataModel.Instance.NewRectangleBuilding);
-                DataModel.Instance.NewRectangleBuilding = null;
+                _vm.MapEntities.Remove(GlobalManagement.Instance.NewRectangleBuilding);
+                GlobalManagement.Instance.NewRectangleBuilding = null;
             }
-            _vm.InTerrainEditingMode = false;
+            GlobalManagement.Instance.InTerrainEditingMode = false;
             mouseHandlingMode = MouseHandlingMode.None;
         }
         #endregion
@@ -280,7 +319,7 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
 
             if ((mouseHandlingMode == MouseHandlingMode.CreateRectangle || mouseHandlingMode == MouseHandlingMode.CreatePolygon))
             {
-                DataModel.Instance.StartBuilding();
+                ((DataModel)_vm).StartBuilding();
                 zoomAndPanControl.CaptureMouse();
                 e.Handled = true;
                 return;
@@ -346,20 +385,20 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                 if(mouseHandlingMode == MouseHandlingMode.CreateRectangle)
                 {
                     // mouse rectangle location to center of shape
-                    VisualRectangularBuilding building = DataModel.Instance.NewRectangleBuilding;
+                    VisualRectangularBuilding building = GlobalManagement.Instance.NewRectangleBuilding;
                     Point diagonal = building.C.Sub(building.A);
                     building.X += diagonal.X / 2;
                     building.Y += diagonal.Y / 2;
                     building.A = building.A.Sub(diagonal.Mult(0.5));
                     building.C = building.C.Sub(diagonal.Mult(0.5));
-                    building.CreateFloorFromDimensions(DataModel.Instance.CurrentMap);
+                    building.CreateFloorFromDimensions();
 
                     // When releasing during the creation of a rectangle
-                    CreateRectangleAction createAction = new CreateRectangleAction(null) { Building = DataModel.Instance.NewRectangleBuilding };
-                    DataModel.Instance.UndoStack.Push(createAction);
+                    CreateRectangleAction createAction = new CreateRectangleAction(null, _vm) { Building = GlobalManagement.Instance.NewRectangleBuilding };
+                    GlobalManagement.Instance.UndoStack.Push(createAction);
                     _vm.SelectedEntities.Clear();
-                    DataModel.Instance.NewRectangleBuilding.IsSelected = true;
-                    DataModel.Instance.NewRectangleBuilding = null;
+                    GlobalManagement.Instance.NewRectangleBuilding.IsSelected = true;
+                    GlobalManagement.Instance.NewRectangleBuilding = null;
                 }
                 if(mouseHandlingMode == MouseHandlingMode.CreatePolygon)
                 {
@@ -369,28 +408,27 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                 if(mouseHandlingMode == MouseHandlingMode.CreateTextMarker)
                 {
                     // place text marker
-                    CreateTextMarkerAction action = new CreateTextMarkerAction(null);
+                    CreateTextMarkerAction action = new CreateTextMarkerAction(null, _vm);
                     action.Marker = new VisualTextMarker(new TextMarker()
                     {
                         X = Utils.PxToMeter(_vm.MousePosition.X),
                         Y = Utils.PxToMeter(_vm.MousePosition.Y),
                         Text = "Text",
                         Name = Constants.DefaultMarkerName,
-                        Id = DataModel.Instance.CurrentMap.GetNewId()
                     });
                     TextMarkerInputBox.SetMarkerData(action.Marker);
                     action.Marker.Name = Constants.DefaultMarkerName + "_" + action.Marker.Text.Replace(' ', '_');
                     action.Do();
                     zoomAndPanControl.Cursor = Cursors.Arrow;
-                    DataModel.Instance.UndoStack.Push(action);
+                    GlobalManagement.Instance.UndoStack.Push(action);
                 }
 
                 zoomAndPanControl.ReleaseMouseCapture();
                 mouseHandlingMode = MouseHandlingMode.None;
-                DataModel.Instance.IsCreatingRectangle = false;
+                GlobalManagement.Instance.IsCreatingRectangularBuilding = false;
                 _vm.GizmoDragX = false;
                 _vm.GizmoDragY = false;
-                DataModel.Instance.NewRectangleBuilding = null;
+                GlobalManagement.Instance.NewRectangleBuilding = null;
                 e.Handled = true;
             }
         }
@@ -458,27 +496,27 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
 
                 e.Handled = true;
             }
-            else if(mouseHandlingMode == MouseHandlingMode.CreateRectangle && DataModel.Instance.NewRectangleBuilding != null)
+            else if(mouseHandlingMode == MouseHandlingMode.CreateRectangle && GlobalManagement.Instance.NewRectangleBuilding != null)
             {
                 // Update rectangle that is being created
                 Point point = e.GetPosition(content).PxToMeter();
-                Point start = DataModel.Instance.BuildingStartLocation;
+                Point start = GlobalManagement.Instance.BuildingStartLocation;
 
-                DataModel.Instance.NewRectangleBuilding.C = point.Sub(start);
+                GlobalManagement.Instance.NewRectangleBuilding.C = point.Sub(start);
 
                 // update building in map
-                _vm.MapEntities.Remove(DataModel.Instance.NewRectangleBuilding);
-                _vm.MapEntities.Add(DataModel.Instance.NewRectangleBuilding);
+                _vm.MapEntities.Remove(GlobalManagement.Instance.NewRectangleBuilding);
+                _vm.MapEntities.Add(GlobalManagement.Instance.NewRectangleBuilding);
             }
-            else if(mouseHandlingMode == MouseHandlingMode.CreatePolygon && DataModel.Instance.CurrentPolygonWall != null)
+            else if(mouseHandlingMode == MouseHandlingMode.CreatePolygon && ((DataModel)_vm).CurrentPolygonWall != null)
             {
                 // Update polygon wall which is currently being placed
                 Point point = e.GetPosition(content).PxToMeter();
-                DataModel.Instance.CurrentPolygonWall.X2 = point.X;
-                DataModel.Instance.CurrentPolygonWall.Y2 = point.Y;
+                ((DataModel)_vm).CurrentPolygonWall.X2 = point.X;
+                ((DataModel)_vm).CurrentPolygonWall.Y2 = point.Y;
             }
             _vm.MousePosition = e.GetPosition(content);
-            DataModel.Instance.CanvasPosition = FromZoomControlToCanvasCoordinates(_vm.MousePosition);
+            GlobalManagement.Instance.CanvasPosition = FromZoomControlToCanvasCoordinates(_vm.MousePosition);
         }
 
         #region Math Tools
@@ -747,12 +785,12 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
         {
             if(mouseHandlingMode == MouseHandlingMode.CreatePolygon)
             {
-                CreatePolygonAction action = new CreatePolygonAction(null);
+                CreatePolygonAction action = new CreatePolygonAction(null, _vm);
                 action.Do();
-                DataModel.Instance.UndoStack.Push(action);
-                DataModel.Instance.CurrentPolygonWall = null;   // remove current polygon building wall (is now replaced with complete building)
-                DataModel.Instance.NewPolygonalBuildingWalls = null;    // remove wall collection
-                DataModel.Instance.IsCreatingPolygon = false;           // polygon creation completed
+                GlobalManagement.Instance.UndoStack.Push(action);
+                ((DataModel)_vm).CurrentPolygonWall = null;   // remove current polygon building wall (is now replaced with complete building)
+                ((DataModel)_vm).NewPolygonalBuildingWalls = null;    // remove wall collection
+                GlobalManagement.Instance.IsCreatingPolygonalBuilding = false;           // polygon creation completed
                 mouseHandlingMode = MouseHandlingMode.None;
                 zoomAndPanControl.ReleaseMouseCapture();
                 e.Handled = true;

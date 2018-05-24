@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SimplePenAndPaperManager.UserInterface.View.Controls"
-        xmlns:datatemplates="clr-namespace:SimplePenAndPaperManager.UserInterface.ViewModel.DataModels"
+        xmlns:dataModel="clr-namespace:SimplePenAndPaperManager.UserInterface.ViewModel.DataModels"
         xmlns:model="clr-namespace:SimplePenAndPaperManager.UserInterface.Model"
         xmlns:converter="clr-namespace:SimplePenAndPaperManager.UserInterface.View.Converter"
         xmlns:commands="clr-namespace:SimplePenAndPaperManager.UserInterface.ViewModel.Commands"
@@ -51,13 +51,13 @@
             <StackPanel HorizontalAlignment="Center" Grid.Row="1" Orientation="Horizontal">
                 <StackPanel Margin="5">
                     <Rectangle Fill="Black" Width="30" Height="30"/>
-                    <RadioButton IsChecked="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=TerrainBrush, Mode=TwoWay, 
+                    <RadioButton IsChecked="{Binding Source={x:Static dataModel:GlobalManagement.Instance}, Path=TerrainBrush, Mode=TwoWay, 
                                  Converter={StaticResource TerrainMaterialToBoolConverter}, ConverterParameter=0}"
                                  HorizontalAlignment="Center" />
                 </StackPanel>
                 <StackPanel Margin="5">
                     <Ellipse Fill="Black" Width="30" Height="30"/>
-                    <RadioButton IsChecked="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=TerrainBrush, Mode=TwoWay, 
+                    <RadioButton IsChecked="{Binding Source={x:Static dataModel:GlobalManagement.Instance}, Path=TerrainBrush, Mode=TwoWay, 
                                  Converter={StaticResource TerrainMaterialToBoolConverter}, ConverterParameter=1}"
                                  HorizontalAlignment="Center" />
                 </StackPanel>
@@ -68,7 +68,7 @@
                           Height="18"
                           Margin="0, 6"
                           Data="M 0 0 0 26 7 21 11 29 13.5 28 9.5 20 18 19 Z"/>
-                    <RadioButton IsChecked="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=TerrainBrush, Mode=TwoWay, 
+                    <RadioButton IsChecked="{Binding Source={x:Static dataModel:GlobalManagement.Instance}, Path=TerrainBrush, Mode=TwoWay, 
                                  Converter={StaticResource TerrainMaterialToBoolConverter}, ConverterParameter=2}"
                                  VerticalAlignment="Bottom" HorizontalAlignment="Center" />
                 </StackPanel>
@@ -76,11 +76,11 @@
             <StackPanel Orientation="Horizontal">
                 <Label Content="Size:"/>
                 <StackPanel>
-                    <Slider Value="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=TerrainBrushSize, Mode=TwoWay}"
+                    <Slider Value="{Binding Source={x:Static dataModel:GlobalManagement.Instance}, Path=TerrainBrushSize, Mode=TwoWay}"
                             Width="90"
                             Minimum="{x:Static model:Constants.MinBrushSize}"
                             Maximum="{x:Static model:Constants.MaxBrushSize}"/>
-                    <TextBox Text="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=TerrainBrushSize, Mode=TwoWay}"
+                    <TextBox Text="{Binding Source={x:Static dataModel:GlobalManagement.Instance}, Path=TerrainBrushSize, Mode=TwoWay}"
                              Width="40" />
                 </StackPanel>
             </StackPanel>

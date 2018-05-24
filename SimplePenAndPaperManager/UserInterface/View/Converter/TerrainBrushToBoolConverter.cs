@@ -30,11 +30,11 @@ namespace SimplePenAndPaperManager.UserInterface.View.Converter
             switch (int.Parse((string)parameter))
             {
                 case 0:
-                    return isEnabled ? TerrainBrush.Rectangle : DataModel.Instance.TerrainBrush;
+                    return isEnabled ? TerrainBrush.Rectangle : GlobalManagement.Instance.TerrainBrush;
                 case 1:
-                    return isEnabled ? TerrainBrush.Circle : DataModel.Instance.TerrainBrush;
+                    return isEnabled ? TerrainBrush.Circle : GlobalManagement.Instance.TerrainBrush;
                 default:
-                    return isEnabled ? TerrainBrush.None : DataModel.Instance.TerrainBrush;
+                    return isEnabled ? TerrainBrush.None : GlobalManagement.Instance.TerrainBrush;
             }
         }
     }

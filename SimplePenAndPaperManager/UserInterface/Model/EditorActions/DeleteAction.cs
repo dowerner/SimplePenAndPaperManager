@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
-using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.Interface;
 
 namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
 {
@@ -10,8 +10,8 @@ namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
         {
             foreach(IVisualElement entity in AffectedEntities)
             {
-                DataModel.Instance.SelectedEntities.Remove(entity);
-                DataModel.Instance.MapEntities.Remove(entity);
+                _context.SelectedEntities.Remove(entity);
+                _context.MapEntities.Remove(entity);
             }
         }
 
@@ -19,11 +19,11 @@ namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
         {
             foreach (IVisualElement entity in AffectedEntities)
             {
-                DataModel.Instance.MapEntities.Add(entity);
+                _context.MapEntities.Add(entity);
             }
         }
 
-        public DeleteAction(ObservableCollection<IVisualElement> selectedEntities) : base(selectedEntities)
+        public DeleteAction(ObservableCollection<IVisualElement> selectedEntities, IDataModel context) : base(selectedEntities, context)
         {
         }
     }

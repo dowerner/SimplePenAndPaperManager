@@ -1,4 +1,5 @@
 ﻿using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.Interface;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
 using System;
 using System.Collections.Generic;
@@ -34,7 +35,7 @@ namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
 
         public override void Do()
         {
-            DataModel.Instance.SelectedEntities.Clear();
+            _context.SelectedEntities.Clear();
             for (int i = 0; i < AffectedEntities.Count; i++)
             {
                 double angle = EndRotation * Math.PI / 180;
@@ -44,26 +45,26 @@ namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
                 if(AffectedEntities.Count > 1) AffectedEntities[i].Orientation = (EntityOrientations[i] + EndRotation) % 360;   // if there are more than one entities being rotated use differential angle
                 else AffectedEntities[i].Orientation = EndRotation;    // if there is only one entity being rotated use absolute angle
 
-                DataModel.Instance.SelectedEntities.Add(AffectedEntities[i]);
+                _context.SelectedEntities.Add(AffectedEntities[i]);
                 AffectedEntities[i].IsSelected = true;
             }
         }
 
         public override void Undo()
         {
-            DataModel.Instance.SelectedEntities.Clear();
+            _context.SelectedEntities.Clear();
             for (int i = 0; i < AffectedEntities.Count; i++)
             {
                 double angle = StartRotation * Math.PI / 180;
                 AffectedEntities[i].X = _pivotPoint.X + EntityOffsets[i].X * Math.Cos(angle) - EntityOffsets[i].Y * Math.Sin(angle);
                 AffectedEntities[i].Y = _pivotPoint.Y + EntityOffsets[i].X * Math.Sin(angle) + EntityOffsets[i].Y * Math.Cos(angle);
                 AffectedEntities[i].Orientation = EntityOrientations[i];
-                DataModel.Instance.SelectedEntities.Add(AffectedEntities[i]);
+                _context.SelectedEntities.Add(AffectedEntities[i]);
                 AffectedEntities[i].IsSelected = true;
             }
         }
 
-        public RotateAction(ObservableCollection<IVisualElement> selectedEntities) : base(selectedEntities)
+        public RotateAction(ObservableCollection<IVisualElement> selectedEntities, IDataModel context) : base(selectedEntities, context)
         {
             EntityOffsets = new List<Point>();
             EntityOrientations = new List<double>();

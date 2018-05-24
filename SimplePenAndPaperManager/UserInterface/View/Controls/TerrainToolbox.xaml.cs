@@ -1,4 +1,5 @@
 ﻿using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 
@@ -18,12 +19,12 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
 
         private void TerrainToolbox_KeyDown(object sender, KeyEventArgs e)
         {
-            if(e.Key == Key.Escape) DataModel.Instance.InTerrainEditingMode = false;
+            if(e.Key == Key.Escape) GlobalManagement.Instance.InTerrainEditingMode = false;
         }
 
-        private void TerrainToolbox_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void TerrainToolbox_Closing(object sender, CancelEventArgs e)
         {
-            DataModel.Instance.InTerrainEditingMode = false;
+            GlobalManagement.Instance.InTerrainEditingMode = false;
         }
     }
 }

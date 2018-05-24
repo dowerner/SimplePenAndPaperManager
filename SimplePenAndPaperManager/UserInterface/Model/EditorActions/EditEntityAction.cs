@@ -4,6 +4,7 @@ using SimplePenAndPaperManager.MapEditor.Entities.Interface;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Markers;
 using SimplePenAndPaperManager.UserInterface.View.Controls;
 using SimplePenAndPaperManager.MapEditor.Entities.Markers.Interface;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.Interface;
 
 namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
 {
@@ -13,7 +14,7 @@ namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
         public IMapEntity NewData { get; set; }
         public IVisualElement AffectedElement { get; set; }
 
-        public EditEntityAction(ObservableCollection<IVisualElement> selectedEntities) : base(selectedEntities)
+        public EditEntityAction(ObservableCollection<IVisualElement> selectedEntities, IDataModel context) : base(selectedEntities, context)
         {
         }
 

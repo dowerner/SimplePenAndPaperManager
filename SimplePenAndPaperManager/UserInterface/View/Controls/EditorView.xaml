@@ -7,7 +7,7 @@
              mc:Ignorable="d"
              xmlns:zoomAndPan="clr-namespace:ZoomAndPan;assembly=ZoomAndPan"
              xmlns:converter="clr-namespace:SimplePenAndPaperManager.UserInterface.View.Converter"
-             xmlns:datatemplates="clr-namespace:SimplePenAndPaperManager.UserInterface.ViewModel.DataModels"
+             xmlns:dataModel="clr-namespace:SimplePenAndPaperManager.UserInterface.ViewModel.DataModels"
              xmlns:commands="clr-namespace:SimplePenAndPaperManager.UserInterface.ViewModel.Commands"
              d:DesignHeight="300" d:DesignWidth="300"
              Loaded="EditorView_Loaded">
@@ -126,23 +126,23 @@
 			/>
         <KeyBinding
             Key="Z" Modifiers="Ctrl"
-            Command="{Binding Source={x:Static commands:EditCommands.UndoCommand}}"
+            Command="{Binding UndoCommand}"
             />
         <KeyBinding
             Key="Y" Modifiers="Ctrl"
-            Command="{Binding Source={x:Static commands:EditCommands.RedoCommand}}"
+            Command="{Binding RedoCommand}"
             />
         <KeyBinding
             Key="C" Modifiers="Ctrl"
-            Command="{Binding Source={x:Static commands:EditCommands.CopyCommand}}"
+            Command="{Binding CopyCommand}"
             />
         <KeyBinding
             Key="V" Modifiers="Ctrl"
-            Command="{Binding Source={x:Static commands:EditCommands.PasteCommand}}"
+            Command="{Binding PasteCommand}"
             />
         <KeyBinding
             Key="Delete"
-            Command="{Binding Source={x:Static commands:EditCommands.DeleteCommand}}"
+            Command="{Binding DeleteCommand}"
             />
     </UserControl.InputBindings>
 
@@ -331,10 +331,10 @@
                     Style="{StaticResource noScrollViewerListBoxStyle}"
                     ItemContainerStyle="{StaticResource listBoxItemStyle}"
                     />-->
-                    <InkCanvas x:Name="TerrainMap" IsHitTestVisible="{Binding InTerrainEditingMode}"
-                               Strokes="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=TerrainStrokes}">
+                    <InkCanvas x:Name="TerrainMap" IsHitTestVisible="{Binding Source={x:Static dataModel:GlobalManagement.Instance}, Path=InTerrainEditingMode}"
+                               Strokes="{Binding Source={x:Static dataModel:GlobalManagement.Instance}, Path=TerrainStrokes}">
                     </InkCanvas>
-                    <ItemsControl IsHitTestVisible="{Binding InTerrainEditingMode, Converter={StaticResource NotConverter}}"
+                    <ItemsControl IsHitTestVisible="{Binding Source={x:Static dataModel:GlobalManagement.Instance}, Path=InTerrainEditingMode, Converter={StaticResource NotConverter}}"
                         x:Name="content"
                         Background="Transparent"
                         ItemsSource="{Binding MapEntities}">
@@ -344,15 +344,14 @@
                                         MouseDown="Canvas_MouseDown">
                                     <Canvas.ContextMenu>
                                         <ContextMenu>
-                                            <MenuItem Header="Edit" Command="{Binding Source={x:Static commands:EditCommands.EditEntityCommand}}" CommandParameter="{Binding}"/>
-                                            <MenuItem Header="Copy" Command="{Binding Source={x:Static commands:EditCommands.CopyCommand}}"/>
-                                            <MenuItem Header="Delete" Command="{Binding Source={x:Static commands:EditCommands.DeleteCommand}}"/>
+                                            <MenuItem Header="Edit" Command="{Binding EditEntityCommand}" CommandParameter="{Binding}"/>
+                                            <MenuItem Header="Copy" Command="{Binding CopyCommand}"/>
+                                            <MenuItem Header="Delete" Command="{Binding DeleteCommand}"/>
                                         </ContextMenu>
                                     </Canvas.ContextMenu>
                                     <Canvas.InputBindings>
                                         <MouseBinding MouseAction="LeftDoubleClick" 
-                                                      Command="{Binding Source={x:Static commands:EditCommands.EditEntityCommand}}"
-                                                      CommandParameter="{Binding}"/>
+                                                      Command="{Binding EditEntityCommand}"/>
                                     </Canvas.InputBindings>
                                 </Canvas>
                             </ItemsPanelTemplate>
@@ -381,7 +380,6 @@
             <StackPanel IsHitTestVisible="False">
                 <TextBlock Text="{Binding MousePosition}"
                            IsHitTestVisible="False"/>
-                <TextBlock Text="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=Debug}" IsHitTestVisible="False" />
             </StackPanel>
             <Canvas>
                 <local:TransformationGizmo x:Name="Gizmo"
@@ -397,17 +395,17 @@
                     </local:TransformationGizmo.RenderTransform>
                 </local:TransformationGizmo>
                 <Ellipse x:Name="TerrainEllipse" Stroke="Black" IsHitTestVisible="False"
-                         Visibility="{Binding ShowTerrainEllipse, Converter={StaticResource BoolToVisibilityConverter}}">
+                         Visibility="{Binding Source={x:Static dataModel:GlobalManagement.Instance}, Path=ShowTerrainEllipse, Converter={StaticResource BoolToVisibilityConverter}}">
                     <Ellipse.RenderTransform>
-                        <TranslateTransform  X="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=CanvasPosition.X, Mode=TwoWay}"
-                                            Y="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=CanvasPosition.Y, Mode=TwoWay}"/>
+                        <TranslateTransform  X="{Binding Source={x:Static dataModel:GlobalManagement.Instance}, Path=CanvasPosition.X, Mode=TwoWay}"
+                                             Y="{Binding Source={x:Static dataModel:GlobalManagement.Instance}, Path=CanvasPosition.Y, Mode=TwoWay}"/>
                     </Ellipse.RenderTransform>
                 </Ellipse>
                 <Rectangle x:Name="TerrainRectangle" Stroke="Black" IsHitTestVisible="False"
-                         Visibility="{Binding ShowTerrainRectangle, Converter={StaticResource BoolToVisibilityConverter}}">
+                         Visibility="{Binding Source={x:Static dataModel:GlobalManagement.Instance}, Path=ShowTerrainRectangle, Converter={StaticResource BoolToVisibilityConverter}}">
                     <Rectangle.RenderTransform>
-                        <TranslateTransform X="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=CanvasPosition.X, Mode=TwoWay}"
-                                            Y="{Binding Source={x:Static datatemplates:DataModel.Instance}, Path=CanvasPosition.Y, Mode=TwoWay}"/>
+                        <TranslateTransform X="{Binding Source={x:Static dataModel:GlobalManagement.Instance}, Path=CanvasPosition.X, Mode=TwoWay}"
+                                            Y="{Binding Source={x:Static dataModel:GlobalManagement.Instance}, Path=CanvasPosition.Y, Mode=TwoWay}"/>
                     </Rectangle.RenderTransform>
                 </Rectangle>
             </Canvas>

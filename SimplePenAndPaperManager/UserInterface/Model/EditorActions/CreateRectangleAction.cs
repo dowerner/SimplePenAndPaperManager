@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
-using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Buildings;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.Interface;
 
 namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
 {
@@ -11,21 +11,21 @@ namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
 
         public override void Do()
         {
-            DataModel.Instance.MapEntities.Add(Building);
-            DataModel.Instance.SelectedEntities.Clear();
+            _context.MapEntities.Add(Building);
+            _context.SelectedEntities.Clear();
             Building.IsSelected = true;
         }
 
         public override void Undo()
         {
-            DataModel.Instance.MapEntities.Remove(Building);
-            if (DataModel.Instance.SelectedEntities.Contains(Building))
+            _context.MapEntities.Remove(Building);
+            if (_context.SelectedEntities.Contains(Building))
             {
-                DataModel.Instance.SelectedEntities.Remove(Building);
+                _context.SelectedEntities.Remove(Building);
             }
         }
 
-        public CreateRectangleAction(ObservableCollection<IVisualElement> selectedEntities) : base(selectedEntities)
+        public CreateRectangleAction(ObservableCollection<IVisualElement> selectedEntities, IDataModel context) : base(selectedEntities, context)
         {
         }
     }

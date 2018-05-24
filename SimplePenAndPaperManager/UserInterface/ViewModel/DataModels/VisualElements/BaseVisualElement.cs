@@ -1,6 +1,7 @@
 ﻿using SimplePenAndPaperManager.MapEditor.Entities.Interface;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
 using System.ComponentModel;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements
@@ -135,8 +136,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
         }
         private Color _strokeColor;
 
-        public abstract BaseVisualElement Copy();
-
+        public abstract IVisualElement Copy();
 
         public IMapEntity SourceEntity
         {
@@ -160,6 +160,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
         /// </summary>
         protected void OnPropertyChanged(string name)
         {
+            CommandManager.InvalidateRequerySuggested();
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 

@@ -1,35 +1,23 @@
 ﻿using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels;
-using System;
-using System.Windows.Input;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.Interface;
 
 namespace SimplePenAndPaperManager.UserInterface.ViewModel.Commands
 {
-    public class MarkerCommands
+    public class CreateMarkerCommand : BaseCommand
     {
-        public static CreateMarkerCommand CreateMarkerCommand
+        public CreateMarkerCommand(IDataModel context) : base(context)
         {
-            get
-            {
-                if (_createMarkerCommand == null) _createMarkerCommand = new CreateMarkerCommand();
-                return _createMarkerCommand;
-            }
         }
-        private static CreateMarkerCommand _createMarkerCommand;
-    }
 
-    public class CreateMarkerCommand : ICommand
-    {
-        public event EventHandler CanExecuteChanged;
-
-        public bool CanExecute(object parameter)
+        public override bool CanExecute(object parameter)
         {
             return true;
         }
 
-        public void Execute(object parameter)
+        public override void Execute(object parameter)
         {
-            DataModel.Instance.InTerrainEditingMode = false;
-            DataModel.Instance.IsCreatingTextMarker = true;
+            GlobalManagement.Instance.InTerrainEditingMode = false;
+            _context.IsCreatingTextMarker = true;
         }
     }
 }

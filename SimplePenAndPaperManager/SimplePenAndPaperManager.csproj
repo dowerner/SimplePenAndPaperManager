@@ -102,11 +102,14 @@
     <Compile Include="UserInterface\Model\EditorActions\BaseAction.cs" />
     <Compile Include="UserInterface\Model\EditorActions\TranslateAction.cs" />
     <Compile Include="UserInterface\Model\ObservableStack.cs" />
+    <Compile Include="UserInterface\ViewModel\Commands\BaseCommand.cs" />
     <Compile Include="UserInterface\ViewModel\Commands\BuildingCommands.cs" />
     <Compile Include="UserInterface\ViewModel\Commands\EditCommands.cs" />
     <Compile Include="UserInterface\ViewModel\Commands\MarkerCommands.cs" />
     <Compile Include="UserInterface\ViewModel\Commands\TerrainCommands.cs" />
+    <Compile Include="UserInterface\ViewModel\DataModels\BaseDataModel.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\DataModel.cs" />
+    <Compile Include="UserInterface\ViewModel\DataModels\GlobalManagement.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\Interface\IDataModel.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\BaseVisualElement.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\Buildings\VisualFloor.cs" />

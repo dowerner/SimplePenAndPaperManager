@@ -1,4 +1,4 @@
-﻿using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels;
+﻿using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.Interface;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,9 +12,13 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
     /// </summary>
     public partial class OverviewWindow : Window
     {
-        public OverviewWindow()
+        private IDataModel _vm;
+
+        public OverviewWindow(IDataModel vm)
         {
             InitializeComponent();
+            _vm = vm;
+            DataContext = _vm;
         }
 
         /// <summary>
@@ -36,10 +40,10 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
             //
             // Update the position of the overview rect as the user drags it around.
             //
-            double newContentOffsetX = Math.Min(Math.Max(0.0, Canvas.GetLeft(overviewZoomRectThumb) + e.HorizontalChange), DataModel.Instance.ContentWidth - DataModel.Instance.ContentViewportWidth);
+            double newContentOffsetX = Math.Min(Math.Max(0.0, Canvas.GetLeft(overviewZoomRectThumb) + e.HorizontalChange), _vm.ContentWidth - _vm.ContentViewportWidth);
             Canvas.SetLeft(overviewZoomRectThumb, newContentOffsetX);
 
-            double newContentOffsetY = Math.Min(Math.Max(0.0, Canvas.GetTop(overviewZoomRectThumb) + e.VerticalChange), DataModel.Instance.ContentHeight - DataModel.Instance.ContentViewportHeight);
+            double newContentOffsetY = Math.Min(Math.Max(0.0, Canvas.GetTop(overviewZoomRectThumb) + e.VerticalChange), _vm.ContentHeight - _vm.ContentViewportHeight);
             Canvas.SetTop(overviewZoomRectThumb, newContentOffsetY);
         }
 

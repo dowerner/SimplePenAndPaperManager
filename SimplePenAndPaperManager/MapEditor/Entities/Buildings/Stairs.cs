@@ -1,5 +1,4 @@
-﻿using System;
-using SimplePenAndPaperManager.MapEditor.Entities.Buildings.Interface;
+﻿using SimplePenAndPaperManager.MapEditor.Entities.Buildings.Interface;
 using SimplePenAndPaperManager.MapEditor.Entities.Interface;
 
 namespace SimplePenAndPaperManager.MapEditor.Entities.Buildings
@@ -8,10 +7,10 @@ namespace SimplePenAndPaperManager.MapEditor.Entities.Buildings
     {
         public BuildingMaterial Material { get; set; }
 
-        public override IMapEntity Copy()
+        public override IMapEntity Copy(bool copyLocation = false)
         {
             Stairs copy = new Stairs() { Material = Material };
-            CopyFillInBaseProperties(copy);
+            CopyFillInBaseProperties(copy, copyLocation);
             return copy;
         }
     }

@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:datamodel="clr-namespace:SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements"
+                    xmlns:buildings="clr-namespace:SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Buildings"
                     xmlns:markers="clr-namespace:SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Markers"
                     xmlns:converter="clr-namespace:SimplePenAndPaperManager.UserInterface.View.Converter"
                     xmlns:commands="clr-namespace:SimplePenAndPaperManager.UserInterface.ViewModel.Commands"
@@ -62,22 +63,23 @@
         </Polygon>
     </DataTemplate>
 
-    <!--<DataTemplate DataType="{x:Type datamodel:WallElement}">
-        <Rectangle
-            Height="{Binding Thickness}"
-            Width="{Binding Length}"
+    <DataTemplate DataType="{x:Type buildings:VisualPolygonalBuilding}">
+        <Polygon
+            Points="{Binding Corners, Converter={StaticResource MeterToPixelConverter}}"
             Fill="{Binding Color, Converter={StaticResource ColorToBrushConverter}}"
             Stroke="{Binding StrokeColor, Converter={StaticResource ColorToBrushConverter}}"
+            StrokeThickness="3"
             Cursor="Hand"
-            RenderTransformOrigin="0.5 0.5">
-            <Rectangle.RenderTransform>
+            RenderTransformOrigin="0 0">
+            <Polygon.RenderTransform>
                 <TransformGroup>
                     <RotateTransform Angle="{Binding Orientation}"/>
-                    <TranslateTransform X="{Binding X}" Y="{Binding Y}"/>
+                    <TranslateTransform X="{Binding X, Converter={StaticResource MeterToPixelConverter}}"
+                                        Y="{Binding Y, Converter={StaticResource MeterToPixelConverter}}"/>
                 </TransformGroup>
-            </Rectangle.RenderTransform>
-        </Rectangle>
-    </DataTemplate>-->
+            </Polygon.RenderTransform>
+        </Polygon>
+    </DataTemplate>
 
     <DataTemplate DataType="{x:Type datamodel:WallElement}">
         <Line
@@ -85,7 +87,7 @@
             Y1="{Binding Y1, Converter={StaticResource MeterToPixelConverter}}"
             X2="{Binding X2, Converter={StaticResource MeterToPixelConverter}}"
             Y2="{Binding Y2, Converter={StaticResource MeterToPixelConverter}}"
-            Stroke="Black"
+            Stroke="{Binding StrokeColor, Converter={StaticResource ColorToBrushConverter}}"
             StrokeThickness="{Binding Thickness, Converter={StaticResource MeterToPixelConverter}}"
             Cursor="Hand"
             />

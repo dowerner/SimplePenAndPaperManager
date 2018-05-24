@@ -2,7 +2,9 @@
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
 using System.Collections.Generic;
 using System.Windows;
-using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.Interface;
+using SimplePenAndPaperManager.MapEditor.Entities.Buildings.Interface;
+using SimplePenAndPaperManager.MapEditor.Entities.Vegetation.Interface;
 
 namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
 {
@@ -14,20 +16,25 @@ namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
 
         public override void Do()
         {
-            DataModel.Instance.SelectedEntities.Clear();
+            _context.SelectedEntities.Clear();
             foreach(IVisualElement entity in AffectedEntities)
             {
-                double offsetX = entity.X - DataModel.Instance.CopyLocation.X;
-                double offsetY = entity.Y - DataModel.Instance.CopyLocation.Y;
+                // check for objects that are not allowed to be paseted inside of buildings
+                if (_context is IVisualBuilding && 
+                    (entity.SourceEntity is IBuildingEntity
+                  || entity.SourceEntity is IVegetationEntity)) continue;
+
+                double offsetX = entity.X - _context.CopyLocation.X;
+                double offsetY = entity.Y - _context.CopyLocation.Y;
 
                 IVisualElement copy = entity.Copy();
                 copy.X = PasteLocation.X + offsetX;
                 copy.Y = PasteLocation.Y + offsetY;
 
-                DataModel.Instance.MapEntities.Add(copy);
+                _context.MapEntities.Add(copy);
                 PastedEntities.Add(copy);
 
-                DataModel.Instance.SelectedEntities.Add(copy);
+                _context.SelectedEntities.Add(copy);
                 copy.IsSelected = true;
             }
         }
@@ -36,14 +43,14 @@ namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
         {
             foreach (IVisualElement copy in PastedEntities)
             {
-                DataModel.Instance.SelectedEntities.Remove(copy);
-                DataModel.Instance.MapEntities.Remove(copy);
+                _context.SelectedEntities.Remove(copy);
+                _context.MapEntities.Remove(copy);
             }
 
             PastedEntities.Clear();
         }
 
-        public PasteAction(ObservableCollection<IVisualElement> selectedEntities) : base(selectedEntities)
+        public PasteAction(ObservableCollection<IVisualElement> selectedEntities, IDataModel context) : base(selectedEntities, context)
         {
             PastedEntities = new List<IVisualElement>();
         }

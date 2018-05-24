@@ -25,7 +25,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             }
         }
 
-        public override BaseVisualElement Copy()
+        public override IVisualElement Copy()
         {
             return new RectangleElement((IRectangularMapEntity)_rectangleSource.Copy());
         }

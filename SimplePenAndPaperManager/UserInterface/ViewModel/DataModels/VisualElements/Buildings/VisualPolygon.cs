@@ -1,5 +1,6 @@
 ﻿using SimplePenAndPaperManager.MapEditor.Entities;
 using SimplePenAndPaperManager.MapEditor.Entities.Interface;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -7,7 +8,7 @@ using System.Windows.Media;
 
 namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Buildings
 {
-    public abstract class VisualPolygon : PolygonElement
+    public class VisualPolygon : PolygonElement
     {
         public new PointCollection Corners
         {
@@ -46,6 +47,11 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
         private void _corners_Changed(object sender, EventArgs e)
         {
             fillPointsToSource();
+        }
+
+        public override IVisualElement Copy()
+        {
+            return new VisualPolygon((IPolygonMapEntity)_polygonSource.Copy());
         }
     }
 }

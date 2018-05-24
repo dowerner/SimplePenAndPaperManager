@@ -22,7 +22,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             _markerSource = mapEntity;
         }
 
-        public override BaseVisualElement Copy()
+        public override IVisualElement Copy()
         {
             return new VisualTextMarker((ITextMarkerEntity)_markerSource.Copy());
         }

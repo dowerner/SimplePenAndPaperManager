@@ -2,6 +2,7 @@
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
 using System.Windows.Ink;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.Interface;
 
 namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
 {
@@ -11,15 +12,15 @@ namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
 
         public override void Do()
         {
-            DataModel.Instance.TerrainStrokes.Add(Added);
+            GlobalManagement.Instance.TerrainStrokes.Add(Added);
         }
 
         public override void Undo()
         {
-            DataModel.Instance.TerrainStrokes.Remove(Added);
+            GlobalManagement.Instance.TerrainStrokes.Remove(Added);
         }
 
-        public AddTerrainStrokeAction(ObservableCollection<IVisualElement> selectedEntities) : base(selectedEntities)
+        public AddTerrainStrokeAction(ObservableCollection<IVisualElement> selectedEntities, IDataModel context) : base(selectedEntities, context)
         {
         }
     }

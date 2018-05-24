@@ -1,5 +1,4 @@
-﻿using SimplePenAndPaperManager.MapEditor;
-using SimplePenAndPaperManager.MapEditor.Entities;
+﻿using SimplePenAndPaperManager.MapEditor.Entities;
 using SimplePenAndPaperManager.MapEditor.Entities.Buildings;
 using SimplePenAndPaperManager.MapEditor.Entities.Buildings.Interface;
 using SimplePenAndPaperManager.MapEditor.Entities.Characters.Interface;
@@ -9,10 +8,6 @@ using SimplePenAndPaperManager.MapEditor.Entities.Markers.Interface;
 using SimplePenAndPaperManager.MapEditor.Entities.Vegetation.Interface;
 using SimplePenAndPaperManager.MathTools;
 using SimplePenAndPaperManager.UserInterface.Model;
-using SimplePenAndPaperManager.UserInterface.Model.EditorActions;
-using SimplePenAndPaperManager.UserInterface.Model.EditorActions.Interface;
-using SimplePenAndPaperManager.UserInterface.View.States;
-using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.Interface;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Buildings;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
@@ -30,92 +25,14 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
     /// A simple example of a data-model.  
     /// The purpose of this data-model is to share display data between the main window and overview window.
     /// </summary>
-    public class DataModel : IDataModel
+    public class DataModel : BaseDataModel
     {
-        #region Data Members
-
-        /// <summary>
-        /// The singleton instance.
-        /// This is a singleton for convenience.
-        /// </summary>
-        private static DataModel instance = new DataModel();
-
-        ///
-        /// The current scale at which the content is being viewed.
-        /// 
-        private double contentScale = 1;
-
-        ///
-        /// The X coordinate of the offset of the viewport onto the content (in content coordinates).
-        /// 
-        private double contentOffsetX = 0;
-
-        ///
-        /// The Y coordinate of the offset of the viewport onto the content (in content coordinates).
-        /// 
-        private double contentOffsetY = 0;
-
-        ///
-        /// The width of the content (in content coordinates).
-        /// 
-        private double contentWidth = 0;
-
-        ///
-        /// The heigth of the content (in content coordinates).
-        /// 
-        private double contentHeight = 0;
-
-        ///
-        /// The width of the viewport onto the content (in content coordinates).
-        /// The value for this is actually computed by the main window's ZoomAndPanControl and update in the
-        /// data model so that the value can be shared with the overview window.
-        /// 
-        private double contentViewportWidth = 0;
-
-        ///
-        /// The heigth of the viewport onto the content (in content coordinates).
-        /// The value for this is actually computed by the main window's ZoomAndPanControl and update in the
-        /// data model so that the value can be shared with the overview window.
-        /// 
-        private double contentViewportHeight = 0;
-
-        #endregion Data Members
-
-        /// <summary>
-        /// Retreive the singleton instance.
-        /// </summary>
-        public static DataModel Instance
+        public DataModel() : base()
         {
-            get
-            {
-                return instance;
-            }
-        }
-
-        public DataModel()
-        {
-            TerrainBrushSize = 10;
-            Terrain = FloorMaterial.Grass;
-
-            UndoStack = new ObservableStack<IEditorAction>();
-            RedoStack = new ObservableStack<IEditorAction>();
-
-            SelectedEntities = new ObservableCollection<IVisualElement>();
-            SelectedEntities.CollectionChanged += SelectedEntities_CollectionChanged;
-            Clipboard = new ObservableCollection<IVisualElement>();
-
             MapEntities = new ObservableCollection<IVisualElement>();
             MapEntities.CollectionChanged += MapEntities_CollectionChanged;
 
             CurrentMap = new Map() { Width = 400, Height = 400 };
-        }
-
-        private void TerrainStrokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
-        {
-            if(e.Added != null && e.Added.Count > 0)
-            {
-                UndoStack.Push(new AddTerrainStrokeAction(null) { Added = e.Added });
-            }
         }
 
         private void MapEntities_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -138,78 +55,19 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
                 }
             }
         }
-
-        private void SelectedEntities_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            // handle items where selection was removed
-            foreach (IVisualElement element in MapEntities)
-            {
-                if (!SelectedEntities.Contains(element)) element.IsSelected = false;
-            }
-
-            // set selection position
-            _selectionLocation = new Point(0, 0);
-
-            foreach (IVisualElement element in SelectedEntities)
-            {
-                _selectionLocation.X += element.X;
-                _selectionLocation.Y += element.Y;
-            }
-            _selectionLocation.X /= SelectedEntities.Count;
-            _selectionLocation.Y /= SelectedEntities.Count;
-
-            OnPropertyChanged("EntitiesSelected");
-            OnPropertyChanged("SelectionLocation");
-
-            // set correct gizmo orientation
-            if (_selectedEntities.Count == 1 && !GizmoIsRotating) GizmoOrientation = _selectedEntities[0].Orientation;
-            else if (!GizmoIsRotating) GizmoOrientation = 0;
-        }
-
+        
         private void EntityChanged(object sender, PropertyChangedEventArgs e)
         {
             IVisualElement entity = (IVisualElement)sender;
 
             if (e.PropertyName == "IsSelected")
             {
-                if (entity.IsSelected && !_selectedEntities.Contains(entity)) _selectedEntities.Add(entity);
-                else if (!entity.IsSelected && _selectedEntities.Contains(entity)) _selectedEntities.Remove(entity);
+                if (entity.IsSelected && !SelectedEntities.Contains(entity)) SelectedEntities.Add(entity);
+                else if (!entity.IsSelected && SelectedEntities.Contains(entity)) SelectedEntities.Remove(entity);
             }
         }
-
-        public IEditorAction CurrentAction { get; set; }
-
-        public ObservableStack<IEditorAction> UndoStack { get; set; }
-        public ObservableStack<IEditorAction> RedoStack { get; set; }
-
-        public ObservableCollection<IVisualElement> Clipboard { get; set; }
-        public Point CopyLocation { get; set; }
-        public Point BuildingStartLocation { get; set; }
-        public IVisualElement LastSelected { get; set; }
-        public Point MousePosition
-        {
-            get { return _mousePosition; }
-            set
-            {
-                _mousePosition = value;
-                OnPropertyChanged("MousePosition");
-            }
-        }
-        private Point _mousePosition;
-
-        public Point CanvasPosition
-        {
-            get { return _canvasPosition; }
-            set
-            {
-                _canvasPosition = value;
-                OnPropertyChanged("CanvasPosition");
-            }
-        }
-        private Point _canvasPosition;
 
         #region Creation Variables
-        public VisualRectangularBuilding NewRectangleBuilding { get; set; }
         public List<WallElement> NewPolygonalBuildingWalls { get; set; }
         public WallElement CurrentPolygonWall { get; set; }
 
@@ -228,17 +86,17 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
         #region Creation Methods
         private void InitiateRectangularBuilding()
         {
-            BuildingStartLocation = MousePosition.PxToMeter();
-            NewRectangleBuilding = new VisualRectangularBuilding(new RectangularBuilding()
+            GlobalManagement.Instance.BuildingStartLocation = MousePosition.PxToMeter();
+            GlobalManagement.Instance.NewRectangleBuilding = new VisualRectangularBuilding(new RectangularBuilding()
             {
-                X = BuildingStartLocation.X,
-                Y = BuildingStartLocation.Y,
+                X = GlobalManagement.Instance.BuildingStartLocation.X,
+                Y = GlobalManagement.Instance.BuildingStartLocation.Y,
                 Width = 0,
                 Height = 0,
                 Id = CurrentMap.GetNewId(),
                 Name = Constants.DefaultHouseName
             });
-            MapEntities.Add(NewRectangleBuilding);
+            MapEntities.Add(GlobalManagement.Instance.NewRectangleBuilding);
         }
 
         private void InitiatePolygonalBuilding()
@@ -246,7 +104,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
             if (CurrentPolygonWall == null)
             {
                 // save mouse start position
-                BuildingStartLocation = MousePosition.PxToMeter();
+                GlobalManagement.Instance.BuildingStartLocation = MousePosition.PxToMeter();
                 NewPolygonalBuildingWalls = new List<WallElement>();
             }
             // create wall of building
@@ -265,118 +123,16 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
 
         public void StartBuilding()
         {
-            if (IsCreatingRectangle)
+            if (GlobalManagement.Instance.IsCreatingRectangularBuilding)
             {
                 InitiateRectangularBuilding();
             }
-            else if (IsCreatingPolygon)
+            else if (GlobalManagement.Instance.IsCreatingPolygonalBuilding)
             {
                 InitiatePolygonalBuilding();
             }
         }
         #endregion
-
-        public bool IsCreatingRectangle
-        {
-            get { return _isCreatingRectangle; }
-            set
-            {
-                _isCreatingRectangle = value;
-                OnPropertyChanged("IsCreatingRectangle");
-            }
-        }
-        private bool _isCreatingRectangle;
-
-        public bool IsCreatingPolygon
-        {
-            get { return _isCreatingPolygon; }
-            set
-            {
-                _isCreatingPolygon = value;
-                OnPropertyChanged("IsCreatingPolygon");
-            }
-        }
-        private bool _isCreatingPolygon;
-
-        public bool IsCreatingTextMarker
-        {
-            get { return _isCreatingTextMarker; }
-            set
-            {
-                _isCreatingTextMarker = value;
-                OnPropertyChanged("IsCreatingTextMarker");
-            }
-        }
-        private bool _isCreatingTextMarker;
-
-        public bool InTerrainEditingMode
-        {
-            get { return _inTerrainEditingMode; }
-            set
-            {
-                _inTerrainEditingMode = value;
-                if (!_inTerrainEditingMode)
-                {
-                    _terrainBrush = TerrainBrush.None;
-                    OnPropertyChanged("TerrainBrush");
-                }
-                else SelectedEntities.Clear();
-                OnPropertyChanged("InTerrainEditingMode");
-                OnPropertyChanged("ShowTerrainEllipse");
-                OnPropertyChanged("ShowTerrainRectangle");
-            }
-        }
-        private bool _inTerrainEditingMode;
-
-        public TerrainBrush TerrainBrush
-        {
-            get { return _terrainBrush; }
-            set
-            {
-                _terrainBrush = value;
-                InTerrainEditingMode = _terrainBrush != TerrainBrush.None;
-                OnPropertyChanged("TerrainBrush");
-                OnPropertyChanged("ShowTerrainEllipse");
-                OnPropertyChanged("ShowTerrainRectangle");
-            }
-        }
-        private TerrainBrush _terrainBrush = TerrainBrush.Circle;
-
-        public bool ShowTerrainEllipse { get { return _terrainBrush == TerrainBrush.Circle && InTerrainEditingMode; } }
-        public bool ShowTerrainRectangle { get { return _terrainBrush == TerrainBrush.Rectangle && InTerrainEditingMode; } }
-
-        public double TerrainBrushSize
-        {
-            get { return _brushSize; }
-            set
-            {
-                _brushSize = value;
-                OnPropertyChanged("TerrainBrushSize");
-            }
-        }
-        private double _brushSize = 10;
-
-        public FloorMaterial Terrain
-        {
-            get { return _terrain; }
-            set
-            {
-                _terrain = value;
-                OnPropertyChanged("Terrain");
-            }
-        }
-        private FloorMaterial _terrain = FloorMaterial.Grass;
-
-        public StrokeCollection TerrainStrokes
-        {
-            get { return _terrainStrokes; }
-            set
-            {
-                _terrainStrokes = value;
-                OnPropertyChanged("TerrainStrokes");
-            }
-        }
-        private StrokeCollection _terrainStrokes;
 
         public ICollectionView CharacterView { get; set; }
         public ICollectionView ItemView { get; set; }
@@ -387,7 +143,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
         public ICollectionView VegetationView { get; set; }
         public ICollectionView MarkersView { get; set; }
 
-        public ObservableCollection<IVisualElement> MapEntities
+        public override ObservableCollection<IVisualElement> MapEntities
         {
             get { return _mapEntities; }
             set
@@ -422,14 +178,14 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
             set
             {
                 MapEntities.Clear();
-                if (_currentMap != null) _currentMap.Terrain.StrokesChanged -= TerrainStrokes_StrokesChanged;
+                if (_currentMap != null) _currentMap.Terrain.StrokesChanged -= GlobalManagement.Instance.TerrainStrokes_StrokesChanged;
                 _currentMap = value;
 
                 if (_currentMap.Entities == null) _currentMap.Entities = new List<IMapEntity>();
                 if (_currentMap.Terrain == null) _currentMap.Terrain = new StrokeCollection();
 
-                TerrainStrokes = _currentMap.Terrain;
-                TerrainStrokes.StrokesChanged += TerrainStrokes_StrokesChanged;
+                GlobalManagement.Instance.TerrainStrokes = _currentMap.Terrain;
+                GlobalManagement.Instance.TerrainStrokes.StrokesChanged += GlobalManagement.Instance.TerrainStrokes_StrokesChanged;
 
                 OnPropertyChanged("CurrentMap");
 
@@ -438,251 +194,16 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
         }
         private Map _currentMap;
 
-        public double MapWidth
+        public override double MapWidth
         {
             get { return _currentMap.Width; }
             set { _currentMap.Height = value; }
         }
 
-        public double MapHeight
+        public override double MapHeight
         {
             get { return _currentMap.Width; }
             set { _currentMap.Height = value; }
         }
-
-        public ObservableCollection<IVisualElement> SelectedEntities
-        {
-            get { return _selectedEntities; }
-            set
-            {
-                _selectedEntities = value;
-                OnPropertyChanged("SelectedEntities");
-            }
-        }
-        private ObservableCollection<IVisualElement> _selectedEntities;
-
-        public Point SelectionLocation
-        {
-            get { return _selectionLocation; }
-            set
-            {
-                _selectionLocation = value;
-                OnPropertyChanged("SelectionLocation");
-            }
-        }
-        private Point _selectionLocation;
-
-        public bool EntitiesSelected { get { return SelectedEntities.Count > 0; } }
-
-        public double GizmoOrientation
-        {
-            get { return _gizmoOrientation; }
-            set
-            {
-                _gizmoOrientation = value;
-                OnPropertyChanged("GizmoOrientation");
-            }
-        }
-        private double _gizmoOrientation;
-
-        public bool GizmoDragX
-        {
-            get { return _gizmoDragX; }
-            set
-            {
-                _gizmoDragX = value;
-                OnPropertyChanged("GizmoDragX");
-            }
-        }
-        private bool _gizmoDragX;
-
-        public bool GizmoDragY
-        {
-            get { return _gizmoDragY; }
-            set
-            {
-                _gizmoDragY = value;
-                OnPropertyChanged("GizmoDragY");
-            }
-        }
-        private bool _gizmoDragY;
-
-        public bool GizmoIsRotating
-        {
-            get { return _gizmoIsRotating; }
-            set
-            {
-                _gizmoIsRotating = value;
-                OnPropertyChanged("GizmoIsRotating");
-            }
-        }
-        private bool _gizmoIsRotating;
-
-        public double GizmoX
-        {
-            get { return _gizmoX; }
-            set
-            {
-                _gizmoX = value;
-                OnPropertyChanged("GizmoX");
-            }
-        }
-        private double _gizmoX;
-
-        public double GizmoY
-        {
-            get { return _gizmoY; }
-            set
-            {
-                _gizmoY = value;
-                OnPropertyChanged("GizmoY");
-            }
-        }
-        private double _gizmoY;
-
-        ///
-        /// The current scale at which the content is being viewed.
-        /// 
-        public double ContentScale
-        {
-            get
-            {
-                return contentScale;
-            }
-            set
-            {
-                contentScale = value;
-                OnPropertyChanged("ContentScale");
-            }
-        }
-
-        ///
-        /// The X coordinate of the offset of the viewport onto the content (in content coordinates).
-        /// 
-        public double ContentOffsetX
-        {
-            get
-            {
-                return contentOffsetX;
-            }
-            set
-            {
-                contentOffsetX = value;
-
-                OnPropertyChanged("ContentOffsetX");
-                OnPropertyChanged("SelectionLocation");
-            }
-        }
-
-        ///
-        /// The Y coordinate of the offset of the viewport onto the content (in content coordinates).
-        /// 
-        public double ContentOffsetY
-        {
-            get
-            {
-                return contentOffsetY;
-            }
-            set
-            {
-                contentOffsetY = value;
-
-                OnPropertyChanged("ContentOffsetY");
-                OnPropertyChanged("SelectionLocation");
-            }
-        }
-
-        ///
-        /// The width of the content (in content coordinates).
-        /// 
-        public double ContentWidth
-        {
-            get
-            {
-                return contentWidth;
-            }
-            set
-            {
-                contentWidth = value;
-
-                OnPropertyChanged("ContentWidth");
-                OnPropertyChanged("SelectionLocation");
-            }
-        }
-
-        ///
-        /// The heigth of the content (in content coordinates).
-        /// 
-        public double ContentHeight
-        {
-            get
-            {
-                return contentHeight;
-            }
-            set
-            {
-                contentHeight = value;
-
-                OnPropertyChanged("ContentHeight");
-                OnPropertyChanged("SelectionLocation");
-            }
-        }
-
-        ///
-        /// The width of the viewport onto the content (in content coordinates).
-        /// The value for this is actually computed by the main window's ZoomAndPanControl and update in the
-        /// data model so that the value can be shared with the overview window.
-        /// 
-        public double ContentViewportWidth
-        {
-            get
-            {
-                return contentViewportWidth;
-            }
-            set
-            {
-                contentViewportWidth = value;
-
-                OnPropertyChanged("ContentViewportWidth");
-                OnPropertyChanged("SelectionLocation");
-            }
-        }
-
-        ///
-        /// The heigth of the viewport onto the content (in content coordinates).
-        /// The value for this is actually computed by the main window's ZoomAndPanControl and update in the
-        /// data model so that the value can be shared with the overview window.
-        /// 
-        public double ContentViewportHeight
-        {
-            get
-            {
-                return contentViewportHeight;
-            }
-            set
-            {
-                contentViewportHeight = value;
-
-                OnPropertyChanged("ContentViewportHeight");
-                OnPropertyChanged("SelectionLocation");
-            }
-        }
-
-        #region INotifyPropertyChanged Members
-
-        /// <summary>
-        /// Raises the 'PropertyChanged' event when the value of a property of the data model has changed.
-        /// </summary>
-        private void OnPropertyChanged(string name)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        /// <summary>
-        /// 'PropertyChanged' event that is raised when the value of a property of the data model has changed.
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        #endregion
     }
 }

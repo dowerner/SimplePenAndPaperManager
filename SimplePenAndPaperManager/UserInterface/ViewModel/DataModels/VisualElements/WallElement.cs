@@ -2,6 +2,8 @@
 using SimplePenAndPaperManager.MapEditor.Entities.Buildings;
 using System;
 using System.Collections.Generic;
+using System.Windows.Media;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
 
 namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements
 {
@@ -139,7 +141,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
         }
         private double _y2;
 
-        public override BaseVisualElement Copy()
+        public override IVisualElement Copy()
         {
             return new WallElement((IWallEntity)_wallEnity.Copy());
         }
@@ -153,6 +155,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             Windows = new List<IWindowEntity>();
             Doors = new List<IDoorEntity>();
             CalculatePositionAndSize(X, Y);
+            StrokeColor = Colors.Black;
         }
 
         #region Help Functions

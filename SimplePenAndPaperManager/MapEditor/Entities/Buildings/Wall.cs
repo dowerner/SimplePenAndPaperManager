@@ -12,14 +12,21 @@ namespace SimplePenAndPaperManager.MapEditor.Entities.Buildings
         public double Length { get; set; }
         public List<IWindowEntity> Windows { get; set; }
 
-        public override IMapEntity Copy()
+        public Wall()
+        {
+            Doors = new List<IDoorEntity>();
+            Windows = new List<IWindowEntity>();
+        }
+
+        public override IMapEntity Copy(bool copyLocation = false)
         {
             Wall copy = new Wall() { Thickness = Thickness, Material = Material };
             copy.Doors = new List<IDoorEntity>();
             copy.Windows = new List<IWindowEntity>();
-            foreach (IDoorEntity door in Doors) copy.Doors.Add((IDoorEntity)door.Copy());
-            foreach (IWindowEntity window in Windows) copy.Windows.Add((IWindowEntity)window.Copy());
-            CopyFillInBaseProperties(copy);
+            foreach (IDoorEntity door in Doors) copy.Doors.Add((IDoorEntity)door.Copy(copyLocation));
+            foreach (IWindowEntity window in Windows) copy.Windows.Add((IWindowEntity)window.Copy(copyLocation));
+            copy.Length = Length;
+            CopyFillInBaseProperties(copy, copyLocation);
             return copy;
         }
     }

@@ -13,10 +13,10 @@ namespace SimplePenAndPaperManager.MapEditor.Entities.Markers
             Name = Constants.DefaultMarkerName;
         }
 
-        public override IMapEntity Copy()
+        public override IMapEntity Copy(bool copyLocation = false)
         {
             TextMarker copy = new TextMarker() { Text = Text };
-            CopyFillInBaseProperties(copy);
+            CopyFillInBaseProperties(copy, copyLocation);
             return copy;
         }
     }

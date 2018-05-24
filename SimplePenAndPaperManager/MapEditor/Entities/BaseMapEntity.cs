@@ -9,13 +9,19 @@ namespace SimplePenAndPaperManager.MapEditor.Entities
         public double Orientation { get; set; }
         public double X { get; set; }
         public double Y { get; set; }
+        
+        public abstract IMapEntity Copy(bool copyLocation = false);
 
-        public abstract IMapEntity Copy();
-
-        protected virtual void CopyFillInBaseProperties(IMapEntity copy)
+        protected virtual void CopyFillInBaseProperties(IMapEntity copy, bool copyLocation = false)
         {
             copy.Name = Name;
-            copy.Orientation = Orientation; // copy orientation but not position as this is determined by the cursor position on pasting
+            copy.Orientation = Orientation; // copy orientation
+
+            if (copyLocation)
+            {
+                copy.X = X;
+                copy.Y = Y;
+            }
         }
     }
 }
