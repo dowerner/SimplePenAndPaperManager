@@ -11,7 +11,7 @@
         mc:Ignorable="d"
         Title="Simple Pen &amp; Paper Manager"
         Height="600" 
-        Width="800">
+        Width="800" x:Name="MainWindowRef">
     <Window.Resources>
         <converter:BoolToColorConverter x:Key="BoolToColorConverter"/>
         <Color x:Key="SelectedColor">#0078d7</Color>
@@ -21,12 +21,13 @@
             <TextBlock Background="{Binding IsSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter={StaticResource SelectedColor}}" 
                         Foreground="{Binding IsSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter={StaticResource SelectedForegroundColor}}" 
                         MouseLeftButtonDown="ListBoxItem_MouseLeftButtonDown" Text="{Binding Name}"
+                        MouseDown="TextBlock_MouseDown"
                         Focusable="False" FocusVisualStyle="{x:Null}">
                 <TextBlock.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="Edit" Command="{Binding EditEntityCommand}"/>
-                        <MenuItem Header="Copy" Command="{Binding CopyCommand}"/>
-                        <MenuItem Header="Delete" Command="{Binding DeleteCommand}"/>
+                        <MenuItem Header="Edit" Command="{Binding Source={x:Reference Name=MainWindowRef}, Path=DataContext.EditEntityCommand}"/>
+                        <MenuItem Header="Copy" Command="{Binding Source={x:Reference Name=MainWindowRef}, Path=DataContext.CopyCommand}"/>
+                        <MenuItem Header="Delete" Command="{Binding Source={x:Reference Name=MainWindowRef}, Path=DataContext.DeleteCommand}"/>
                     </ContextMenu>
                 </TextBlock.ContextMenu>
                 <TextBlock.InputBindings>
@@ -103,7 +104,7 @@
                 <MenuItem Header="About"/>
             </MenuItem>
         </Menu>
-        <controls:EditorView Grid.Row="1" DataContext="{Binding}" />
+        <controls:EditorView Grid.Row="1" DataContext="{Binding}"/>
         <GridSplitter HorizontalAlignment="Stretch" Grid.Row="1" Grid.Column="1"/>
         <TreeView Grid.Row="1" Grid.Column="2">
             <TreeViewItem Header="Characters"

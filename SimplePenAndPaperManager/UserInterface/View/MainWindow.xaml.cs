@@ -30,5 +30,11 @@ namespace SimplePenAndPaperManager.UserInterface.View
             }
             selectedElement.IsSelected = !selectedElement.IsSelected;
         }
+
+        private void TextBlock_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            IVisualElement selectedElement = (IVisualElement)((FrameworkElement)sender).DataContext;
+            _vm.LastSelected = selectedElement;
+        }
     }
 }
