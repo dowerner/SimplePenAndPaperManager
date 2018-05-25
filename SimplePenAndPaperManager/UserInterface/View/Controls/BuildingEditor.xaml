@@ -7,7 +7,7 @@
         xmlns:commands="clr-namespace:SimplePenAndPaperManager.UserInterface.ViewModel.Commands"
         xmlns:converter="clr-namespace:SimplePenAndPaperManager.UserInterface.View.Converter"
         mc:Ignorable="d"
-        Title="{Binding Name}" Height="500" Width="600">
+        Title="{Binding Name}" Height="500" Width="600" x:Name="EditorRef">
     <Window.Resources>
         <RoutedUICommand x:Key="SaveAndCloseCommand"/>
         <converter:BoolToColorConverter x:Key="BoolToColorConverter"/>
@@ -21,9 +21,9 @@
                         Focusable="False" FocusVisualStyle="{x:Null}">
                 <TextBlock.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="Edit" Command="{Binding EditEntityCommand}"/>
-                        <MenuItem Header="Copy" Command="{Binding CopyCommand}"/>
-                        <MenuItem Header="Delete" Command="{Binding DeleteCommand}"/>
+                        <MenuItem Header="Edit" Command="{Binding Source={x:Reference Name=EditorRef} ,Path=DataContext.EditEntityCommand}"/>
+                        <MenuItem Header="Copy" Command="{Binding Source={x:Reference Name=EditorRef} ,Path=CopyCommand}"/>
+                        <MenuItem Header="Delete" Command="{Binding Source={x:Reference Name=EditorRef} ,Path=DeleteCommand}"/>
                     </ContextMenu>
                 </TextBlock.ContextMenu>
                 <TextBlock.InputBindings>

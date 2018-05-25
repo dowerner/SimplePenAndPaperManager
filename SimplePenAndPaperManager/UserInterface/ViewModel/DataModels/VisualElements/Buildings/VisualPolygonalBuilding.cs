@@ -160,6 +160,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
                 }
                 _currentFloor = value;
                 OnPropertyChanged("CurrentFloor");
+                OnPropertyChanged("MapEntities");
                 if (_currentFloor == null) return;
                 SetBoundingDimensions();
 
@@ -168,6 +169,17 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             }
         }
         private VisualFloor _currentFloor;
+
+        public override ObservableCollection<IVisualElement> MapEntities
+        {
+            get { return CurrentFloor != null ? CurrentFloor.MapEntities : null; }
+            set
+            {
+                if (CurrentFloor == null) return;
+                CurrentFloor.MapEntities = value;
+                OnPropertyChanged("MapEntities");
+            }
+        }
 
         public ObservableCollection<VisualFloor> Floors
         {

@@ -149,11 +149,18 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
             // update selected entities postion
             if((e.PropertyName == "GizmoX" || e.PropertyName == "GizmoY") && mouseHandlingMode == MouseHandlingMode.DragObject)
             {
-                TranslateAction translation = (TranslateAction)GlobalManagement.Instance.CurrentAction;
-                Point pxPoint = FromCanvasToZoomControlCoordinates(new Point(Utils.MeterToPx(_vm.GizmoX) + Gizmo.Width / 2,
-                                                                             Utils.MeterToPx(_vm.GizmoY) + Gizmo.Height / 2));
-                translation.TransformEndPoint = pxPoint.PxToMeter();
-                translation.Do();
+                if(GlobalManagement.Instance.CurrentAction != null && GlobalManagement.Instance.CurrentAction is TranslateAction)
+                {
+                    TranslateAction translation = (TranslateAction)GlobalManagement.Instance.CurrentAction;
+                    Point pxPoint = FromCanvasToZoomControlCoordinates(new Point(Utils.MeterToPx(_vm.GizmoX) + Gizmo.Width / 2,
+                                                                                 Utils.MeterToPx(_vm.GizmoY) + Gizmo.Height / 2));
+                    translation.TransformEndPoint = pxPoint.PxToMeter();
+                    translation.Do();
+                }
+                else
+                {
+                    mouseHandlingMode = MouseHandlingMode.None;
+                }
             }
 
             // update selected entities rotation

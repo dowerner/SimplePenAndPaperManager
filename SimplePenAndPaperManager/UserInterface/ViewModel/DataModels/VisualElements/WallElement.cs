@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Media;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
+using System.ComponentModel;
 
 namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements
 {
@@ -156,6 +157,19 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             Doors = new List<IDoorEntity>();
             CalculatePositionAndSize(X, Y);
             StrokeColor = Colors.Black;
+            PropertyChanged += WallElement_PropertyChanged;
+        }
+
+        private void WallElement_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Orientation")
+            {
+                CalculatePositionAndSize(X, Y);
+                OnPropertyChanged("X1");
+                OnPropertyChanged("Y1");
+                OnPropertyChanged("X2");
+                OnPropertyChanged("Y2");
+            }
         }
 
         #region Help Functions
