@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows;
+using System.Linq;
 using SimplePenAndPaperManager.MapEditor.Entities.Interface;
 using System.Windows.Media;
 
@@ -40,7 +41,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
         #region Help Methods
         private void EntityChanged(object sender, PropertyChangedEventArgs e)
         {
-            IVisualElement entity = (IVisualElement)sender;
+            Interface.IVisualElement entity = (Interface.IVisualElement)sender;
 
             if (e.PropertyName == "IsSelected")
             {
@@ -56,11 +57,11 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             // listen for entity changes
             if (e.NewItems != null)
             {
-                foreach (IVisualElement element in e.NewItems) element.PropertyChanged += EntityChanged;
+                foreach (Interface.IVisualElement element in e.NewItems) element.PropertyChanged += EntityChanged;
             }
             if (e.OldItems != null)
             {
-                foreach (IVisualElement element in e.OldItems) element.PropertyChanged -= EntityChanged;
+                foreach (Interface.IVisualElement element in e.OldItems) element.PropertyChanged -= EntityChanged;
             }
         }
 
@@ -108,14 +109,26 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
 
         public void CreateFloorFromDimensions()
         {
-            Floor floorSource = new Floor()
-            {
-                Id = 0,
-                Name = "Floor",
-            };
+            VisualFloor newFloor = new VisualFloor(new Floor() { Name = "Floor" });
+            UpdateFloorToDimensions(newFloor);
+            Floors.Add(newFloor);
+            if (CurrentFloor == null) CurrentFloor = newFloor;
+        }
 
-            VisualFloor floor = new VisualFloor(floorSource);
+        public void UpdateAllFloorDimensions()
+        {
+            foreach (VisualFloor floor in Floors) UpdateFloorToDimensions(floor);
+        }
 
+        public void UpdateFloorToDimensions(VisualFloor floor)
+        {
+            // remove old walls
+            ((IFloorEntity)floor.SourceEntity).Walls.RemoveAll(wall => wall.IsOuterWall);
+            var toRemove = floor.MapEntities.Where(item => item is WallElement && ((WallElement)item).IsOuterWall).ToList();
+
+            if (toRemove != null) for (int j = 0; j < toRemove.Count; j++) floor.MapEntities.Remove(toRemove[j]);
+
+            // update dimensions of map
             SetBoundingDimensions();
 
             int i = 0;
@@ -124,7 +137,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
 
             while(!finished)
             {
-                Wall wall = new Wall() { Id = 0, Thickness = Constants.DefaultOutsideWallThickness, Name = "OuterWall" };
+                Wall wall = new Wall() { Id = 0, Thickness = Constants.DefaultOutsideWallThickness, Name = "OuterWall", IsOuterWall = true };
                 WallElement visualWall = new WallElement(wall);
                 visualWall.X1 = Corners[i].X + offset.X;
                 visualWall.Y1 = Corners[i].Y + offset.Y;
@@ -143,9 +156,6 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
                 }
                 floor.MapEntities.Add(visualWall);
             }
-            Floors.Add(floor);
-
-            if (CurrentFloor == null) CurrentFloor = floor;
         }
 
         public VisualFloor CurrentFloor
@@ -155,7 +165,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             {
                 if (_currentFloor != null)
                 {
-                    foreach (IVisualElement entity in _currentFloor.MapEntities) entity.PropertyChanged -= EntityChanged;
+                    foreach (Interface.IVisualElement entity in _currentFloor.MapEntities) entity.PropertyChanged -= EntityChanged;
                     _currentFloor.MapEntities.CollectionChanged -= MapEntities_CollectionChanged;
                 }
                 _currentFloor = value;
@@ -165,12 +175,12 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
                 SetBoundingDimensions();
 
                 _currentFloor.MapEntities.CollectionChanged += MapEntities_CollectionChanged;
-                foreach (IVisualElement entity in _currentFloor.MapEntities) entity.PropertyChanged += EntityChanged;
+                foreach (Interface.IVisualElement entity in _currentFloor.MapEntities) entity.PropertyChanged += EntityChanged;
             }
         }
         private VisualFloor _currentFloor;
 
-        public override ObservableCollection<IVisualElement> MapEntities
+        public override ObservableCollection<Interface.IVisualElement> MapEntities
         {
             get { return CurrentFloor != null ? CurrentFloor.MapEntities : null; }
             set

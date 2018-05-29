@@ -12,6 +12,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Ink;
+using System.Windows.Media;
 
 namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
 {
@@ -23,7 +24,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
     {
         public DataModel() : base()
         {
-            MapEntities = new ObservableCollection<IVisualElement>();
+            base.MapEntities = new ObservableCollection<IVisualElement>();
             MapEntities.CollectionChanged += MapEntities_CollectionChanged;
 
             CurrentMap = new Map() { Width = 400, Height = 400 };
@@ -38,6 +39,8 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
                 {
                     element.PropertyChanged += EntityChanged;
                     CurrentMap.Entities.Add(element.SourceEntity);
+
+                    if (element is VisualPolygonalBuilding) CurrentCorners = ((VisualPolygonalBuilding)element).Corners;
                 }
             }
             if (e.OldItems != null)
@@ -52,7 +55,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
         
         private void EntityChanged(object sender, PropertyChangedEventArgs e)
         {
-            IVisualElement entity = (IVisualElement)sender;
+            VisualElements.Interface.IVisualElement entity = (VisualElements.Interface.IVisualElement)sender;
 
             if (e.PropertyName == "IsSelected")
             {
@@ -64,6 +67,17 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
         #region Creation Variables
         public List<WallElement> NewPolygonalBuildingWalls { get; set; }
         public WallElement CurrentPolygonWall { get; set; }
+
+        public PointCollection CurrentCorners
+        {
+            get { return _currentCorners; }
+            set
+            {
+                _currentCorners = value;
+                OnPropertyChanged("CurrentCorners");
+            }
+        }
+        private PointCollection _currentCorners;
 
         public string Debug
         {

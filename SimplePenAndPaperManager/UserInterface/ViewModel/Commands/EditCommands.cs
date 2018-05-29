@@ -8,6 +8,9 @@ using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.Interface;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Markers;
 using System.Collections.Specialized;
+using System;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Buildings;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements;
 
 namespace SimplePenAndPaperManager.UserInterface.ViewModel.Commands
 {
@@ -175,6 +178,36 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.Commands
                 EditEntityAction action = new EditEntityAction(null, _context) { AffectedElement = selectedElement };
                 action.Do();
                 GlobalManagement.Instance.UndoStack.Push(action);
+            }
+        }
+    }
+
+    public class ShowManipulationPoints : BaseCommand
+    {
+        public ShowManipulationPoints(IDataModel context) : base(context)
+        {
+        }
+
+        public override bool CanExecute(object parameter)
+        {
+            return _context.LastSelected is VisualPolygonalBuilding;
+        }
+
+        public override void Execute(object parameter)
+        {
+            VisualPolygonalBuilding polygon = (VisualPolygonalBuilding)_context.LastSelected;
+
+            foreach(VisualCornerManipulator manipulator in _context.CornerManipulators)
+            {
+                _context.MapEntities.Remove(manipulator);
+            }
+            _context.CornerManipulators.Clear();
+
+            for(int i = 0; i < polygon.Corners.Count; i++)
+            {
+                VisualCornerManipulator manipulator = new VisualCornerManipulator(polygon.SourceEntity, polygon, i);
+                _context.CornerManipulators.Add(manipulator);
+                _context.MapEntities.Add(manipulator);
             }
         }
     }

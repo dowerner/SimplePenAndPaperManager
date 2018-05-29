@@ -16,9 +16,9 @@
 
         <DataTemplate x:Key="EntityListItemTemplate">
             <TextBlock Background="{Binding IsSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter={StaticResource SelectedColor}}" 
-                        Foreground="{Binding IsSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter={StaticResource SelectedForegroundColor}}" 
-                        MouseLeftButtonDown="TextBlock_MouseLeftButtonDown" Text="{Binding Name}"
-                        Focusable="False" FocusVisualStyle="{x:Null}">
+                       Foreground="{Binding IsSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter={StaticResource SelectedForegroundColor}}" 
+                       MouseLeftButtonDown="TextBlock_MouseLeftButtonDown" Text="{Binding Name}"
+                       Focusable="False" FocusVisualStyle="{x:Null}">
                 <TextBlock.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Edit" Command="{Binding Source={x:Reference Name=EditorRef} ,Path=DataContext.EditEntityCommand}"/>
@@ -80,7 +80,7 @@
                 <MenuItem Header="Create NPC"/>
             </MenuItem>
         </Menu>
-        <local:EditorView Grid.Row="1" Grid.RowSpan="3" ShowOverview="False" />
+        <local:EditorView Grid.Row="1" Grid.RowSpan="3" ShowOverview="False" DataContext="{Binding}"/>
         <TreeView Grid.Row="1" Grid.Column="2">
             <TreeViewItem Header="Characters"
                           ItemsSource="{Binding CharacterView}"

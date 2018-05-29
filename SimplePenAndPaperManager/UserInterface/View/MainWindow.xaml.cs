@@ -15,6 +15,8 @@ namespace SimplePenAndPaperManager.UserInterface.View
 
         public MainWindow()
         {
+            GlobalManagement.Instance.MainWindow = this;
+
             InitializeComponent();
             _vm = new DataModel();
             DataContext = _vm;

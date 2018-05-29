@@ -1,4 +1,5 @@
 ﻿using SimplePenAndPaperManager.UserInterface.ViewModel.Commands;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -12,6 +13,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.Interface
         double MapHeight { get; set; }
         ObservableCollection<IVisualElement> MapEntities { get; set; }
         ObservableCollection<IVisualElement> SelectedEntities { get; set; }
+        ObservableCollection<VisualCornerManipulator> CornerManipulators { get; set; }
         Point SelectionLocation { get; set; }
         Point CopyLocation { get; set; }
         double ContentScale { get; set; }
@@ -26,6 +28,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.Interface
         bool GizmoIsRotating { get; set; }
         bool GizmoDragX { get; set; }
         bool GizmoDragY { get; set; }
+        bool AllowRotation { get; set; }
         double GizmoX { get; set; }
         double GizmoY { get; set; }
         Point MousePosition { get; set; }
@@ -44,6 +47,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.Interface
         DeselectAllCommand DeselectAllCommand { get; }
         EditEntityCommand EditEntityCommand { get; }
         CreateMarkerCommand CreateMarkerCommand { get; }
+        ShowManipulationPoints ShowManipulationPoints { get; }
         #endregion
     }
 }

@@ -172,7 +172,7 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
             }
 
             #region terrain
-            if (e.PropertyName == "CurrentMap") ExpandContent();
+            if (e.PropertyName == "CurrentMap" || e.PropertyName == "MapWidth" || e.PropertyName == "MapHeight") ExpandContent();
 
             if (e.PropertyName == "TerrainBrushSize" || e.PropertyName == "ContentScale")
             {

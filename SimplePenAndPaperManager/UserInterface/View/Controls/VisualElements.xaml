@@ -32,6 +32,17 @@
             </Rectangle.RenderTransform>
         </Rectangle>
     </DataTemplate>-->
+    <DataTemplate DataType="{x:Type datamodel:VisualCornerManipulator}">
+        <Ellipse Width="{Binding Width, Converter={StaticResource MeterToPixelConverter}}" 
+                 Height="{Binding Height, Converter={StaticResource MeterToPixelConverter}}"
+                 Fill="{Binding Color, Converter={StaticResource ColorToBrushConverter}}">
+            <Ellipse.RenderTransform>
+                <TranslateTransform X="{Binding X, Converter={StaticResource MeterToPixelConverter}}"
+                                    Y="{Binding Y, Converter={StaticResource MeterToPixelConverter}}"/>
+            </Ellipse.RenderTransform>
+        </Ellipse>
+    </DataTemplate>
+    
     <DataTemplate DataType="{x:Type markers:VisualTextMarker}">
         <Border BorderThickness="3" BorderBrush="{Binding IsSelected, Converter={StaticResource BoolToColorConverter}}">
             <TextBlock Text="{Binding Text, Mode=TwoWay}" FontSize="32"/>
@@ -80,6 +91,15 @@
             </Polygon.RenderTransform>
         </Polygon>
     </DataTemplate>
+
+    <!--<DataTemplate DataType="{x:Type Point}">
+        <local:TransformationGizmo RotationEnabled="False">
+            <local:TransformationGizmo.RenderTransform>
+                <TranslateTransform X="{Binding X, Converter={StaticResource CornerGizmoConverter}, ConverterParameter={Binding}}"
+                                    Y="{Binding Y, Converter={StaticResource CornerGizmoConverter}, ConverterParameter={Binding}}"/>
+            </local:TransformationGizmo.RenderTransform>
+        </local:TransformationGizmo>
+    </DataTemplate>-->
 
     <DataTemplate DataType="{x:Type datamodel:WallElement}">
         <Line

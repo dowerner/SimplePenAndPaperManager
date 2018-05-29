@@ -1,4 +1,5 @@
-﻿using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.Interface;
+﻿using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.Interface;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
 using System.Windows;
 using System.Windows.Input;
@@ -13,6 +14,7 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
         public BuildingEditor()
         {
             InitializeComponent();
+            Owner = GlobalManagement.Instance.MainWindow;
         }
 
         public void SaveAndClose(object sender, ExecutedRoutedEventArgs e)

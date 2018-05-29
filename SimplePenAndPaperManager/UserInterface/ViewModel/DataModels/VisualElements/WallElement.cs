@@ -13,6 +13,12 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
         public List<IWindowEntity> Windows { get; set; } 
         public List<IDoorEntity> Doors { get; set; }
 
+        public bool IsOuterWall
+        {
+            get { return _wallEnity.IsOuterWall; }
+            set { _wallEnity.IsOuterWall = value; }
+        }
+
         public double Thickness
         {
             get { return _wallEnity.Thickness; }

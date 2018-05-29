@@ -8,6 +8,7 @@
              Height="120" Width="120">
     <Canvas>
         <Line X1="0" Y1="0" X2="47" Y2="0" RenderTransformOrigin="0.98,-0.006"
+              x:Name="RotationLine"
               Stroke="Blue"
               Canvas.Top="57.5" Canvas.Left="14"
               StrokeThickness="5"
@@ -19,6 +20,7 @@
             </Line.RenderTransform>
         </Line>
         <Ellipse Height="100" Width="100"
+                 x:Name="RotationRing"
                  Fill="Transparent"
                  Canvas.Top="10" Canvas.Left="10"
                  Stroke="Gray"/>

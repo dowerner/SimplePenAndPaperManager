@@ -69,7 +69,7 @@ namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
             _context.MapEntities.Remove(Building);
         }
 
-        public CreatePolygonAction(ObservableCollection<IVisualElement> selectedEntities, IDataModel context) : base(selectedEntities, context)
+        public CreatePolygonAction(ObservableCollection<ViewModel.DataModels.VisualElements.Interface.IVisualElement> selectedEntities, IDataModel context) : base(selectedEntities, context)
         {
         }
     }

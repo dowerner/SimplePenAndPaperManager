@@ -15,6 +15,19 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
         public delegate void TransformationChangedHandler(object sender, TransformationEvent transformationEvent);
         public event TransformationChangedHandler TransformationChanged;
 
+        public static readonly DependencyProperty RotationEnabledProperty =
+                DependencyProperty.Register("RotationEnabled", typeof(bool), typeof(TransformationGizmo), new PropertyMetadata(true, RotationEnabledPropertyChanged));
+
+        private static void RotationEnabledPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            TransformationGizmo gizmo = (TransformationGizmo)d;
+            bool rotationEnabled = (bool)e.NewValue;
+            gizmo.RotationBall.Visibility = rotationEnabled ? Visibility.Visible : Visibility.Hidden;
+            gizmo.RotationLine.Visibility = rotationEnabled ? Visibility.Visible : Visibility.Hidden;
+            gizmo.RotationRing.Visibility = rotationEnabled ? Visibility.Visible : Visibility.Hidden;
+            gizmo.RotationText.Visibility = rotationEnabled ? Visibility.Visible : Visibility.Hidden;
+        }
+
         public static readonly DependencyProperty XProperty =
                 DependencyProperty.Register("X", typeof(double), typeof(TransformationGizmo), new PropertyMetadata(0.0, null));
 
@@ -52,6 +65,12 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
 
         public static readonly DependencyProperty IsRotatingProperty =
                DependencyProperty.Register("IsRotating", typeof(bool), typeof(TransformationGizmo), new PropertyMetadata(false, null));
+
+        public bool RotationEnabled
+        {
+            get { return (bool)GetValue(RotationEnabledProperty); }
+            set { SetValue(RotationEnabledProperty, value); }
+        }
 
         public double X
         {

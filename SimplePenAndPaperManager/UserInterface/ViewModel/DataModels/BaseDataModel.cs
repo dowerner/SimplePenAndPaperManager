@@ -11,6 +11,7 @@ using SimplePenAndPaperManager.MapEditor.Entities.Items.Interface;
 using SimplePenAndPaperManager.MapEditor.Entities.Buildings.Interface;
 using SimplePenAndPaperManager.MapEditor.Entities.Vegetation.Interface;
 using SimplePenAndPaperManager.MapEditor.Entities.Markers.Interface;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements;
 
 namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
 {
@@ -24,9 +25,29 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
         public DeselectAllCommand DeselectAllCommand { get; private set; }
         public EditEntityCommand EditEntityCommand { get; private set; }
         public CreateMarkerCommand CreateMarkerCommand { get; private set; }
+        public ShowManipulationPoints ShowManipulationPoints { get; private set; }
 
-        public virtual double MapWidth { get; set; }
-        public virtual double MapHeight { get; set; }
+        public virtual double MapWidth
+        {
+            get { return _mapWidth; }
+            set
+            {
+                _mapWidth = value;
+                OnPropertyChanged("MapWidth");
+            }
+        }
+        private double _mapWidth;
+
+        public virtual double MapHeight
+        {
+            get { return _mapHeight; }
+            set
+            {
+                _mapHeight = value;
+                OnPropertyChanged("MapHeight");
+            }
+        }
+        private double _mapHeight;
 
         public ICollectionView CharacterView { get; set; }
         public ICollectionView ItemView { get; set; }
@@ -76,6 +97,8 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
             }
         }
         private ObservableCollection<IVisualElement> _selectedEntities;
+
+        public ObservableCollection<VisualCornerManipulator> CornerManipulators { get; set; }
 
         public Point SelectionLocation
         {
@@ -295,6 +318,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
             ContentScale = 1;
             SelectedEntities = new ObservableCollection<IVisualElement>();
             SelectedEntities.CollectionChanged += SelectedEntities_CollectionChanged;
+            CornerManipulators = new ObservableCollection<VisualCornerManipulator>();
             MapEntities = new ObservableCollection<IVisualElement>();
 
             // commands
@@ -306,6 +330,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
             DeselectAllCommand = new DeselectAllCommand(this);
             EditEntityCommand = new EditEntityCommand(this);
             CreateMarkerCommand = new CreateMarkerCommand(this);
+            ShowManipulationPoints = new ShowManipulationPoints(this);
         }
 
         private void SelectedEntities_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -333,8 +358,22 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
             // set correct gizmo orientation
             if (_selectedEntities.Count == 1 && !GizmoIsRotating) GizmoOrientation = _selectedEntities[0].Orientation;
             else if (!GizmoIsRotating) GizmoOrientation = 0;
+
+            // update rotation capabilities
+            AllowRotation = true;
+            foreach (IVisualElement entity in SelectedEntities) if (entity is VisualCornerManipulator) AllowRotation = false;
         }
 
+        public bool AllowRotation
+        {
+            get { return _allowRotation; }
+            set
+            {
+                _allowRotation = value;
+                OnPropertyChanged("AllowRotation");
+            }
+        }
+        private bool _allowRotation;
 
         #region INotifyPropertyChanged Members
 

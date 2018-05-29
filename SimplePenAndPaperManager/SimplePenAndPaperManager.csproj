@@ -122,6 +122,7 @@
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\Interface\IVisualElement.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\PolygonElement.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\RectangleElement.cs" />
+    <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\VisualCornerManipulator.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\VisualElementHelper.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\WallElement.cs" />
     <Compile Include="UserInterface\View\Controls\BuildingEditor.xaml.cs">

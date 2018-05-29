@@ -3,6 +3,7 @@ using SimplePenAndPaperManager.MathTools;
 using SimplePenAndPaperManager.UserInterface.Model;
 using SimplePenAndPaperManager.UserInterface.Model.EditorActions;
 using SimplePenAndPaperManager.UserInterface.Model.EditorActions.Interface;
+using SimplePenAndPaperManager.UserInterface.View;
 using SimplePenAndPaperManager.UserInterface.View.States;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Buildings;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
@@ -15,7 +16,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
 {
     public class GlobalManagement : INotifyPropertyChanged
     {
-
+        public MainWindow MainWindow { get; set; }
 
         public bool InTerrainEditingMode
         {

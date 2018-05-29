@@ -345,6 +345,7 @@
                                     <Canvas.ContextMenu>
                                         <ContextMenu>
                                             <MenuItem Header="Edit" Command="{Binding EditEntityCommand}" CommandParameter="{Binding}"/>
+                                            <MenuItem Header="Edit Shape" Command="{Binding ShowManipulationPoints}"/>
                                             <MenuItem Header="Copy" Command="{Binding CopyCommand}"/>
                                             <MenuItem Header="Delete" Command="{Binding DeleteCommand}"/>
                                         </ContextMenu>
@@ -353,6 +354,16 @@
                                         <MouseBinding MouseAction="LeftDoubleClick" 
                                                       Command="{Binding EditEntityCommand}"/>
                                     </Canvas.InputBindings>
+                                </Canvas>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                    <ItemsControl IsHitTestVisible="False"
+                        Background="Transparent"
+                        ItemsSource="{Binding CurrentCorners}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <Canvas>
                                 </Canvas>
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
@@ -388,6 +399,7 @@
                                            IsRotating="{Binding GizmoIsRotating, Mode=OneWayToSource}"
                                            DraggingX="{Binding GizmoDragX, Mode=TwoWay}"
                                            DraggingY="{Binding GizmoDragY, Mode=TwoWay}"
+                                           RotationEnabled="{Binding AllowRotation}"
                                            RenderTransformOrigin="0.5 0.5">
                     <local:TransformationGizmo.RenderTransform>
                         <TranslateTransform X="{Binding GizmoX, Mode=TwoWay, Converter={StaticResource MeterToPixelConverter}}"
