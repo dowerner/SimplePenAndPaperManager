@@ -345,7 +345,7 @@
                                     <Canvas.ContextMenu>
                                         <ContextMenu>
                                             <MenuItem Header="Edit" Command="{Binding EditEntityCommand}" CommandParameter="{Binding}"/>
-                                            <MenuItem Header="Edit Shape" Command="{Binding ShowManipulationPoints}"/>
+                                            <MenuItem Header="Edit Shape" Command="{Binding ShowManipulationPoints}" Visibility="{Binding SelectionIsBuilding, Converter={StaticResource BoolToVisibilityConverter}}"/>
                                             <MenuItem Header="Copy" Command="{Binding CopyCommand}"/>
                                             <MenuItem Header="Delete" Command="{Binding DeleteCommand}"/>
                                         </ContextMenu>
@@ -354,16 +354,6 @@
                                         <MouseBinding MouseAction="LeftDoubleClick" 
                                                       Command="{Binding EditEntityCommand}"/>
                                     </Canvas.InputBindings>
-                                </Canvas>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                    </ItemsControl>
-                    <ItemsControl IsHitTestVisible="False"
-                        Background="Transparent"
-                        ItemsSource="{Binding CurrentCorners}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <Canvas>
                                 </Canvas>
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
@@ -388,10 +378,6 @@
                     </Canvas>
                 </Grid>
             </zoomAndPan:ZoomAndPanControl>
-            <StackPanel IsHitTestVisible="False">
-                <TextBlock Text="{Binding MousePosition}"
-                           IsHitTestVisible="False"/>
-            </StackPanel>
             <Canvas>
                 <local:TransformationGizmo x:Name="Gizmo"
                                            Orientation="{Binding GizmoOrientation, Mode=TwoWay}"

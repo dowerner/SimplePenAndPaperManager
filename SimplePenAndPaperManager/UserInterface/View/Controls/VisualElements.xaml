@@ -37,8 +37,12 @@
                  Height="{Binding Height, Converter={StaticResource MeterToPixelConverter}}"
                  Fill="{Binding Color, Converter={StaticResource ColorToBrushConverter}}">
             <Ellipse.RenderTransform>
-                <TranslateTransform X="{Binding X, Converter={StaticResource MeterToPixelConverter}}"
+                <TransformGroup>
+                    <TranslateTransform X="{Binding X, Converter={StaticResource MeterToPixelConverter}}"
                                     Y="{Binding Y, Converter={StaticResource MeterToPixelConverter}}"/>
+                    <TranslateTransform X="{Binding XOffset, Converter={StaticResource MeterToPixelConverter}}"
+                                    Y="{Binding YOffset, Converter={StaticResource MeterToPixelConverter}}"/>
+                </TransformGroup>
             </Ellipse.RenderTransform>
         </Ellipse>
     </DataTemplate>

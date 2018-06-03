@@ -27,6 +27,11 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
         public CreateMarkerCommand CreateMarkerCommand { get; private set; }
         public ShowManipulationPoints ShowManipulationPoints { get; private set; }
 
+        public bool SelectionIsBuilding
+        {
+            get { return LastSelected is IVisualBuilding; }
+        }
+
         public virtual double MapWidth
         {
             get { return _mapWidth; }
@@ -70,7 +75,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
                 ItemView = new CollectionViewSource() { Source = _mapEntities }.View;
                 ItemView.Filter = delegate (object item) { return ((IVisualElement)item).SourceEntity is IItemEntity; };
                 BuildingsView = new CollectionViewSource() { Source = _mapEntities }.View;
-                BuildingsView.Filter = delegate (object item) { return ((IVisualElement)item).SourceEntity is IBuildingEntity; };
+                BuildingsView.Filter = delegate (object item) { return ((IVisualElement)item).SourceEntity is IBuildingEntity && !(item is VisualCornerManipulator); };
                 WallsView = new CollectionViewSource() { Source = _mapEntities }.View;
                 WallsView.Filter = delegate (object item) { return ((IVisualElement)item).SourceEntity is IWallEntity; };
                 DoorsView = new CollectionViewSource() { Source = _mapEntities }.View;
@@ -300,7 +305,18 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
         }
         private double _gizmoY;
 
-        public IVisualElement LastSelected { get; set; }
+        public IVisualElement LastSelected
+        {
+            get { return _lastSelected; }
+            set
+            {
+                _lastSelected = value;
+                OnPropertyChanged("LastSelected");
+                OnPropertyChanged("SelectionIsBuilding");
+            }
+        }
+        private IVisualElement _lastSelected;
+
         public Point MousePosition
         {
             get { return _mousePosition; }

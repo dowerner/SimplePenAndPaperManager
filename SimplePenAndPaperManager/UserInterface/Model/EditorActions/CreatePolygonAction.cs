@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels;
 using System.Collections.Generic;

@@ -49,13 +49,15 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
                 {
                     element.PropertyChanged -= EntityChanged;
                     CurrentMap.Entities.Remove(element.SourceEntity);
+
+                    if (element is VisualPolygonalBuilding && CurrentCorners == ((VisualPolygonalBuilding)element).Corners) CurrentCorners = null;
                 }
             }
         }
         
         private void EntityChanged(object sender, PropertyChangedEventArgs e)
         {
-            VisualElements.Interface.IVisualElement entity = (VisualElements.Interface.IVisualElement)sender;
+            IVisualElement entity = (IVisualElement)sender;
 
             if (e.PropertyName == "IsSelected")
             {

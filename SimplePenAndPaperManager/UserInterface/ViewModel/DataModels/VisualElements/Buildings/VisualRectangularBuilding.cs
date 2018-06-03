@@ -19,6 +19,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
                 Corners[3] = new Point(Corners[0].X, Corners[2].Y);
 
                 OnPropertyChanged("Corners");
+                OnPropertyChanged("A");
                 UpdateDimensions();
             }
         }
@@ -35,6 +36,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
                 Corners[2] = new Point(Corners[1].X, Corners[3].Y);
 
                 OnPropertyChanged("Corners");
+                OnPropertyChanged("B");
                 UpdateDimensions();
             }
         }
@@ -51,6 +53,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
                 Corners[3] = new Point(Corners[0].X, Corners[2].Y);
 
                 OnPropertyChanged("Corners");
+                OnPropertyChanged("C");
                 UpdateDimensions();
             }
         }
@@ -67,6 +70,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
                 Corners[2] = new Point(Corners[1].X, Corners[3].Y);
 
                 OnPropertyChanged("Corners");
+                OnPropertyChanged("D");
                 UpdateDimensions();
             }
         }

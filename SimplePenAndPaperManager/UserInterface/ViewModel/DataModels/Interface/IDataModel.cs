@@ -29,6 +29,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.Interface
         bool GizmoDragX { get; set; }
         bool GizmoDragY { get; set; }
         bool AllowRotation { get; set; }
+        bool SelectionIsBuilding { get; }
         double GizmoX { get; set; }
         double GizmoY { get; set; }
         Point MousePosition { get; set; }

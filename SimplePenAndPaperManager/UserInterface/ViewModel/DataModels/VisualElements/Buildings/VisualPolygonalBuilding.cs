@@ -41,7 +41,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
         #region Help Methods
         private void EntityChanged(object sender, PropertyChangedEventArgs e)
         {
-            Interface.IVisualElement entity = (Interface.IVisualElement)sender;
+            IVisualElement entity = (IVisualElement)sender;
 
             if (e.PropertyName == "IsSelected")
             {
@@ -57,11 +57,11 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             // listen for entity changes
             if (e.NewItems != null)
             {
-                foreach (Interface.IVisualElement element in e.NewItems) element.PropertyChanged += EntityChanged;
+                foreach (IVisualElement element in e.NewItems) element.PropertyChanged += EntityChanged;
             }
             if (e.OldItems != null)
             {
-                foreach (Interface.IVisualElement element in e.OldItems) element.PropertyChanged -= EntityChanged;
+                foreach (IVisualElement element in e.OldItems) element.PropertyChanged -= EntityChanged;
             }
         }
 
@@ -165,7 +165,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             {
                 if (_currentFloor != null)
                 {
-                    foreach (Interface.IVisualElement entity in _currentFloor.MapEntities) entity.PropertyChanged -= EntityChanged;
+                    foreach (IVisualElement entity in _currentFloor.MapEntities) entity.PropertyChanged -= EntityChanged;
                     _currentFloor.MapEntities.CollectionChanged -= MapEntities_CollectionChanged;
                 }
                 _currentFloor = value;
@@ -175,7 +175,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
                 SetBoundingDimensions();
 
                 _currentFloor.MapEntities.CollectionChanged += MapEntities_CollectionChanged;
-                foreach (Interface.IVisualElement entity in _currentFloor.MapEntities) entity.PropertyChanged += EntityChanged;
+                foreach (IVisualElement entity in _currentFloor.MapEntities) entity.PropertyChanged += EntityChanged;
             }
         }
         private VisualFloor _currentFloor;
@@ -203,12 +203,6 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
         private ObservableCollection<VisualFloor> _floors;
 
         #region DataModel Implementation
-        public ICollectionView CharacterView { get { return CurrentFloor.CharacterView; } set { CurrentFloor.CharacterView = value; } }
-        public ICollectionView ItemView { get { return CurrentFloor.ItemView; } set { CurrentFloor.ItemView = value; } }
-        public ICollectionView WallsView { get { return CurrentFloor.WallsView; } set { CurrentFloor.WallsView = value; } }
-        public ICollectionView DoorsView { get { return CurrentFloor.DoorsView; } set { CurrentFloor.DoorsView = value; } }
-        public ICollectionView WindowsView { get { return CurrentFloor.WindowsView; } set { CurrentFloor.WindowsView = value; } }
-        public ICollectionView MarkersView { get { return CurrentFloor.MarkersView; } set { CurrentFloor.MarkersView = value; } }
 
         public PointCollection Corners
         {

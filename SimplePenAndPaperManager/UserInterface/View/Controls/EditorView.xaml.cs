@@ -6,11 +6,13 @@ using SimplePenAndPaperManager.UserInterface.Model.EditorActions;
 using SimplePenAndPaperManager.UserInterface.View.States;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.Interface;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Buildings;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Markers;
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -174,6 +176,15 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
             #region terrain
             if (e.PropertyName == "CurrentMap" || e.PropertyName == "MapWidth" || e.PropertyName == "MapHeight") ExpandContent();
 
+            if(e.PropertyName == "ContentScale" &&  _vm is DataModel)
+            {
+                foreach(VisualCornerManipulator manipulator in _vm.MapEntities.Where(item => item is VisualCornerManipulator))
+                {
+                    manipulator.Width = Constants.ManipulatorDiameter / _vm.ContentScale;
+                    manipulator.Height = Constants.ManipulatorDiameter / _vm.ContentScale;
+                }
+            }
+
             if (e.PropertyName == "TerrainBrushSize" || e.PropertyName == "ContentScale")
             {
                 TerrainMap.DefaultDrawingAttributes.Width = Utils.MeterToPx(GlobalManagement.Instance.TerrainBrushSize);
@@ -300,6 +311,14 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
             }
             GlobalManagement.Instance.InTerrainEditingMode = false;
             mouseHandlingMode = MouseHandlingMode.None;
+
+            // remove all building shape manipulation helpers
+            var items = _vm.MapEntities.Where(item => item is VisualCornerManipulator).ToList();
+            for (int i = 0; i < items.Count; i++) _vm.MapEntities.Remove(items[i]);
+            if (_vm is DataModel)
+            {
+                ((DataModel)_vm).CurrentCorners = null;
+            }
         }
         #endregion
 

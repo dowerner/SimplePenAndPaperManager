@@ -8,6 +8,7 @@
         public const double StartMax = -1e9;
         public const double StartMin = 1e9;
         public const double BuildingBoundExtension = 2;
+        public const double ManipulatorDiameter = 2;
 
         public const double DefaultOutsideWallThickness = 0.5;
 
