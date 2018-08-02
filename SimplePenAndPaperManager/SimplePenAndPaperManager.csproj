@@ -112,6 +112,7 @@
     <Compile Include="UserInterface\ViewModel\DataModels\GlobalManagement.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\Interface\IDataModel.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\BaseVisualElement.cs" />
+    <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\Buildings\VisualDoor.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\Buildings\VisualFloor.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\Buildings\VisualPolygon.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\Buildings\VisualPolygonalBuilding.cs" />

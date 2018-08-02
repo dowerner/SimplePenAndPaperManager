@@ -6,6 +6,8 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
 {
     public interface IVisualElement : INotifyPropertyChanged
     {
+        bool AttachToWall { get; set; }
+        bool DisplayWhilePlacing { get; set; }
         Color Color { get; set; }
         double CenterX { get; set; }
         double CenterY { get; set; }

@@ -8,13 +8,35 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
 {
     public abstract class BaseVisualElement : IVisualElement
     {
+        public bool AttachToWall
+        {
+            get { return _attachToWall; }
+            set
+            {
+                _attachToWall = value;
+                OnPropertyChanged(nameof(AttachToWall));
+            }
+        }
+        private bool _attachToWall;
+
+        public bool DisplayWhilePlacing
+        {
+            get { return _displayWhilePlacing; }
+            set
+            {
+                _displayWhilePlacing = value;
+                OnPropertyChanged(nameof(DisplayWhilePlacing));
+            }
+        }
+        private bool _displayWhilePlacing;
+
         public double BoundingWidth
         {
             get { return _boundingWidth; }
             set
             {
                 _boundingWidth = value;
-                OnPropertyChanged("BoundingWidth");
+                OnPropertyChanged(nameof(BoundingWidth));
             }
         }
         protected double _boundingWidth;
@@ -25,7 +47,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             set
             {
                 _boundingHeight = value;
-                OnPropertyChanged("BoundingHeight");
+                OnPropertyChanged(nameof(BoundingHeight));
             }
         }
         protected double _boundingHeight;
@@ -36,7 +58,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             set
             {
                 _color = value;
-                OnPropertyChanged("Color");
+                OnPropertyChanged(nameof(Color));
             }
         }
         protected Color _color;
@@ -47,7 +69,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             set
             {
                 _centerX = value;
-                OnPropertyChanged("CenterX");
+                OnPropertyChanged(nameof(CenterX));
             }
         }
         protected double _centerX;
@@ -58,7 +80,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             set
             {
                 _centerY = value;
-                OnPropertyChanged("CenterY");
+                OnPropertyChanged(nameof(CenterY));
             }
         }
         protected double _centerY;
@@ -69,7 +91,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             set
             {
                 _source.X = value;
-                OnPropertyChanged("X");
+                OnPropertyChanged(nameof(X));
             }
         }
 
@@ -79,7 +101,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             set
             {
                 _source.Y = value;
-                OnPropertyChanged("Y");
+                OnPropertyChanged(nameof(Y));
             }
         }
 
@@ -89,7 +111,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             set
             {
                 _source.Orientation = value;
-                OnPropertyChanged("Orientation");
+                OnPropertyChanged(nameof(Orientation));
             }
         }
 
@@ -99,7 +121,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             set
             {
                 _source.Id = value;
-                OnPropertyChanged("Id");
+                OnPropertyChanged(nameof(Id));
             }
         }
 
@@ -109,7 +131,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             set
             {
                 _source.Name = value;
-                OnPropertyChanged("Name");
+                OnPropertyChanged(nameof(Name));
             }
         }
 
@@ -120,7 +142,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             {
                 _isSelected = value;
                 StrokeColor = _isSelected ? Colors.Blue : Color;
-                OnPropertyChanged("IsSelected");
+                OnPropertyChanged(nameof(IsSelected));
             }
         }
         private bool _isSelected;
@@ -131,7 +153,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             set
             {
                 _strokeColor = value;
-                OnPropertyChanged("StrokeColor");
+                OnPropertyChanged(nameof(StrokeColor));
             }
         }
         private Color _strokeColor;
@@ -147,6 +169,8 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
 
         public BaseVisualElement(IMapEntity mapEntity)
         {
+            AttachToWall = false;
+            DisplayWhilePlacing = false;
             _source = mapEntity;
             _color = Colors.Black;
             CenterX = 0.5;

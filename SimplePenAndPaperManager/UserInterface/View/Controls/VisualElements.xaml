@@ -117,4 +117,19 @@
             />
     </DataTemplate>
     <!--Stroke="{Binding StrokeColor, Converter={StaticResource ColorToBrushConverter}}"-->
+
+    <DataTemplate DataType="{x:Type buildings:VisualDoor}">
+        <Rectangle Fill="{Binding Color}"
+                   Stroke="{Binding StrokeColor}"
+                   Cursor="Hand"
+                   RenderTransformOrigin="0 0">
+            <Rectangle.RenderTransform>
+                <TransformGroup>
+                    <RotateTransform Angle="{Binding Orientation}"/>
+                    <TranslateTransform X="{Binding X, Converter={StaticResource MeterToPixelConverter}}"
+                                        Y="{Binding Y, Converter={StaticResource MeterToPixelConverter}}"/>
+                </TransformGroup>
+            </Rectangle.RenderTransform>
+        </Rectangle>
+    </DataTemplate>
 </ResourceDictionary>
