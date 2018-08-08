@@ -119,6 +119,7 @@
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\Buildings\VisualRectangle.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\Buildings\VisualRectangularBuilding.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\Interface\IVisualBuilding.cs" />
+    <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\Interface\IVisualWallAttachable.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\Markers\VisualTextMarker.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\Interface\IVisualElement.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\VisualElements\PolygonElement.cs" />
@@ -154,6 +155,10 @@
     <Compile Include="UserInterface\View\Controls\OverviewWindow.xaml.cs">
       <DependentUpon>OverviewWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserInterface\View\PushBindings\FreezableBinding.cs" />
+    <Compile Include="UserInterface\View\PushBindings\PushBinding.cs" />
+    <Compile Include="UserInterface\View\PushBindings\PushBindingCollection.cs" />
+    <Compile Include="UserInterface\View\PushBindings\PushBindingManager.cs" />
     <Compile Include="UserInterface\View\States\MouseHandleMode.cs" />
     <Compile Include="UserInterface\View\States\TerrainBrush.cs" />
     <Compile Include="UserInterface\View\States\TransformationEvent.cs" />

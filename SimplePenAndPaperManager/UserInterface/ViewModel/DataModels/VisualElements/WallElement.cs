@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using System.Windows.Media;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
 using System.ComponentModel;
+using System.Windows;
+using SimplePenAndPaperManager.MathTools;
+using SimplePenAndPaperManager.UserInterface.Model;
 
 namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements
 {
@@ -158,12 +161,29 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
         public WallElement(IWallEntity mapEntity) : base(mapEntity)
         {
             _wallEnity = mapEntity;
-            Thickness = 1;
             Windows = new List<IWindowEntity>();
             Doors = new List<IDoorEntity>();
             CalculatePositionAndSize(X, Y);
             StrokeColor = Colors.Black;
+            Thickness = Constants.DefaultOutsideWallThickness;
             PropertyChanged += WallElement_PropertyChanged;
+        }
+
+        public bool Contains(Point point, double thresholdDistance=Constants.ThresholdDistanceForWallAttachables)
+        {
+            return Utils.RectangleContains(point, new Point(X, Y), Length, Thickness + thresholdDistance, Orientation);
+        }
+
+        public Point ClosestPointOnWall(Point point)
+        {
+            Point centerOffset = new Point(0, -Thickness / 2).Rotate(Orientation);
+            Point a = new Point(X1, Y1);
+            Point ab = new Point(X2 - X1, Y2 - Y1);
+            Point ap = point.Sub(a);
+            double length = Math.Sqrt(ab.X * ab.X + ab.Y * ab.Y);
+            Point vec = ab.Mult(1 / length);
+            double dp = ap.Dot(ab) / (length * length);
+            return centerOffset.Add(a.Add(ab.Mult(dp)));
         }
 
         private void WallElement_PropertyChanged(object sender, PropertyChangedEventArgs e)

@@ -26,6 +26,20 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
         public EditEntityCommand EditEntityCommand { get; private set; }
         public CreateMarkerCommand CreateMarkerCommand { get; private set; }
         public ShowManipulationPoints ShowManipulationPoints { get; private set; }
+        public CreateDoorCommand CreateDoorCommand { get; private set; }
+
+        public IVisualWallAttachable CurrentWallAttachable { get; set; }
+
+        public bool IsCreatingWallAttachement
+        {
+            get { return _isCreatingWallAttachement; }
+            set
+            {
+                _isCreatingWallAttachement = value;
+                OnPropertyChanged(nameof(IsCreatingWallAttachement));
+            }
+        }
+        private bool _isCreatingWallAttachement;
 
         public bool SelectionIsBuilding
         {
@@ -347,6 +361,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
             EditEntityCommand = new EditEntityCommand(this);
             CreateMarkerCommand = new CreateMarkerCommand(this);
             ShowManipulationPoints = new ShowManipulationPoints(this);
+            CreateDoorCommand = new CreateDoorCommand(this);
         }
 
         private void SelectedEntities_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

@@ -79,7 +79,7 @@
                 <MenuItem Header="Create Rectangular Building" Command="{Binding Source={x:Static commands:BuildingCommands.CreateRecangularBuildingCommand}}"/>
                 <MenuItem Header="Create Polygonal Building" Command="{Binding Source={x:Static commands:BuildingCommands.CreatePolygonalBuildingCommand}}"/>
                 <MenuItem Header="Create Wall"/>
-                <MenuItem Header="Create Door"/>
+                <MenuItem Header="Create Door" Command="{Binding CreateDoorCommand}"/>
             </MenuItem>
             <MenuItem Header="Terrain">
                 <MenuItem Header="Edit Terrain" Command="{Binding Source={x:Static commands:TerrainCommands.EditTerrainCommand}}"/>

@@ -63,7 +63,7 @@
             </MenuItem>
             <MenuItem Header="Building">
                 <MenuItem Header="Create Wall"/>
-                <MenuItem Header="Create Door"/>
+                <MenuItem Header="Create Door" Command="{Binding CreateDoorCommand}"/>
             </MenuItem>
             <MenuItem Header="Vegetation">
                 <MenuItem Header="Create Vegetation"/>
@@ -106,7 +106,7 @@
         </TreeView>
         <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" Grid.Column="1" Grid.RowSpan="3"/>
         <GridSplitter Grid.Row="2" VerticalAlignment="Stretch" Grid.Column="2" />
-        <Grid Grid.Row="3" Grid.Column="2">
+        <Grid Grid.Row="3" Grid.Column="2" Background="White">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>

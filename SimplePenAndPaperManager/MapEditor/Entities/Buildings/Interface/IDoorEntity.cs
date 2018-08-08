@@ -6,6 +6,8 @@ namespace SimplePenAndPaperManager.MapEditor.Entities.Buildings.Interface
 {
     public interface IDoorEntity : IMapEntity
     {
+        double Width { get; set; }
+        double Thickness { get; set; }
         bool Locked { get; set; }
         List<IKeyEntity> Keys { get; set; }
         BuildingMaterial Material { get; set; }

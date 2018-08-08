@@ -50,6 +50,8 @@
         /// </summary>
         CreatePolygon,
 
-        CreateTextMarker
+        CreateTextMarker,
+
+        CreateWallAttachable
     }
 }

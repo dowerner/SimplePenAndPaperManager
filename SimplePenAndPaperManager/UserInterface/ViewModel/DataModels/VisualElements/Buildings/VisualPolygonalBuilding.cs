@@ -158,6 +158,28 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             }
         }
 
+        public bool AttachToWall
+        {
+            get { return _attachToWall; }
+            set
+            {
+                _attachToWall = value;
+                OnPropertyChanged(nameof(AttachToWall));
+            }
+        }
+        private bool _attachToWall;
+
+        public bool DisplayWhilePlacing
+        {
+            get { return _displayWhilePlacing; }
+            set
+            {
+                _displayWhilePlacing = value;
+                OnPropertyChanged(nameof(DisplayWhilePlacing));
+            }
+        }
+        private bool _displayWhilePlacing;
+
         public VisualFloor CurrentFloor
         {
             get { return _currentFloor; }

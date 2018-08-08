@@ -7,6 +7,9 @@ namespace SimplePenAndPaperManager.MapEditor.Entities.Buildings
 {
     public class Door : BaseMapEntity, IDoorEntity
     {
+        public double Width { get; set; }
+        public double Thickness { get; set; }
+
         public List<IKeyEntity> Keys { get; set; }
         public bool Locked { get; set; }
         public BuildingMaterial Material { get; set; }

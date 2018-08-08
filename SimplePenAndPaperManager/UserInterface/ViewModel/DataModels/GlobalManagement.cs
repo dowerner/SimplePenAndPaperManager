@@ -1,5 +1,4 @@
 ﻿using SimplePenAndPaperManager.MapEditor;
-using SimplePenAndPaperManager.MathTools;
 using SimplePenAndPaperManager.UserInterface.Model;
 using SimplePenAndPaperManager.UserInterface.Model.EditorActions;
 using SimplePenAndPaperManager.UserInterface.Model.EditorActions.Interface;
@@ -27,11 +26,11 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
                 if (!_inTerrainEditingMode)
                 {
                     _terrainBrush = TerrainBrush.None;
-                    OnPropertyChanged("TerrainBrush");
+                    OnPropertyChanged(nameof(TerrainBrush));
                 }
-                OnPropertyChanged("InTerrainEditingMode");
-                OnPropertyChanged("ShowTerrainEllipse");
-                OnPropertyChanged("ShowTerrainRectangle");
+                OnPropertyChanged(nameof(InTerrainEditingMode));
+                OnPropertyChanged(nameof(ShowTerrainEllipse));
+                OnPropertyChanged(nameof(ShowTerrainRectangle));
             }
         }
         private bool _inTerrainEditingMode;
@@ -43,9 +42,9 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
             {
                 _terrainBrush = value;
                 InTerrainEditingMode = _terrainBrush != TerrainBrush.None;
-                OnPropertyChanged("TerrainBrush");
-                OnPropertyChanged("ShowTerrainEllipse");
-                OnPropertyChanged("ShowTerrainRectangle");
+                OnPropertyChanged(nameof(TerrainBrush));
+                OnPropertyChanged(nameof(ShowTerrainEllipse));
+                OnPropertyChanged(nameof(ShowTerrainRectangle));
             }
         }
         private TerrainBrush _terrainBrush = TerrainBrush.Circle;
@@ -61,7 +60,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
             set
             {
                 _canvasPosition = value;
-                OnPropertyChanged("CanvasPosition");
+                OnPropertyChanged(nameof(CanvasPosition));
             }
         }
         private Point _canvasPosition;
@@ -72,7 +71,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
             set
             {
                 _isCreatingRectangularBuilding = value;
-                OnPropertyChanged("IsCreatingRectangularBuilding");
+                OnPropertyChanged(nameof(IsCreatingRectangularBuilding));
             }
         }
         private bool _isCreatingRectangularBuilding;
@@ -83,7 +82,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
             set
             {
                 _isCreatingPolygonalBuilding = value;
-                OnPropertyChanged("IsCreatingPolygonalBuilding");
+                OnPropertyChanged(nameof(IsCreatingPolygonalBuilding));
             }
         }
         private bool _isCreatingPolygonalBuilding;
@@ -94,7 +93,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
             set
             {
                 _brushSize = value;
-                OnPropertyChanged("TerrainBrushSize");
+                OnPropertyChanged(nameof(TerrainBrushSize));
             }
         }
         private double _brushSize = 10;
@@ -105,7 +104,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
             set
             {
                 _terrain = value;
-                OnPropertyChanged("Terrain");
+                OnPropertyChanged(nameof(Terrain));
             }
         }
         private FloorMaterial _terrain = FloorMaterial.Grass;
@@ -116,7 +115,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
             set
             {
                 _terrainStrokes = value;
-                OnPropertyChanged("TerrainStrokes");
+                OnPropertyChanged(nameof(TerrainStrokes));
             }
         }
         private StrokeCollection _terrainStrokes;

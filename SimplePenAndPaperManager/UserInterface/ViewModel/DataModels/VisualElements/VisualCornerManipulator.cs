@@ -51,7 +51,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
                 
                 _polygon.Corners = _polygon.Corners;
                 _polygon.UpdateAllFloorDimensions();
-                OnPropertyChanged("X");
+                OnPropertyChanged(nameof(X));
             }
         }
         private double _x;
@@ -98,7 +98,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
                 _polygon.Corners[_cornerIndex] = newPoint;
                 _polygon.Corners = _polygon.Corners;
                 _polygon.UpdateAllFloorDimensions();
-                OnPropertyChanged("Y");
+                OnPropertyChanged(nameof(Y));
             }
         }
         private double _y;
@@ -109,9 +109,9 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             set
             {
                 _width = value;
-                OnPropertyChanged("Width");
-                OnPropertyChanged("X");
-                OnPropertyChanged("XOffset");
+                OnPropertyChanged(nameof(Width));
+                OnPropertyChanged(nameof(X));
+                OnPropertyChanged(nameof(XOffset));
             }
         }
         private double _width;
@@ -122,9 +122,9 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             set
             {
                 _height = value;
-                OnPropertyChanged("Height");
-                OnPropertyChanged("Y");
-                OnPropertyChanged("YOffset");
+                OnPropertyChanged(nameof(Height));
+                OnPropertyChanged(nameof(Y));
+                OnPropertyChanged(nameof(YOffset));
             }
         }
         private double _height;
@@ -145,7 +145,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             set
             {
                 _cornerIndex = value;
-                OnPropertyChanged("CornerIndex");
+                OnPropertyChanged(nameof(CornerIndex));
             }
         }
         private int _cornerIndex;
@@ -156,7 +156,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             set
             {
                 _polygon = value;
-                OnPropertyChanged("Polygon");
+                OnPropertyChanged(nameof(Polygon));
             }
         }
         private VisualPolygonalBuilding _polygon;
@@ -175,8 +175,8 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
         {
             if (e.PropertyName == "X" || e.PropertyName == "Y" || e.PropertyName == "A" || e.PropertyName == "B" || e.PropertyName == "C" || e.PropertyName == "D")
             {
-                OnPropertyChanged("X");
-                OnPropertyChanged("Y");
+                OnPropertyChanged(nameof(X));
+                OnPropertyChanged(nameof(Y));
             }
         }
 

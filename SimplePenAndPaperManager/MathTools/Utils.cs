@@ -28,7 +28,7 @@ namespace SimplePenAndPaperManager.MathTools
             return meterPoint.Mult(Constants.PxPerMeter);
         }
 
-        public static bool AddIfNoPointPresent(this List<Point2D> points, Point2D point, double searchRadius = 3)
+        public static bool AddIfNoPointPresent(this List<Point2D> points, Point2D point, double searchRadius = 0.1)
         {
             foreach(Point2D existingPoint in points)
             {
@@ -76,6 +76,37 @@ namespace SimplePenAndPaperManager.MathTools
         public static double Dot(this Point point1, Point point2)
         {
             return point1.X * point2.X + point1.Y * point2.Y;
+        }
+
+        public static bool RectangleContains(Point point, Point position, double width, double height, double orientation)
+        {
+            Point a = position.Add(new Point(-width / 2, height / 2).Rotate(orientation));
+            Point b = position.Add(new Point(width / 2, height / 2).Rotate(orientation));
+            //Point c = position.Add(new Point(width / 2, -height / 2).Rotate(orientation));
+            Point d = position.Add(new Point(-width / 2, -height / 2).Rotate(orientation));
+
+            Point ap = point.Sub(a);
+            Point ab = b.Sub(a);
+
+            double apab = ap.Dot(ab);
+            double abab = ab.Dot(ab);
+            if (apab < 0 || apab >= abab) return false;
+
+            Point ad = d.Sub(a);
+
+            double apad = ap.Dot(ad);
+            double adad = ad.Dot(ad);
+            if (apad < 0 || apad >= adad) return false;
+
+            return true;
+        }
+
+        public static Point Rotate(this Point point, double rotation)
+        {
+            double angle = rotation * Math.PI / 180;
+            double x = point.X * Math.Cos(angle) - point.Y * Math.Sin(angle);
+            double y = point.X * Math.Sin(angle) + point.Y * Math.Cos(angle);
+            return new Point(x, y);
         }
     }
 }

@@ -5,8 +5,8 @@
                     xmlns:markers="clr-namespace:SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Markers"
                     xmlns:converter="clr-namespace:SimplePenAndPaperManager.UserInterface.View.Converter"
                     xmlns:commands="clr-namespace:SimplePenAndPaperManager.UserInterface.ViewModel.Commands"
-                    xmlns:local="clr-namespace:SimplePenAndPaperManager.UserInterface.View.Controls">
-
+                    xmlns:local="clr-namespace:SimplePenAndPaperManager.UserInterface.View.Controls"
+                    xmlns:pb="clr-namespace:SimplePenAndPaperManager.UserInterface.View.PushBindings">
     <converter:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
     <converter:MeterToPixelConverter x:Key="MeterToPixelConverter"/>
     <converter:BoolToColorConverter x:Key="BoolToColorConverter"/>
@@ -119,8 +119,10 @@
     <!--Stroke="{Binding StrokeColor, Converter={StaticResource ColorToBrushConverter}}"-->
 
     <DataTemplate DataType="{x:Type buildings:VisualDoor}">
-        <Rectangle Fill="{Binding Color}"
-                   Stroke="{Binding StrokeColor}"
+        <Rectangle Fill="{Binding Color, Converter={StaticResource ColorToBrushConverter}}"
+                   Stroke="{Binding StrokeColor, Converter={StaticResource ColorToBrushConverter}}"
+                   Width="{Binding Width, Converter={StaticResource MeterToPixelConverter}}"
+                   Height="{Binding Thickness, Converter={StaticResource MeterToPixelConverter}}"
                    Cursor="Hand"
                    RenderTransformOrigin="0 0">
             <Rectangle.RenderTransform>

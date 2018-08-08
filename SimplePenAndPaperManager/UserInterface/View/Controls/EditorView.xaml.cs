@@ -141,7 +141,12 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                 zoomAndPanControl.Cursor = Cursors.Pen;
             }
 
-            if(e.PropertyName == "SelectionLocation" && mouseHandlingMode != MouseHandlingMode.DragObject)
+            if (e.PropertyName == nameof(_vm.IsCreatingWallAttachement) && _vm.IsCreatingWallAttachement)
+            {
+                mouseHandlingMode = MouseHandlingMode.CreateWallAttachable;
+            }
+
+            if (e.PropertyName == "SelectionLocation" && mouseHandlingMode != MouseHandlingMode.DragObject)
             {
                 Point canvasPoint = FromZoomControlToCanvasCoordinates(_vm.SelectionLocation.MeterToPx());
                 _vm.GizmoX = Utils.PxToMeter(canvasPoint.X - Gizmo.Width / 2);
@@ -309,8 +314,22 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                 _vm.MapEntities.Remove(GlobalManagement.Instance.NewRectangleBuilding);
                 GlobalManagement.Instance.NewRectangleBuilding = null;
             }
+            if(mouseHandlingMode == MouseHandlingMode.CreateWallAttachable && _vm.CurrentWallAttachable != null)
+            {
+                _vm.MapEntities.Remove(_vm.CurrentWallAttachable);
+                _vm.CurrentWallAttachable = null;
+            }
             GlobalManagement.Instance.InTerrainEditingMode = false;
             mouseHandlingMode = MouseHandlingMode.None;
+            if (_vm is DataModel && ((DataModel)_vm).NewPolygonalBuildingWalls != null)
+            {
+                foreach(WallElement wall in ((DataModel)_vm).NewPolygonalBuildingWalls)
+                {
+                    _vm.MapEntities.Remove(wall);
+                }
+                ((DataModel)_vm).NewPolygonalBuildingWalls = null;
+                ((DataModel)_vm).CurrentPolygonWall = null;
+            }
 
             // remove all building shape manipulation helpers
             var items = _vm.MapEntities.Where(item => item is VisualCornerManipulator).ToList();
@@ -350,6 +369,14 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                 e.Handled = true;
                 return;
             }
+
+            if(mouseHandlingMode == MouseHandlingMode.CreateWallAttachable)
+            {
+                e.Handled = true;
+                _vm.CurrentWallAttachable = null;
+                mouseHandlingMode = MouseHandlingMode.None;
+            }
+
             if(mouseHandlingMode == MouseHandlingMode.CreateTextMarker)
             {
                 zoomAndPanControl.CaptureMouse();
@@ -540,6 +567,28 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                 Point point = e.GetPosition(content).PxToMeter();
                 ((DataModel)_vm).CurrentPolygonWall.X2 = point.X;
                 ((DataModel)_vm).CurrentPolygonWall.Y2 = point.Y;
+            }
+            else if(mouseHandlingMode == MouseHandlingMode.CreateWallAttachable)
+            {
+                Point point = e.GetPosition(content).PxToMeter();
+                _vm.CurrentWallAttachable.X = point.X;
+                _vm.CurrentWallAttachable.Y = point.Y;
+
+                // check if walls are in proximity
+                foreach(IVisualElement mapEntity in _vm.MapEntities)
+                {
+                    if(mapEntity is WallElement)
+                    {
+                        WallElement wall = (WallElement)mapEntity;
+                        if (wall.Contains(point))
+                        {
+                            _vm.CurrentWallAttachable.Orientation = wall.Orientation;
+                            Point pointOnWall = wall.ClosestPointOnWall(point);
+                            _vm.CurrentWallAttachable.X = pointOnWall.X;
+                            _vm.CurrentWallAttachable.Y = pointOnWall.Y;
+                        }
+                    }
+                }
             }
             _vm.MousePosition = e.GetPosition(content);
             GlobalManagement.Instance.CanvasPosition = FromZoomControlToCanvasCoordinates(_vm.MousePosition);
@@ -811,6 +860,7 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
         {
             if(mouseHandlingMode == MouseHandlingMode.CreatePolygon)
             {
+                ((DataModel)_vm).NewPolygonalBuildingWalls.Add(((DataModel)_vm).CurrentPolygonWall);
                 CreatePolygonAction action = new CreatePolygonAction(null, _vm);
                 action.Do();
                 GlobalManagement.Instance.UndoStack.Push(action);

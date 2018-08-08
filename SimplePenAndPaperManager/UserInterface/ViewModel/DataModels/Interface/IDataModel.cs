@@ -14,6 +14,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.Interface
         ObservableCollection<IVisualElement> MapEntities { get; set; }
         ObservableCollection<IVisualElement> SelectedEntities { get; set; }
         ObservableCollection<VisualCornerManipulator> CornerManipulators { get; set; }
+        IVisualWallAttachable CurrentWallAttachable { get; set; }
         Point SelectionLocation { get; set; }
         Point CopyLocation { get; set; }
         double ContentScale { get; set; }
@@ -24,6 +25,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.Interface
         double ContentWidth { get; set; }
         double ContentHeight { get; set; }
         double GizmoOrientation { get; set; }
+        bool IsCreatingWallAttachement { get; set; }
         bool EntitiesSelected { get; }
         bool GizmoIsRotating { get; set; }
         bool GizmoDragX { get; set; }
