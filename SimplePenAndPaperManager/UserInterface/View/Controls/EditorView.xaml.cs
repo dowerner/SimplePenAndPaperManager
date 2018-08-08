@@ -568,11 +568,14 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                 ((DataModel)_vm).CurrentPolygonWall.X2 = point.X;
                 ((DataModel)_vm).CurrentPolygonWall.Y2 = point.Y;
             }
-            else if(mouseHandlingMode == MouseHandlingMode.CreateWallAttachable)
+            else if(mouseHandlingMode == MouseHandlingMode.CreateWallAttachable && _vm.CurrentWallAttachable != null)
             {
+                if(!zoomAndPanControl.IsMouseCaptured) zoomAndPanControl.CaptureMouse();
                 Point point = e.GetPosition(content).PxToMeter();
-                _vm.CurrentWallAttachable.X = point.X;
-                _vm.CurrentWallAttachable.Y = point.Y;
+                Point cursorCenteredPoint = point.Sub(new Point(Constants.DefaultDoorWidth / 2, Constants.DefaultOutsideWallThickness / 2).Rotate(_vm.CurrentWallAttachable.Orientation));
+                _vm.CurrentWallAttachable.X = cursorCenteredPoint.X;
+                _vm.CurrentWallAttachable.Y = cursorCenteredPoint.Y;
+                bool wallFound = false;
 
                 // check if walls are in proximity
                 foreach(IVisualElement mapEntity in _vm.MapEntities)
@@ -582,13 +585,18 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                         WallElement wall = (WallElement)mapEntity;
                         if (wall.Contains(point))
                         {
+                            wallFound = true;
                             _vm.CurrentWallAttachable.Orientation = wall.Orientation;
-                            Point pointOnWall = wall.ClosestPointOnWall(point);
+                            cursorCenteredPoint = point.Sub(new Point(Constants.DefaultDoorWidth / 2, Constants.DefaultOutsideWallThickness / 2).Rotate(_vm.CurrentWallAttachable.Orientation));
+                            Point pointOnWall = wall.ClosestPointOnWall(cursorCenteredPoint);
                             _vm.CurrentWallAttachable.X = pointOnWall.X;
                             _vm.CurrentWallAttachable.Y = pointOnWall.Y;
+                            _vm.CurrentWallAttachable.AttachedWall = wall;
+                            break;
                         }
                     }
                 }
+                if (!wallFound) _vm.CurrentWallAttachable.AttachedWall = null;
             }
             _vm.MousePosition = e.GetPosition(content);
             GlobalManagement.Instance.CanvasPosition = FromZoomControlToCanvasCoordinates(_vm.MousePosition);

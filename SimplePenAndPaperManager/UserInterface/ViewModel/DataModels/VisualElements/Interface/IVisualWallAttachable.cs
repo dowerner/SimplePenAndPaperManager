@@ -2,6 +2,6 @@
 {
     public interface IVisualWallAttachable : IVisualElement
     {
-        
+        WallElement AttachedWall { get; set; }
     }
 }

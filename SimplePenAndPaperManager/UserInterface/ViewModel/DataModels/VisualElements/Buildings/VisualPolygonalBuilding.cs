@@ -31,6 +31,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             if (Floors.Count > 0) CurrentFloor = Floors[0];
 
             Floors.CollectionChanged += Floors_CollectionChanged;
+            MapEntities = MapEntities;
         }
 
         private void _polygonBuildingSource_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -126,7 +127,14 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             ((IFloorEntity)floor.SourceEntity).Walls.RemoveAll(wall => wall.IsOuterWall);
             var toRemove = floor.MapEntities.Where(item => item is WallElement && ((WallElement)item).IsOuterWall).ToList();
 
-            if (toRemove != null) for (int j = 0; j < toRemove.Count; j++) floor.MapEntities.Remove(toRemove[j]);
+            if (toRemove != null)
+            {
+                for (int j = 0; j < toRemove.Count; j++)
+                {
+                    foreach (VisualDoor door in ((WallElement)toRemove[j]).Doors) floor.MapEntities.Remove(door);
+                    floor.MapEntities.Remove(toRemove[j]);
+                }
+            }
 
             // update dimensions of map
             SetBoundingDimensions();
@@ -192,8 +200,8 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
                 }
                 _currentFloor = value;
                 OnPropertyChanged("CurrentFloor");
-                OnPropertyChanged("MapEntities");
                 if (_currentFloor == null) return;
+                MapEntities = _currentFloor.MapEntities;
                 SetBoundingDimensions();
 
                 _currentFloor.MapEntities.CollectionChanged += MapEntities_CollectionChanged;
@@ -201,17 +209,6 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             }
         }
         private VisualFloor _currentFloor;
-
-        public override ObservableCollection<Interface.IVisualElement> MapEntities
-        {
-            get { return CurrentFloor != null ? CurrentFloor.MapEntities : null; }
-            set
-            {
-                if (CurrentFloor == null) return;
-                CurrentFloor.MapEntities = value;
-                OnPropertyChanged("MapEntities");
-            }
-        }
 
         public ObservableCollection<VisualFloor> Floors
         {
@@ -295,7 +292,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
         public string Name
         {
             get { return _polygonBuildingSource.Name; }
-            set { _polygonBuildingSource.Name = Name; }
+            set { _polygonBuildingSource.Name = value; }
         }
 
         public bool IsSelected

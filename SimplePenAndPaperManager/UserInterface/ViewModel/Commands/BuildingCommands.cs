@@ -52,7 +52,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.Commands
             GlobalManagement.Instance.InTerrainEditingMode = false;
             _model.IsCreatingWallAttachement = true;
             if (_model.CurrentWallAttachable != null) _model.MapEntities.Remove(_model.CurrentWallAttachable);
-            _model.CurrentWallAttachable = new VisualDoor(new Door() { Width=Constants.DefaultDoorWidth, Thickness=Constants.DefaultOutsideWallThickness });
+            _model.CurrentWallAttachable = new VisualDoor(new Door() { Width=Constants.DefaultDoorWidth, Thickness=Constants.DefaultOutsideWallThickness, Name=Constants.DefaultDoorName });
             _model.MapEntities.Add(_model.CurrentWallAttachable);
         }
     }

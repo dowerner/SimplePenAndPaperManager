@@ -4,6 +4,7 @@ using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.Interface;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels;
 using System.Linq;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Buildings;
 
 namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
 {
@@ -21,6 +22,12 @@ namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
                 if (_context is DataModel)
                 {
                     ((DataModel)_context).CurrentCorners = null;
+                }
+
+                if(entity is WallElement)
+                {
+                    foreach (VisualDoor door in ((WallElement)entity).Doors) _context.MapEntities.Remove(door);
+                    //TODO: Windows
                 }
 
                 _context.MapEntities.Remove(entity);

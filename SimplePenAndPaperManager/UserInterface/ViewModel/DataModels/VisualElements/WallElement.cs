@@ -8,13 +8,15 @@ using System.ComponentModel;
 using System.Windows;
 using SimplePenAndPaperManager.MathTools;
 using SimplePenAndPaperManager.UserInterface.Model;
+using System.Collections.ObjectModel;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Buildings;
 
 namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements
 {
     public class WallElement : BaseVisualElement
     {
         public List<IWindowEntity> Windows { get; set; } 
-        public List<IDoorEntity> Doors { get; set; }
+        public ObservableCollection<VisualDoor> Doors { get; set; }
 
         public bool IsOuterWall
         {
@@ -162,11 +164,18 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
         {
             _wallEnity = mapEntity;
             Windows = new List<IWindowEntity>();
-            Doors = new List<IDoorEntity>();
+            Doors = new ObservableCollection<VisualDoor>();
             CalculatePositionAndSize(X, Y);
             StrokeColor = Colors.Black;
             Thickness = Constants.DefaultOutsideWallThickness;
             PropertyChanged += WallElement_PropertyChanged;
+            Doors.CollectionChanged += Doors_CollectionChanged;
+        }
+
+        private void Doors_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if(e.NewItems != null) foreach (VisualDoor door in e.NewItems) _wallEnity.Doors.Add((IDoorEntity)door.SourceEntity);
+            if(e.OldItems != null) foreach (VisualDoor door in e.OldItems) _wallEnity.Doors.Remove((IDoorEntity)door.SourceEntity);
         }
 
         public bool Contains(Point point, double thresholdDistance=Constants.ThresholdDistanceForWallAttachables)
