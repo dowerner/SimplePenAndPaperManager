@@ -2,14 +2,18 @@
 using System.Collections.Generic;
 using SimplePenAndPaperManager.MapEditor.Entities.Items.Interface;
 using SimplePenAndPaperManager.MapEditor.Entities.Interface;
+using System;
+using System.Xml.Serialization;
 
 namespace SimplePenAndPaperManager.MapEditor.Entities.Buildings
 {
+    [Serializable]
     public class Door : BaseMapEntity, IDoorEntity
     {
         public double Width { get; set; }
         public double Thickness { get; set; }
 
+        [XmlArrayItem("ListOfKeys")]
         public List<IKeyEntity> Keys { get; set; }
         public bool Locked { get; set; }
         public BuildingMaterial Material { get; set; }

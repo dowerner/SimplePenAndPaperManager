@@ -91,7 +91,10 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
         {
             foreach (VisualFloor floor in Floors)
             {
-                if (!_buildingSource.Floors.Contains((IFloorEntity)floor.SourceEntity)) _buildingSource.Floors.Add((IFloorEntity)floor.SourceEntity);
+                if (!_buildingSource.Floors.Contains((IFloorEntity)floor.SourceEntity))
+                {
+                    _buildingSource.Floors.Add((IFloorEntity)floor.SourceEntity);
+                }
             }
         }
 

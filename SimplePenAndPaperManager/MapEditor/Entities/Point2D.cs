@@ -1,5 +1,8 @@
-﻿namespace SimplePenAndPaperManager.MapEditor.Entities
+﻿using System;
+
+namespace SimplePenAndPaperManager.MapEditor.Entities
 {
+    [Serializable]
     public struct Point2D
     {
         public double X { get; set; }

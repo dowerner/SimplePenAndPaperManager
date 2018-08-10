@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using SimplePenAndPaperManager.MapEditor.Entities.Interface;
+using System;
 
 namespace SimplePenAndPaperManager.MapEditor.Entities.Buildings
 {
+    [Serializable]
     public class PolygonBuilding : BaseBuilding, IPolygonMapEntity
     {
         public override IMapEntity Copy(bool copyLocation = false)

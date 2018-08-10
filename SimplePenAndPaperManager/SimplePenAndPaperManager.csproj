@@ -101,11 +101,14 @@
     <Compile Include="UserInterface\Model\EditorActions\RotateAction.cs" />
     <Compile Include="UserInterface\Model\EditorActions\BaseAction.cs" />
     <Compile Include="UserInterface\Model\EditorActions\TranslateAction.cs" />
+    <Compile Include="UserInterface\Model\FileDirector.cs" />
     <Compile Include="UserInterface\Model\ObservableStack.cs" />
     <Compile Include="UserInterface\ViewModel\Commands\BaseCommand.cs" />
     <Compile Include="UserInterface\ViewModel\Commands\BuildingCommands.cs" />
     <Compile Include="UserInterface\ViewModel\Commands\EditCommands.cs" />
+    <Compile Include="UserInterface\ViewModel\Commands\FileCommands.cs" />
     <Compile Include="UserInterface\ViewModel\Commands\MarkerCommands.cs" />
+    <Compile Include="UserInterface\ViewModel\Commands\SimpleCommand.cs" />
     <Compile Include="UserInterface\ViewModel\Commands\TerrainCommands.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\BaseDataModel.cs" />
     <Compile Include="UserInterface\ViewModel\DataModels\DataModel.cs" />

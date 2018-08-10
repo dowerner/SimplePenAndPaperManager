@@ -1,8 +1,10 @@
 ﻿using SimplePenAndPaperManager.MapEditor.Entities.Buildings.Interface;
 using SimplePenAndPaperManager.MapEditor.Entities.Interface;
+using System;
 
 namespace SimplePenAndPaperManager.MapEditor.Entities.Buildings
 {
+    [Serializable]
     public class RectangularBuilding : BaseBuilding, IRectangularBuildingEntity
     {
         public double Height { get; set; }

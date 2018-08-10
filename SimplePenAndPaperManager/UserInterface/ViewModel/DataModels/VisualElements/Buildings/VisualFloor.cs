@@ -73,7 +73,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             foreach (IWallEntity wall in _sourceFloor.Walls)
             {
                 _mapEntities.Add(new WallElement(wall));
-                foreach (IDoorEntity door in wall.Doors) _mapEntities.Add(null);    //TODO: Create visual door 
+                foreach (IDoorEntity door in wall.Doors) _mapEntities.Add(VisualElementHelper.CreateFromMapEntity(door));    // Create visual door 
                 foreach (IDoorEntity door in wall.Windows) _mapEntities.Add(null);    //TODO: Create visual window
             }
 

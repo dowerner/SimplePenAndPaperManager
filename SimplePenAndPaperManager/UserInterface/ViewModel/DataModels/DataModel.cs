@@ -3,6 +3,7 @@ using SimplePenAndPaperManager.MapEditor.Entities.Buildings;
 using SimplePenAndPaperManager.MapEditor.Entities.Interface;
 using SimplePenAndPaperManager.MathTools;
 using SimplePenAndPaperManager.UserInterface.Model;
+using SimplePenAndPaperManager.UserInterface.ViewModel.Commands;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Buildings;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
@@ -10,6 +11,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.IO;
 using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Media;
@@ -22,12 +24,37 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
     /// </summary>
     public class DataModel : BaseDataModel
     {
+        public string CurrentMapPath
+        {
+            get { return _currentMapPath; }
+            set
+            {
+                _currentMapPath = value;
+                OnPropertyChanged(nameof(CurrentMapPath));
+                OnPropertyChanged(nameof(CurrentMapPath));
+            }
+        }
+        private string _currentMapPath;
+
+        public OpenMapCommand OpenMapCommand { get; private set; }
+        public SaveMapAsCommand SaveMapAsCommand { get; private set; }
+        public SimpleCommand SaveMapCommand
+        {
+            get { return CurrentMapPath != null && File.Exists(CurrentMapPath) ? _saveMapCommand : (SimpleCommand)SaveMapAsCommand; }
+        }
+        private SaveMapCommand _saveMapCommand;
+
         public DataModel() : base()
         {
             base.MapEntities = new ObservableCollection<IVisualElement>();
             MapEntities.CollectionChanged += MapEntities_CollectionChanged;
 
             CurrentMap = new Map() { Width = 400, Height = 400 };
+
+            // commands
+            OpenMapCommand = new OpenMapCommand(this);
+            SaveMapAsCommand = new SaveMapAsCommand(this);
+            _saveMapCommand = new SaveMapCommand(this);
         }
 
         private void MapEntities_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

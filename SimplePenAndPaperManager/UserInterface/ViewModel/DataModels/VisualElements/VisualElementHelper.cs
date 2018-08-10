@@ -17,6 +17,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             if (mapEntity is PolygonBuilding) return new VisualPolygonalBuilding((IBuildingEntity)mapEntity);
             if (mapEntity is TextMarker) return new VisualTextMarker((ITextMarkerEntity)mapEntity);
             if (mapEntity is IWallEntity) return new WallElement((IWallEntity)mapEntity);
+            if (mapEntity is IDoorEntity) return new VisualDoor((IDoorEntity)mapEntity);
             if (mapEntity is IFloorEntity) return new VisualFloor((IFloorEntity)mapEntity);
 
             return null;

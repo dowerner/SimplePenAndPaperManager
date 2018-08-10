@@ -1,9 +1,11 @@
 ﻿using SimplePenAndPaperManager.MapEditor.Entities.Markers.Interface;
 using SimplePenAndPaperManager.MapEditor.Entities.Interface;
 using SimplePenAndPaperManager.UserInterface.Model;
+using System;
 
 namespace SimplePenAndPaperManager.MapEditor.Entities.Markers
 {
+    [Serializable]
     public class TextMarker : BaseMapEntity, ITextMarkerEntity
     {
         public string Text { get; set; }

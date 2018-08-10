@@ -20,5 +20,9 @@
         public const string DefaultOuterWallName = "OuterWall";
         public const string DefaultMarkerName = "Marker";
         public const string DefaultFloorName = "Floor";
+
+        public const string SaveFileExtension = ".xml";
+        public const string SaveFileExtensionMapFilter = "Pen&Paper Map Files (.xml)|*.xml";
+        public const string DefaultMapName = "PenAndPaperMap.xml";
     }
 }

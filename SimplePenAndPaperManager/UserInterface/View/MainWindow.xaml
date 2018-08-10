@@ -61,6 +61,9 @@
                 <MenuItem Header="Open Adventure"/>
                 <MenuItem Header="Save Adventure"/>
                 <MenuItem Header="Save Advendture As"/>
+                <MenuItem Header="Open Map" Command="{Binding OpenMapCommand}"/>
+                <MenuItem Header="Save Map" Command="{Binding SaveMapCommand}"/>
+                <MenuItem Header="Save Map As" Command="{Binding SaveMapAsCommand}"/>
                 <MenuItem Header="New Exterior"/>
                 <MenuItem Header="Open Exterior"/>
             </MenuItem>

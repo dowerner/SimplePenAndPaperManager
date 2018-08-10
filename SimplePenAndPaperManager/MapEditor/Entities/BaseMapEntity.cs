@@ -1,7 +1,9 @@
 ﻿using SimplePenAndPaperManager.MapEditor.Entities.Interface;
+using System;
 
 namespace SimplePenAndPaperManager.MapEditor.Entities
 {
+    [Serializable]
     public abstract class BaseMapEntity : IMapEntity
     {
         public int Id { get; set; }
