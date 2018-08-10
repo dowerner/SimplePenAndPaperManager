@@ -22,8 +22,8 @@
                 <TextBlock.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Edit" Command="{Binding Source={x:Reference Name=EditorRef} ,Path=DataContext.EditEntityCommand}"/>
-                        <MenuItem Header="Copy" Command="{Binding Source={x:Reference Name=EditorRef} ,Path=CopyCommand}"/>
-                        <MenuItem Header="Delete" Command="{Binding Source={x:Reference Name=EditorRef} ,Path=DeleteCommand}"/>
+                        <MenuItem Header="Copy" Command="{Binding Source={x:Reference Name=EditorRef} ,Path=DataContext.CopyCommand}"/>
+                        <MenuItem Header="Delete" Command="{Binding Source={x:Reference Name=EditorRef} ,Path=DataContext.DeleteCommand}"/>
                     </ContextMenu>
                 </TextBlock.ContextMenu>
                 <TextBlock.InputBindings>
@@ -34,6 +34,14 @@
             </TextBlock>
         </DataTemplate>
     </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding Key="Delete" Command="{Binding DeleteCommand}"/>
+        <KeyBinding Modifiers="Ctrl" Key="C" Command="{Binding CopyCommand}"/>
+        <KeyBinding Modifiers="Ctrl" Key="V" Command="{Binding PasteCommand}"/>
+        <KeyBinding Modifiers="Ctrl" Key="Z" Command="{Binding UndoCommand}"/>
+        <KeyBinding Modifiers="Ctrl" Key="Y" Command="{Binding RedoCommand}"/>
+        <KeyBinding Key="Esc" Command="{Binding DeselectAllCommand}"/>
+    </Window.InputBindings>
     <Window.CommandBindings>
         <CommandBinding Command="{StaticResource SaveAndCloseCommand}" Executed="SaveAndClose" />
     </Window.CommandBindings>
@@ -62,8 +70,9 @@
                 <MenuItem Header="Show Content"/>
             </MenuItem>
             <MenuItem Header="Building">
-                <MenuItem Header="Create Wall"/>
+                <MenuItem Header="Create Wall" Command="{Binding CreateWallCommand}"/>
                 <MenuItem Header="Create Door" Command="{Binding CreateDoorCommand}"/>
+                <MenuItem Header="Add Floor" Command="{Binding AddFloorCommand}"/>
             </MenuItem>
             <MenuItem Header="Vegetation">
                 <MenuItem Header="Create Vegetation"/>
@@ -81,7 +90,7 @@
             </MenuItem>
         </Menu>
         <local:EditorView Grid.Row="1" Grid.RowSpan="3" ShowOverview="False" DataContext="{Binding}"/>
-        <TreeView Grid.Row="1" Grid.Column="2">
+        <TreeView Grid.Row="1" Grid.Column="2" LostFocus="TreeView_LostFocus">
             <TreeViewItem Header="Characters"
                           ItemsSource="{Binding CharacterView}"
                           ItemTemplate="{StaticResource EntityListItemTemplate}" />
@@ -92,7 +101,14 @@
                           ItemsSource="{Binding WallsView}"
                           ItemTemplate="{StaticResource EntityListItemTemplate}"/>
             <TreeViewItem Header="Floors"
-                          ItemsSource="{Binding Floors}"/>
+                          ItemsSource="{Binding Floors}"
+                          ItemTemplate="{StaticResource EntityListItemTemplate}">
+                <TreeViewItem.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Add Floor" Command="{Binding AddFloorCommand}"/>
+                    </ContextMenu>
+                </TreeViewItem.ContextMenu>
+            </TreeViewItem>
             <TreeViewItem Header="Doors"
                           ItemsSource="{Binding DoorsView}"
                           ItemTemplate="{StaticResource EntityListItemTemplate}"/>

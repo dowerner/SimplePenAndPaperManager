@@ -10,6 +10,9 @@ namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
 {
     public class DeleteAction : BaseAction
     {
+        public VisualFloor RemovedFloor { get; set; }
+        public int RemovedFloorIndex { get; set; }
+
         public override void Do()
         {
             foreach(IVisualElement entity in AffectedEntities)
@@ -29,8 +32,22 @@ namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
                     foreach (VisualDoor door in ((WallElement)entity).Doors) _context.MapEntities.Remove(door);
                     //TODO: Windows
                 }
-
                 _context.MapEntities.Remove(entity);
+            }
+
+            // handle floor removal
+            if (_context is IVisualBuilding)
+            {
+                IVisualBuilding building = (IVisualBuilding)_context;
+                VisualFloor floor = building.CurrentFloor;
+                if (floor != null && floor.IsSelected)
+                {
+                    RemovedFloorIndex = building.Floors.IndexOf(floor);
+                    building.Floors.Remove(floor);
+                    RemovedFloor = floor;
+                    if (building.Floors.Count > 0) building.CurrentFloor = building.Floors[0];
+                    else building.CurrentFloor = null;
+                }
             }
         }
 
@@ -39,6 +56,12 @@ namespace SimplePenAndPaperManager.UserInterface.Model.EditorActions
             foreach (IVisualElement entity in AffectedEntities)
             {
                 _context.MapEntities.Add(entity);
+            }
+
+            if(_context is IVisualBuilding && RemovedFloor != null)
+            {
+                IVisualBuilding building = (IVisualBuilding)_context;
+                building.Floors.Insert(RemovedFloorIndex, RemovedFloor);
             }
         }
 

@@ -52,6 +52,8 @@
 
         CreateTextMarker,
 
-        CreateWallAttachable
+        CreateWallAttachable,
+
+        CreateWall
     }
 }

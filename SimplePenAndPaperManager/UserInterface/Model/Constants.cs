@@ -16,6 +16,9 @@
 
         public const string DefaultHouseName = "House";
         public const string DefaultDoorName = "Door";
+        public const string DefaultWallName = "Wall";
+        public const string DefaultOuterWallName = "OuterWall";
         public const string DefaultMarkerName = "Marker";
+        public const string DefaultFloorName = "Floor";
     }
 }

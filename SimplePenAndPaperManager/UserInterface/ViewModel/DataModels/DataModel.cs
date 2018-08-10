@@ -118,7 +118,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
                 NewPolygonalBuildingWalls = new List<WallElement>();
             }
             // create wall of building
-            CurrentPolygonWall = new WallElement(new Wall());
+            CurrentPolygonWall = new WallElement(new Wall() { Name=Constants.DefaultWallName });
             Point meterPosition = MousePosition.PxToMeter();
             CurrentPolygonWall.X1 = meterPosition.X;
             CurrentPolygonWall.Y1 = meterPosition.Y;

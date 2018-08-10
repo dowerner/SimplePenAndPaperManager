@@ -3,6 +3,7 @@ using SimplePenAndPaperManager.UserInterface.Model;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.Interface;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Buildings;
+using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
 using System;
 using System.Windows.Input;
 
@@ -31,6 +32,28 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.Commands
         private static CreatePolygonalBuildingCommand _createPolygonalBuildingCommand;
     }
 
+    public class AddFloorCommand : ICommand
+    {
+        public event EventHandler CanExecuteChanged;
+
+        private IVisualBuilding _building;
+
+        public AddFloorCommand(IVisualBuilding building)
+        {
+            _building = building;
+        }
+
+        public bool CanExecute(object parameter)
+        {
+            return true;
+        }
+
+        public void Execute(object parameter)
+        {
+            _building.CreateFloorFromDimensions();
+        }
+    }
+
     public class CreateDoorCommand : ICommand
     {
         public event EventHandler CanExecuteChanged;
@@ -54,6 +77,29 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.Commands
             if (_model.CurrentWallAttachable != null) _model.MapEntities.Remove(_model.CurrentWallAttachable);
             _model.CurrentWallAttachable = new VisualDoor(new Door() { Width=Constants.DefaultDoorWidth, Thickness=Constants.DefaultOutsideWallThickness, Name=Constants.DefaultDoorName });
             _model.MapEntities.Add(_model.CurrentWallAttachable);
+        }
+    }
+
+    public class CreateWallCommand : ICommand
+    {
+        public event EventHandler CanExecuteChanged;
+
+        private IDataModel _model;
+
+        public CreateWallCommand(IDataModel model)
+        {
+            _model = model;
+        }
+
+        public bool CanExecute(object parameter)
+        {
+            return true;
+        }
+
+        public void Execute(object parameter)
+        {
+            GlobalManagement.Instance.InTerrainEditingMode = false;
+            _model.IsCreatingWall = true;
         }
     }
 

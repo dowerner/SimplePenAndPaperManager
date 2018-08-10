@@ -9,11 +9,16 @@ using System.Windows;
 using System.Linq;
 using SimplePenAndPaperManager.MapEditor.Entities.Interface;
 using System.Windows.Media;
+using SimplePenAndPaperManager.UserInterface.ViewModel.Commands;
 
 namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Buildings
 {
     public class VisualPolygonalBuilding : BaseDataModel, IVisualBuilding
     {
+        public event FloorWasSelectedHandler FloorWasSelected;
+
+        public AddFloorCommand AddFloorCommand { get; private set; }
+
         private IBuildingEntity _buildingSource;
         protected VisualPolygon _polygonBuildingSource;
 
@@ -25,6 +30,9 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             // setup
             _buildingSource = mapEntity;
             Floors = new ObservableCollection<VisualFloor>();
+
+            // Commands
+            AddFloorCommand = new AddFloorCommand(this);
 
             // fill floors
             FillFromSource();
@@ -110,7 +118,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
 
         public void CreateFloorFromDimensions()
         {
-            VisualFloor newFloor = new VisualFloor(new Floor() { Name = "Floor" });
+            VisualFloor newFloor = new VisualFloor(new Floor() { Name=Constants.DefaultFloorName });
             UpdateFloorToDimensions(newFloor);
             Floors.Add(newFloor);
             if (CurrentFloor == null) CurrentFloor = newFloor;
@@ -119,6 +127,11 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
         public void UpdateAllFloorDimensions()
         {
             foreach (VisualFloor floor in Floors) UpdateFloorToDimensions(floor);
+        }
+
+        public void FireFloorSelectionEvent()
+        {
+            FloorWasSelected?.Invoke(this);
         }
 
         public void UpdateFloorToDimensions(VisualFloor floor)
@@ -145,7 +158,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
 
             while(!finished)
             {
-                Wall wall = new Wall() { Id = 0, Thickness = Constants.DefaultOutsideWallThickness, Name = "OuterWall", IsOuterWall = true };
+                Wall wall = new Wall() { Id = 0, Thickness=Constants.DefaultOutsideWallThickness, Name=Constants.DefaultOuterWallName, IsOuterWall=true };
                 WallElement visualWall = new WallElement(wall);
                 visualWall.X1 = Corners[i].X + offset.X;
                 visualWall.Y1 = Corners[i].Y + offset.Y;

@@ -1,4 +1,5 @@
 ﻿using SimplePenAndPaperManager.MapEditor;
+using SimplePenAndPaperManager.MapEditor.Entities.Buildings;
 using SimplePenAndPaperManager.MapEditor.Entities.Markers;
 using SimplePenAndPaperManager.MathTools;
 using SimplePenAndPaperManager.UserInterface.Model;
@@ -146,6 +147,11 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                 mouseHandlingMode = MouseHandlingMode.CreateWallAttachable;
             }
 
+            if(e.PropertyName == nameof(_vm.IsCreatingWall) && _vm.IsCreatingWall)
+            {
+                mouseHandlingMode = MouseHandlingMode.CreateWall;
+            }
+
             if (e.PropertyName == "SelectionLocation" && mouseHandlingMode != MouseHandlingMode.DragObject)
             {
                 Point canvasPoint = FromZoomControlToCanvasCoordinates(_vm.SelectionLocation.MeterToPx());
@@ -254,7 +260,7 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
             if ((bool)e.NewValue)
             {
                 editorView._overviewWindow = new OverviewWindow(editorView._vm);
-                Window parent = Window.GetWindow(editorView);
+                System.Windows.Window parent = System.Windows.Window.GetWindow(editorView);
                 editorView._overviewWindow.Left = parent.Left;
                 editorView._overviewWindow.Top = parent.Top + editorView.Height + 5;
                 editorView._overviewWindow.Owner = parent;
@@ -282,7 +288,7 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
             if (ShowOverview)
             {
                 _overviewWindow = new OverviewWindow(_vm);
-                Window parent = Window.GetWindow(this);
+                System.Windows.Window parent = System.Windows.Window.GetWindow(this);
                 _overviewWindow.Left = parent.Left;
                 _overviewWindow.Top = parent.Top + Height + 5;
                 _overviewWindow.Owner = parent;
@@ -319,6 +325,12 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                 _vm.MapEntities.Remove(_vm.CurrentWallAttachable);
                 _vm.CurrentWallAttachable = null;
             }
+            if (_vm.CurrentWall != null)
+            {
+                _vm.MapEntities.Remove(_vm.CurrentWall);
+                _vm.CurrentWall = null;
+            }
+
             GlobalManagement.Instance.InTerrainEditingMode = false;
             mouseHandlingMode = MouseHandlingMode.None;
             if (_vm is DataModel && ((DataModel)_vm).NewPolygonalBuildingWalls != null)
@@ -375,6 +387,31 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                 e.Handled = true;
                 _vm.CurrentWallAttachable = null;
                 mouseHandlingMode = MouseHandlingMode.None;
+            }
+
+            if(mouseHandlingMode == MouseHandlingMode.CreateWall)
+            {
+                e.Handled = true;
+
+                if(_vm.CurrentWall == null)     // start wall placement
+                {
+                    Point point = e.GetPosition(content).PxToMeter();
+                    e.Handled = true;
+                    _vm.CurrentWall = new WallElement(new Wall() { Name=Constants.DefaultWallName, Thickness=Constants.DefaultOutsideWallThickness });
+                    _vm.CurrentWall.X1 = point.X;
+                    _vm.CurrentWall.X2 = point.X;
+                    _vm.CurrentWall.Y1 = point.Y;
+                    _vm.CurrentWall.Y2 = point.Y;
+                    _vm.MapEntities.Add(_vm.CurrentWall);
+                    zoomAndPanControl.CaptureMouse();
+                }
+                else    // terminate wall placement
+                {
+                    _vm.CurrentWall = null;
+                    mouseHandlingMode = MouseHandlingMode.None;
+                    zoomAndPanControl.ReleaseMouseCapture();
+                }
+                return;             
             }
 
             if(mouseHandlingMode == MouseHandlingMode.CreateTextMarker)
@@ -474,6 +511,11 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                     action.Do();
                     zoomAndPanControl.Cursor = Cursors.Arrow;
                     GlobalManagement.Instance.UndoStack.Push(action);
+                }
+                if(mouseHandlingMode == MouseHandlingMode.CreateWall)
+                {
+                    // don't stop if wall being is created
+                    return;
                 }
 
                 zoomAndPanControl.ReleaseMouseCapture();
@@ -597,6 +639,12 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                     }
                 }
                 if (!wallFound) _vm.CurrentWallAttachable.AttachedWall = null;
+            }
+            else if(mouseHandlingMode == MouseHandlingMode.CreateWall && _vm.CurrentWall != null)
+            {
+                Point point = e.GetPosition(content).PxToMeter();
+                _vm.CurrentWall.X2 = point.X;
+                _vm.CurrentWall.Y2 = point.Y;
             }
             _vm.MousePosition = e.GetPosition(content);
             GlobalManagement.Instance.CanvasPosition = FromZoomControlToCanvasCoordinates(_vm.MousePosition);

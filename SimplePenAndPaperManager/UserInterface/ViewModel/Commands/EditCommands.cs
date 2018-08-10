@@ -119,6 +119,13 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.Commands
         public DeleteCommand(IDataModel context) : base(context)
         {
             _context.SelectedEntities.CollectionChanged += SelectedEntities_CollectionChanged;
+
+            if(_context is IVisualBuilding) ((IVisualBuilding)_context).FloorWasSelected += DeleteCommand_FloorWasSelected;
+        }
+
+        private void DeleteCommand_FloorWasSelected(IVisualBuilding building)
+        {
+            OnCanExecutedChanged(this, null);
         }
 
         private void SelectedEntities_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -128,6 +135,17 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.Commands
 
         public override bool CanExecute(object parameter)
         {
+            // handle floor removal
+            if(_context is IVisualBuilding)
+            {
+                if (((IVisualBuilding)_context).CurrentFloor != null) {
+                    foreach(VisualFloor floor in ((IVisualBuilding)_context).Floors)
+                    {
+                        if (floor.IsSelected) return true;
+                    }
+                }
+            }
+
             return _context.SelectedEntities.Count > 0;
         }
 
