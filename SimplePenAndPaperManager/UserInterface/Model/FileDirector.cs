@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Xml.Serialization;
+using System.Runtime.Serialization;
+using System.Xml;
 
 namespace SimplePenAndPaperManager.UserInterface.Model
 {
@@ -10,10 +12,13 @@ namespace SimplePenAndPaperManager.UserInterface.Model
         {
             try
             {
-                XmlSerializer serializer = new XmlSerializer(typeof(T));
-                TextWriter writer = new StreamWriter(path);
-                serializer.Serialize(writer, data);
-                writer.Close(); 
+                DataContractSerializer serializer = new DataContractSerializer(typeof(T));
+                XmlWriterSettings settings = new XmlWriterSettings { Indent = true };
+
+                using (XmlWriter writer = XmlWriter.Create(path, settings))
+                {
+                    serializer.WriteObject(writer, data);
+                }
             }
             catch(Exception e)
             {
@@ -25,9 +30,14 @@ namespace SimplePenAndPaperManager.UserInterface.Model
         {
             try
             {
-                XmlSerializer serializer = new XmlSerializer(typeof(T));
-                TextReader reader = new StreamReader(path);
-                T data = (T)serializer.Deserialize(reader);
+                DataContractSerializer serializer = new DataContractSerializer(typeof(T));
+                T data;
+
+                using (XmlReader reader = XmlReader.Create(path))
+                {
+                    data = (T)serializer.ReadObject(reader);
+                }
+
                 return data;
             }
             catch(Exception e)

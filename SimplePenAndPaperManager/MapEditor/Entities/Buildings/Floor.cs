@@ -1,17 +1,18 @@
 ﻿using SimplePenAndPaperManager.MapEditor.Entities.Buildings.Interface;
 using SimplePenAndPaperManager.MapEditor.Entities.Interface;
-using System;
+using SimplePenAndPaperManager.MapEditor.Entities.Markers;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Xml.Serialization;
 
 namespace SimplePenAndPaperManager.MapEditor.Entities.Buildings
 {
-    [Serializable]
+    [DataContract]
     public class Floor : BaseMapEntity, IFloorEntity
     {
-        [XmlArrayItem("ListOfWalls")]
+        [DataMember]
         public List<IWallEntity> Walls { get; set; }
-        [XmlArrayItem("ListOfMapEntities")]
+        [DataMember]
         public List<IMapEntity> Entities { get; set; }
 
         public Floor()

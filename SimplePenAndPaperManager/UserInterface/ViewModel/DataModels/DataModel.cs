@@ -31,7 +31,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
             {
                 _currentMapPath = value;
                 OnPropertyChanged(nameof(CurrentMapPath));
-                OnPropertyChanged(nameof(CurrentMapPath));
+                OnPropertyChanged(nameof(SaveMapCommand));
             }
         }
         private string _currentMapPath;
@@ -44,6 +44,8 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
         }
         private SaveMapCommand _saveMapCommand;
 
+        private bool _disableSourceUpdate;
+
         public DataModel() : base()
         {
             base.MapEntities = new ObservableCollection<IVisualElement>();
@@ -55,6 +57,8 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
             OpenMapCommand = new OpenMapCommand(this);
             SaveMapAsCommand = new SaveMapAsCommand(this);
             _saveMapCommand = new SaveMapCommand(this);
+
+            _disableSourceUpdate = false;
         }
 
         private void MapEntities_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -65,7 +69,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
                 foreach (IVisualElement element in e.NewItems)
                 {
                     element.PropertyChanged += EntityChanged;
-                    CurrentMap.Entities.Add(element.SourceEntity);
+                    if(!_disableSourceUpdate) CurrentMap.Entities.Add(element.SourceEntity);
 
                     if (element is VisualPolygonalBuilding) CurrentCorners = ((VisualPolygonalBuilding)element).Corners;
                 }
@@ -75,7 +79,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
                 foreach (IVisualElement element in e.OldItems)
                 {
                     element.PropertyChanged -= EntityChanged;
-                    CurrentMap.Entities.Remove(element.SourceEntity);
+                    if (!_disableSourceUpdate) CurrentMap.Entities.Remove(element.SourceEntity);
 
                     if (element is VisualPolygonalBuilding && CurrentCorners == ((VisualPolygonalBuilding)element).Corners) CurrentCorners = null;
                 }
@@ -188,7 +192,9 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
 
                 OnPropertyChanged("CurrentMap");
 
-                foreach (IMapEntity enity in _currentMap.Entities) MapEntities.Add(VisualElementHelper.CreateFromMapEntity(enity));
+                _disableSourceUpdate = true;    // prohibit that the added entities get sent to the source -> would result in infinite loop
+                for (int i = 0; i < _currentMap.Entities.Count; i++) MapEntities.Add(VisualElementHelper.CreateFromMapEntity(_currentMap.Entities[i]));
+                _disableSourceUpdate = false;
             }
         }
         private Map _currentMap;

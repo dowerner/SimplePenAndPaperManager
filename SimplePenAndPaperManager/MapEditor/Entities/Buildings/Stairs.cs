@@ -1,12 +1,14 @@
 ﻿using SimplePenAndPaperManager.MapEditor.Entities.Buildings.Interface;
 using SimplePenAndPaperManager.MapEditor.Entities.Interface;
-using System;
+using SimplePenAndPaperManager.MapEditor.Entities.Markers;
+using System.Runtime.Serialization;
 
 namespace SimplePenAndPaperManager.MapEditor.Entities.Buildings
 {
-    [Serializable]
+    [DataContract]
     public class Stairs : BaseMapEntity, IStairsEntity
     {
+        [DataMember]
         public BuildingMaterial Material { get; set; }
 
         public override IMapEntity Copy(bool copyLocation = false)

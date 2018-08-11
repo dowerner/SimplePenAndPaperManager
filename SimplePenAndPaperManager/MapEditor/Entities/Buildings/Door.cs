@@ -2,20 +2,23 @@
 using System.Collections.Generic;
 using SimplePenAndPaperManager.MapEditor.Entities.Items.Interface;
 using SimplePenAndPaperManager.MapEditor.Entities.Interface;
-using System;
-using System.Xml.Serialization;
+using System.Runtime.Serialization;
+using SimplePenAndPaperManager.MapEditor.Entities.Markers;
 
 namespace SimplePenAndPaperManager.MapEditor.Entities.Buildings
 {
-    [Serializable]
+    [DataContract]
     public class Door : BaseMapEntity, IDoorEntity
     {
+        [DataMember]
         public double Width { get; set; }
+        [DataMember]
         public double Thickness { get; set; }
-
-        [XmlArrayItem("ListOfKeys")]
+        [DataMember]
         public List<IKeyEntity> Keys { get; set; }
+        [DataMember]
         public bool Locked { get; set; }
+        [DataMember]
         public BuildingMaterial Material { get; set; }
 
         public override IMapEntity Copy(bool copyLocation = false)

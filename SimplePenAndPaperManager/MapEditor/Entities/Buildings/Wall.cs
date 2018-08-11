@@ -1,21 +1,26 @@
 ﻿using System.Collections.Generic;
 using SimplePenAndPaperManager.MapEditor.Entities.Buildings.Interface;
 using SimplePenAndPaperManager.MapEditor.Entities.Interface;
-using System;
 using System.Xml.Serialization;
+using System.Runtime.Serialization;
+using SimplePenAndPaperManager.MapEditor.Entities.Markers;
 
 namespace SimplePenAndPaperManager.MapEditor.Entities.Buildings
 {
-    [Serializable]
+    [DataContract]
     public class Wall : BaseMapEntity, IWallEntity
     {
-        [XmlArrayItem("ListOfDoors")]
+        [DataMember]
         public List<IDoorEntity> Doors { get; set; }
+        [DataMember]
         public BuildingMaterial Material { get; set; }
+        [DataMember]
         public bool IsOuterWall { get; set; }
+        [DataMember]
         public double Thickness { get; set; }
+        [DataMember]
         public double Length { get; set; }
-        [XmlArrayItem("ListOfWindows")]
+        [DataMember]
         public List<IWindowEntity> Windows { get; set; }
 
         public Wall()

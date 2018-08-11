@@ -1,11 +1,20 @@
 ﻿using SimplePenAndPaperManager.MapEditor.Entities.Markers.Interface;
 using SimplePenAndPaperManager.MapEditor.Entities.Interface;
 using SimplePenAndPaperManager.UserInterface.Model;
-using System;
+using System.Runtime.Serialization;
+using SimplePenAndPaperManager.MapEditor.Entities.Buildings;
 
 namespace SimplePenAndPaperManager.MapEditor.Entities.Markers
 {
-    [Serializable]
+    [KnownType(typeof(Stairs))]
+    [KnownType(typeof(Window))]
+    [KnownType(typeof(TextMarker))]
+    [KnownType(typeof(Point2D))]
+    [KnownType(typeof(Door))]
+    [KnownType(typeof(Floor))]
+    [KnownType(typeof(RectangularBuilding))]
+    [KnownType(typeof(PolygonBuilding))]
+    [DataContract]
     public class TextMarker : BaseMapEntity, ITextMarkerEntity
     {
         public string Text { get; set; }

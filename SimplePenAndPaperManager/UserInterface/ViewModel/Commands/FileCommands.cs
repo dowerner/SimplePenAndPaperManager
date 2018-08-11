@@ -33,6 +33,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.Commands
                 try
                 {
                     _vm.CurrentMap = FileDirector.Instance.LoadFromXml<Map>(dlg.FileName);
+                    _vm.CurrentMapPath = dlg.FileName;
                 }
                 catch(Exception e)
                 {
@@ -69,6 +70,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.Commands
                 try
                 {
                     FileDirector.Instance.SaveToXml<Map>(dlg.FileName, _vm.CurrentMap);
+                    _vm.CurrentMapPath = dlg.FileName;
                 }
                 catch(Exception e)
                 {
