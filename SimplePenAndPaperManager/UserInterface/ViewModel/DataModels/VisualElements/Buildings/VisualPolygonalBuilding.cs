@@ -28,6 +28,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             _polygonBuildingSource.PropertyChanged += _polygonBuildingSource_PropertyChanged;
 
             // setup
+            TerrainEnabled = false;
             _buildingSource = mapEntity;
             Floors = new ObservableCollection<VisualFloor>();
 
@@ -36,10 +37,11 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
 
             // fill floors
             FillFromSource();
-            if (Floors.Count > 0) CurrentFloor = Floors[0];
 
             Floors.CollectionChanged += Floors_CollectionChanged;
             MapEntities = MapEntities;
+
+            if (Floors.Count > 0) CurrentFloor = Floors[0];
         }
 
         private void _polygonBuildingSource_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -98,7 +100,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             }
         }
 
-        private void SetBoundingDimensions()
+        protected void SetBoundingDimensions()
         {
             double x_max = Constants.StartMax, y_max = Constants.StartMax;
             double x_min = Constants.StartMin, y_min = Constants.StartMin;
@@ -216,6 +218,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
                 }
                 _currentFloor = value;
                 OnPropertyChanged("CurrentFloor");
+
                 if (_currentFloor == null) return;
                 MapEntities = _currentFloor.MapEntities;
                 SetBoundingDimensions();

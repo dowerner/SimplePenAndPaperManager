@@ -122,6 +122,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             Corners = new PointCollection();
             for (int i = 0; i < 4; i++) Corners.Add(new Point());
             UpdateCorners();
+            SetBoundingDimensions();
         }
 
         public override IVisualElement Copy()

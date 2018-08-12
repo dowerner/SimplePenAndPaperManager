@@ -52,6 +52,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
             MapEntities.CollectionChanged += MapEntities_CollectionChanged;
 
             CurrentMap = new Map() { Width = 400, Height = 400 };
+            TerrainEnabled = true;
 
             // commands
             OpenMapCommand = new OpenMapCommand(this);

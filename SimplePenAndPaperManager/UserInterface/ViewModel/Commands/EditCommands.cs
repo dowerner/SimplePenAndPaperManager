@@ -207,24 +207,37 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.Commands
 
         public override bool CanExecute(object parameter)
         {
-            return _context.LastSelected is VisualPolygonalBuilding;
+            return _context.LastSelected is VisualPolygonalBuilding || _context.LastSelected is WallElement;
         }
 
         public override void Execute(object parameter)
         {
-            VisualPolygonalBuilding polygon = (VisualPolygonalBuilding)_context.LastSelected;
-
-            foreach(VisualCornerManipulator manipulator in _context.CornerManipulators)
+            foreach (VisualCornerManipulator manipulator in _context.CornerManipulators)
             {
                 _context.MapEntities.Remove(manipulator);
             }
             _context.CornerManipulators.Clear();
 
-            for(int i = 0; i < polygon.Corners.Count; i++)
+            if (_context.LastSelected is VisualPolygonalBuilding)
             {
-                VisualCornerManipulator manipulator = new VisualCornerManipulator(polygon.SourceEntity, polygon, i);
-                _context.CornerManipulators.Add(manipulator);
-                _context.MapEntities.Add(manipulator);
+                VisualPolygonalBuilding polygon = (VisualPolygonalBuilding)_context.LastSelected;
+
+                for (int i = 0; i < polygon.Corners.Count; i++)
+                {
+                    VisualCornerManipulator manipulator = new VisualCornerManipulator(polygon.SourceEntity, polygon, i);
+                    _context.CornerManipulators.Add(manipulator);
+                    _context.MapEntities.Add(manipulator);
+                }
+            }
+            else if(_context.LastSelected is WallElement)
+            {
+                WallElement wall = (WallElement)_context.LastSelected;
+                for(int i = 0; i < 2; i++)
+                {
+                    VisualCornerManipulator manipulator = new VisualCornerManipulator(wall.SourceEntity, wall, i);
+                    _context.CornerManipulators.Add(manipulator);
+                    _context.MapEntities.Add(manipulator);
+                }
             }
         }
     }

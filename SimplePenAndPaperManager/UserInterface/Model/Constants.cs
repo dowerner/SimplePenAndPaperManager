@@ -22,6 +22,7 @@
         public const string DefaultFloorName = "Floor";
 
         public const string SaveFileExtension = ".xml";
+        public const string TerrainFileExtentions = ".ter";
         public const string SaveFileExtensionMapFilter = "Pen&Paper Map Files (.xml)|*.xml";
         public const string DefaultMapName = "PenAndPaperMap.xml";
     }

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
-using System.Xml.Serialization;
 using System.Runtime.Serialization;
 using System.Xml;
+using System.Windows.Ink;
 
 namespace SimplePenAndPaperManager.UserInterface.Model
 {
@@ -44,6 +44,52 @@ namespace SimplePenAndPaperManager.UserInterface.Model
             {
                 throw e;
             }
+        }
+
+        public void SaveTerrain(string path, StrokeCollection terrain)
+        {
+            FileStream fileStream = null;
+
+            try
+            {
+                fileStream = new FileStream(path, FileMode.Create);
+                terrain.Save(fileStream);
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                if (fileStream != null)
+                {
+                    fileStream.Close();
+                }
+            }
+        }
+
+        public StrokeCollection LoadTerrain(string path)
+        {
+            FileStream fileStream = null;
+            StrokeCollection terrain = null;
+
+            try
+            {
+                fileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
+                terrain = new StrokeCollection(fileStream);
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                if (fileStream != null)
+                {
+                    fileStream.Close();
+                }
+            }
+            return terrain;
         }
 
         #region Singleton

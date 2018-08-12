@@ -2,6 +2,7 @@
 using SimplePenAndPaperManager.UserInterface.Model;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels;
 using System;
+using System.IO;
 using System.Windows;
 
 namespace SimplePenAndPaperManager.UserInterface.ViewModel.Commands
@@ -32,7 +33,13 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.Commands
                 // Open map
                 try
                 {
-                    _vm.CurrentMap = FileDirector.Instance.LoadFromXml<Map>(dlg.FileName);
+                    Map map = FileDirector.Instance.LoadFromXml<Map>(dlg.FileName);
+                    string terrainPath = dlg.FileName + Constants.TerrainFileExtentions;
+
+                    if (File.Exists(terrainPath)) map.Terrain = FileDirector.Instance.LoadTerrain(terrainPath);
+                    else MessageBox.Show($"The map was loaded but the terrain file '{terrainPath}' could not be found.", "Terrain not found", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    _vm.CurrentMap = map;                    
+
                     _vm.CurrentMapPath = dlg.FileName;
                 }
                 catch(Exception e)
@@ -69,7 +76,8 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.Commands
                 // Save map
                 try
                 {
-                    FileDirector.Instance.SaveToXml<Map>(dlg.FileName, _vm.CurrentMap);
+                    FileDirector.Instance.SaveToXml(dlg.FileName, _vm.CurrentMap);
+                    FileDirector.Instance.SaveTerrain(dlg.FileName + Constants.TerrainFileExtentions, _vm.CurrentMap.Terrain);
                     _vm.CurrentMapPath = dlg.FileName;
                 }
                 catch(Exception e)
@@ -95,7 +103,8 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.Commands
             // Save map
             try
             {
-                FileDirector.Instance.SaveToXml<Map>(_vm.CurrentMapPath, _vm.CurrentMap);
+                FileDirector.Instance.SaveToXml(_vm.CurrentMapPath, _vm.CurrentMap);
+                FileDirector.Instance.SaveTerrain(_vm.CurrentMapPath + Constants.TerrainFileExtentions, _vm.CurrentMap.Terrain);
             }
             catch(Exception e)
             {

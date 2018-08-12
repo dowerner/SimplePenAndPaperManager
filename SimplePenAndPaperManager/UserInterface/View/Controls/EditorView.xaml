@@ -184,6 +184,7 @@
         <Grid
             Margin="5,5,5,5"
             DockPanel.Dock="Bottom"
+            Panel.ZIndex="1"
             >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -332,7 +333,8 @@
                     ItemContainerStyle="{StaticResource listBoxItemStyle}"
                     />-->
                     <InkCanvas x:Name="TerrainMap" IsHitTestVisible="{Binding Source={x:Static dataModel:GlobalManagement.Instance}, Path=InTerrainEditingMode}"
-                               Strokes="{Binding Source={x:Static dataModel:GlobalManagement.Instance}, Path=TerrainStrokes}">
+                               Strokes="{Binding Source={x:Static dataModel:GlobalManagement.Instance}, Path=TerrainStrokes}"
+                               Visibility="{Binding TerrainEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
                     </InkCanvas>
                     <ItemsControl IsHitTestVisible="{Binding Source={x:Static dataModel:GlobalManagement.Instance}, Path=InTerrainEditingMode, Converter={StaticResource NotConverter}}"
                         x:Name="content"

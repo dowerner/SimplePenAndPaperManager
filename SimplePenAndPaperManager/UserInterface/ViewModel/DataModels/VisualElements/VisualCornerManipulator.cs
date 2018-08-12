@@ -14,43 +14,60 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
         {
             get
             {
-                double angle = _polygon.Orientation * Math.PI / 180;
-                double x = Math.Cos(angle) * _polygon.Corners[_cornerIndex].X - Math.Sin(angle) * _polygon.Corners[_cornerIndex].Y;
-                _x = x + _polygon.X;
-                return _x;
+                if(_polygon != null)
+                {
+                    double angle = _polygon.Orientation * Math.PI / 180;
+                    double x = Math.Cos(angle) * _polygon.Corners[_cornerIndex].X - Math.Sin(angle) * _polygon.Corners[_cornerIndex].Y;
+                    _x = x + _polygon.X;
+                    return _x;
+                }
+                else if(_wall != null)
+                {
+                    return _cornerIndex == 0 ? _wall.X1 : _wall.X2;
+                }
+                return 0;
             }
             set
             {
-                double angle = _polygon.Orientation * Math.PI / 180;
-                double x = Math.Cos(angle) * (value - _polygon.X) + Math.Sin(angle) * (_y - _polygon.Y);
-
-                Point newPoint = new Point(x, _polygon.Corners[_cornerIndex].Y);
-
-                if (_polygon is VisualRectangularBuilding)
+                if(_polygon != null)
                 {
-                    switch (_cornerIndex)
+                    double angle = _polygon.Orientation * Math.PI / 180;
+                    double x = Math.Cos(angle) * (value - _polygon.X) + Math.Sin(angle) * (_y - _polygon.Y);
+
+                    Point newPoint = new Point(x, _polygon.Corners[_cornerIndex].Y);
+
+                    if (_polygon is VisualRectangularBuilding)
                     {
-                        case 0:
-                            ((VisualRectangularBuilding)_polygon).A = newPoint;
-                            break;
-                        case 1:
-                            ((VisualRectangularBuilding)_polygon).B = newPoint;
-                            break;
-                        case 2:
-                            ((VisualRectangularBuilding)_polygon).C = newPoint;
-                            break;
-                        case 3:
-                            ((VisualRectangularBuilding)_polygon).D = newPoint;
-                            break;
+                        switch (_cornerIndex)
+                        {
+                            case 0:
+                                ((VisualRectangularBuilding)_polygon).A = newPoint;
+                                break;
+                            case 1:
+                                ((VisualRectangularBuilding)_polygon).B = newPoint;
+                                break;
+                            case 2:
+                                ((VisualRectangularBuilding)_polygon).C = newPoint;
+                                break;
+                            case 3:
+                                ((VisualRectangularBuilding)_polygon).D = newPoint;
+                                break;
+                        }
                     }
+                    else
+                    {
+                        _polygon.Corners[_cornerIndex] = newPoint;
+                    }
+
+                    _polygon.Corners = _polygon.Corners;
+                    _polygon.UpdateAllFloorDimensions();
                 }
-                else
+                else if(_wall != null)
                 {
-                    _polygon.Corners[_cornerIndex] = newPoint;
+                    if (_cornerIndex == 0) _wall.X1 = value;
+                    else _wall.X2 = value;
                 }
                 
-                _polygon.Corners = _polygon.Corners;
-                _polygon.UpdateAllFloorDimensions();
                 OnPropertyChanged(nameof(X));
             }
         }
@@ -60,44 +77,61 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
         {
             get
             {
-                double angle = _polygon.Orientation * Math.PI / 180;
-                double y = Math.Sin(angle) * _polygon.Corners[_cornerIndex].X + Math.Cos(angle) * _polygon.Corners[_cornerIndex].Y;
-                _y = y + _polygon.Y;
-                return _y;
+                if (_polygon != null)
+                {
+                    double angle = _polygon.Orientation * Math.PI / 180;
+                    double y = Math.Sin(angle) * _polygon.Corners[_cornerIndex].X + Math.Cos(angle) * _polygon.Corners[_cornerIndex].Y;
+                    _y = y + _polygon.Y;
+                    return _y;
+                }
+                else if (_wall != null)
+                {
+                    return _cornerIndex == 0 ? _wall.Y1 : _wall.Y2;
+                }
+                return 0;
             }
             set
             {
-                double angle = _polygon.Orientation * Math.PI / 180;
-                double y = -Math.Sin(angle) * (_x - _polygon.X) + Math.Cos(angle) * (value - _polygon.Y);
-
-                Point newPoint = new Point(_polygon.Corners[_cornerIndex].X, y);
-
-                if (_polygon is VisualRectangularBuilding)
+                if(_polygon != null)
                 {
-                    switch (_cornerIndex)
+                    double angle = _polygon.Orientation * Math.PI / 180;
+                    double y = -Math.Sin(angle) * (_x - _polygon.X) + Math.Cos(angle) * (value - _polygon.Y);
+
+                    Point newPoint = new Point(_polygon.Corners[_cornerIndex].X, y);
+
+                    if (_polygon is VisualRectangularBuilding)
                     {
-                        case 0:
-                            ((VisualRectangularBuilding)_polygon).A = newPoint;
-                            break;
-                        case 1:
-                            ((VisualRectangularBuilding)_polygon).B = newPoint;
-                            break;
-                        case 2:
-                            ((VisualRectangularBuilding)_polygon).C = newPoint;
-                            break;
-                        case 3:
-                            ((VisualRectangularBuilding)_polygon).D = newPoint;
-                            break;
+                        switch (_cornerIndex)
+                        {
+                            case 0:
+                                ((VisualRectangularBuilding)_polygon).A = newPoint;
+                                break;
+                            case 1:
+                                ((VisualRectangularBuilding)_polygon).B = newPoint;
+                                break;
+                            case 2:
+                                ((VisualRectangularBuilding)_polygon).C = newPoint;
+                                break;
+                            case 3:
+                                ((VisualRectangularBuilding)_polygon).D = newPoint;
+                                break;
+                        }
                     }
-                }
-                else
-                {
-                    _polygon.Corners[_cornerIndex] = newPoint;
-                }
+                    else
+                    {
+                        _polygon.Corners[_cornerIndex] = newPoint;
+                    }
 
-                _polygon.Corners[_cornerIndex] = newPoint;
-                _polygon.Corners = _polygon.Corners;
-                _polygon.UpdateAllFloorDimensions();
+                    _polygon.Corners[_cornerIndex] = newPoint;
+                    _polygon.Corners = _polygon.Corners;
+                    _polygon.UpdateAllFloorDimensions();
+                }
+                else if (_wall != null)
+                {
+                    if (_cornerIndex == 0) _wall.X1 = value;
+                    else _wall.X2 = value;
+                }
+                
                 OnPropertyChanged(nameof(Y));
             }
         }
@@ -161,17 +195,38 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
         }
         private VisualPolygonalBuilding _polygon;
 
+        public WallElement Wall
+        {
+            get { return _wall; }
+            set
+            {
+                _wall = value;
+                OnPropertyChanged(nameof(Wall));
+            }
+        }
+        private WallElement _wall;
+
         public VisualCornerManipulator(IMapEntity mapEntity, VisualPolygonalBuilding polygon, int index) : base(mapEntity)
         {
             Color = Colors.Blue;
             Width = Constants.ManipulatorDiameter;
             Height = Constants.ManipulatorDiameter;
             _polygon = polygon;
-            _polygon.PropertyChanged += _polygon_PropertyChanged;
+            _polygon.PropertyChanged += manipulatedObject_PropertyChanged;
             _cornerIndex = index;
         }
 
-        private void _polygon_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        public VisualCornerManipulator(IMapEntity mapEntity, WallElement wall, int index) : base(mapEntity)
+        {
+            Color = Colors.Blue;
+            Width = Constants.ManipulatorDiameter;
+            Height = Constants.ManipulatorDiameter;
+            _wall = wall;
+            _wall.PropertyChanged += manipulatedObject_PropertyChanged;
+            _cornerIndex = index;
+        }
+
+        private void manipulatedObject_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "X" || e.PropertyName == "Y" || e.PropertyName == "A" || e.PropertyName == "B" || e.PropertyName == "C" || e.PropertyName == "D")
             {

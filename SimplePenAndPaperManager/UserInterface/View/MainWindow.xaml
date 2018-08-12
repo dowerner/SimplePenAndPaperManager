@@ -55,7 +55,7 @@
             <ColumnDefinition Width="5"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Menu Grid.ColumnSpan="3">
+        <Menu Grid.ColumnSpan="3" Panel.ZIndex="1">
             <MenuItem Header="File">
                 <MenuItem Header="New Adventure"/>
                 <MenuItem Header="Open Adventure"/>

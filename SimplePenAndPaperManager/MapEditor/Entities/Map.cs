@@ -35,7 +35,6 @@ namespace SimplePenAndPaperManager.MapEditor.Entities
         [DataMember]
         public List<IMapEntity> Entities { get; set; }
 
-        [DataMember]
         public StrokeCollection Terrain { get; set; }
 
         public Map()

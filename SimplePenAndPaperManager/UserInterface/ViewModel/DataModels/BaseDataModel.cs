@@ -33,6 +33,17 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
 
         public WallElement CurrentWall { get; set; }
 
+        public bool TerrainEnabled
+        {
+            get { return _terrainEnabled; }
+            set
+            {
+                _terrainEnabled = value;
+                OnPropertyChanged(nameof(TerrainEnabled));
+            }
+        }
+        private bool _terrainEnabled;
+
         public bool IsCreatingWallAttachement
         {
             get { return _isCreatingWallAttachement; }
@@ -55,9 +66,9 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
         }
         private bool _isCreatingWall;
 
-        public bool SelectionIsBuilding
+        public bool SelectionIsShapeEditable
         {
-            get { return LastSelected is IVisualBuilding; }
+            get { return LastSelected is IVisualBuilding || LastSelected is WallElement; }
         }
 
         public virtual double MapWidth
