@@ -93,6 +93,17 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels
         }
         private double _mapHeight;
 
+        public IVisualElement CurrentlyManipulatedObject
+        {
+            get { return _currentlyManipulatedObject; }
+            set
+            {
+                _currentlyManipulatedObject = value;
+                OnPropertyChanged(nameof(CurrentlyManipulatedObject));
+            }
+        }
+        private IVisualElement _currentlyManipulatedObject;
+
         public ICollectionView CharacterView { get; set; }
         public ICollectionView ItemView { get; set; }
         public ICollectionView BuildingsView { get; set; }

@@ -1,5 +1,6 @@
 ﻿using SimplePenAndPaperManager.MapEditor.Entities;
 using SimplePenAndPaperManager.MapEditor.Entities.Interface;
+using SimplePenAndPaperManager.MathTools;
 using SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElements.Interface;
 using System;
 using System.Collections.Generic;
@@ -47,6 +48,22 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
         private void _corners_Changed(object sender, EventArgs e)
         {
             fillPointsToSource();
+        }
+
+        public void UpdateCenter()
+        {
+            Point offset = new Point(0, 0);
+            foreach (Point point in Corners) offset = offset.Add(point);
+            offset = offset.Mult(1.0 / Corners.Count);
+
+            PointCollection newCorners = new PointCollection();
+            foreach (Point point in Corners) newCorners.Add(point.Sub(offset));
+            Corners = newCorners;
+
+            offset = offset.Rotate(Orientation);
+
+            X += offset.X;
+            Y += offset.Y;
         }
 
         public override IVisualElement Copy()

@@ -184,6 +184,17 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                 rotation.Do();
             }
 
+            if(e.PropertyName == nameof(_vm.LastSelected) && !_vm.SelectedEntities.Contains(_vm.CurrentlyManipulatedObject) && !(_vm.LastSelected is VisualCornerManipulator))
+            {
+                // remove corner manipulators on changing selection
+                var items = _vm.MapEntities.Where(item => item is VisualCornerManipulator).ToList();
+                for (int i = 0; i < items.Count; i++) _vm.MapEntities.Remove(items[i]);
+                if (_vm is DataModel)
+                {
+                    ((DataModel)_vm).CurrentCorners = null;
+                }
+            }
+
             #region terrain
             if (e.PropertyName == "CurrentMap" || e.PropertyName == "MapWidth" || e.PropertyName == "MapHeight") ExpandContent();
 
@@ -405,12 +416,6 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                     _vm.MapEntities.Add(_vm.CurrentWall);
                     zoomAndPanControl.CaptureMouse();
                 }
-                else    // terminate wall placement
-                {
-                    _vm.CurrentWall = null;
-                    mouseHandlingMode = MouseHandlingMode.None;
-                    zoomAndPanControl.ReleaseMouseCapture();
-                }
                 return;             
             }
 
@@ -515,6 +520,12 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
                 if(mouseHandlingMode == MouseHandlingMode.CreateWall)
                 {
                     // don't stop if wall being is created
+                    if(_vm.CurrentWall != null)
+                    {
+                        _vm.CurrentWall = null;
+                        mouseHandlingMode = MouseHandlingMode.None;
+                        zoomAndPanControl.ReleaseMouseCapture();
+                    }
                     return;
                 }
 
@@ -939,6 +950,12 @@ namespace SimplePenAndPaperManager.UserInterface.View.Controls
 
         private void Canvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            if (mouseHandlingMode == MouseHandlingMode.CreateWall
+            || mouseHandlingMode == MouseHandlingMode.CreateTextMarker
+            || mouseHandlingMode == MouseHandlingMode.CreatePolygon
+            || mouseHandlingMode == MouseHandlingMode.CreateRectangle
+            || mouseHandlingMode == MouseHandlingMode.CreateWallAttachable) return;
+
             if(!Keyboard.IsKeyDown(Key.LeftCtrl) && !Keyboard.IsKeyDown(Key.RightCtrl))
             {
                 _vm.SelectedEntities.Clear();

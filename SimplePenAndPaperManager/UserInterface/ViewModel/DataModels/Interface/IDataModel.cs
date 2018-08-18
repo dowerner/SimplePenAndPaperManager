@@ -39,6 +39,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.Interface
         double GizmoY { get; set; }
         Point MousePosition { get; set; }
         IVisualElement LastSelected { get; set; }
+        IVisualElement CurrentlyManipulatedObject { get; set; }
 
         #region Build Properties
         bool IsCreatingTextMarker { get; set; }

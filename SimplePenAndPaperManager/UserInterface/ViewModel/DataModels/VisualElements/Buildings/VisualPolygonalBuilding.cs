@@ -44,6 +44,11 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
             if (Floors.Count > 0) CurrentFloor = Floors[0];
         }
 
+        public void UpdateCenter()
+        {
+            _polygonBuildingSource.UpdateCenter();
+        }
+
         private void _polygonBuildingSource_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             OnPropertyChanged(e.PropertyName);

@@ -60,6 +60,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
                     }
 
                     _polygon.Corners = _polygon.Corners;
+                    _polygon.UpdateCenter();
                     _polygon.UpdateAllFloorDimensions();
                 }
                 else if(_wall != null)
@@ -128,8 +129,8 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.DataModels.VisualElem
                 }
                 else if (_wall != null)
                 {
-                    if (_cornerIndex == 0) _wall.X1 = value;
-                    else _wall.X2 = value;
+                    if (_cornerIndex == 0) _wall.Y1 = value;
+                    else _wall.Y2 = value;
                 }
                 
                 OnPropertyChanged(nameof(Y));

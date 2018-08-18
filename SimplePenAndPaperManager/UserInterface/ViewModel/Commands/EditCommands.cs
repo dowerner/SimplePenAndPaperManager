@@ -228,6 +228,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.Commands
                     _context.CornerManipulators.Add(manipulator);
                     _context.MapEntities.Add(manipulator);
                 }
+                _context.CurrentlyManipulatedObject = _context.LastSelected;
             }
             else if(_context.LastSelected is WallElement)
             {
@@ -238,6 +239,7 @@ namespace SimplePenAndPaperManager.UserInterface.ViewModel.Commands
                     _context.CornerManipulators.Add(manipulator);
                     _context.MapEntities.Add(manipulator);
                 }
+                _context.CurrentlyManipulatedObject = _context.LastSelected;
             }
         }
     }
